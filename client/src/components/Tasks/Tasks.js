@@ -1,0 +1,1102 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
+  Dialog,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  Avatar,
+  Tooltip,
+  LinearProgress,
+  Tabs,
+  Tab,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  ToggleButton,
+  ToggleButtonGroup
+} from '@mui/material';
+import {
+  Add,
+  MoreVert,
+  Edit,
+  Delete,
+  Person,
+  CalendarToday,
+  Flag,
+  Assignment,
+  FilterList,
+  ViewModule,
+  ViewList
+} from '@mui/icons-material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'react-toastify';
+
+const Tasks = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
+  const [tasks, setTasks] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'list'
+  const [filters, setFilters] = useState({
+    status: '',
+    priority: '',
+    assignee: '',
+    project: ''
+  });
+
+  const [newTask, setNewTask] = useState({
+    title: '',
+    description: '',
+    project: '',
+    priority: 'medium',
+    type: 'task',
+    assignee: '',
+    dueDate: null,
+    estimatedHours: '',
+    tags: ''
+  });
+
+  // Local inputs for per-task time logging on cards
+  const [timeInputs, setTimeInputs] = useState({}); // { [taskId]: { hours: '', minutes: '' } }
+
+  const statusTabs = [
+    { label: 'All', value: '' },
+    { label: 'To Do', value: 'todo' },
+    { label: 'In Progress', value: 'in-progress' },
+    { label: 'Review', value: 'review' },
+    { label: 'Testing', value: 'testing' },
+    { label: 'Done', value: 'done' }
+  ];
+
+  // derive counts for tabs from current tasks dataset
+  const tabCounts = React.useMemo(() => {
+    const counts = { '': tasks.length, todo: 0, 'in-progress': 0, review: 0, testing: 0, done: 0 };
+    tasks.forEach(t => { if (counts[t.status] !== undefined) counts[t.status]++; });
+    return counts;
+  }, [tasks]);
+
+  useEffect(() => {
+    fetchTasks();
+    fetchProjects();
+    if (user?.role === 'admin') {
+      fetchUsers();
+    }
+  }, [user, filters]);
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.append(key, value);
+      });
+      
+      const response = await axios.get(`/tasks?${params.toString()}`);
+      setTasks(response.data.tasks);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      toast.error('Failed to fetch tasks');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handlers for time logging on task cards
+  const updateTimeInput = (taskId, field, value) => {
+    setTimeInputs(prev => ({
+      ...prev,
+      [taskId]: { ...(prev[taskId] || {}), [field]: value.replace(/[^0-9]/g, '') }
+    }));
+  };
+
+  const handleLogTime = async (taskId) => {
+    const inputs = timeInputs[taskId] || { hours: '0', minutes: '0' };
+    const hours = parseInt(inputs.hours || '0', 10) || 0;
+    const minutes = parseInt(inputs.minutes || '0', 10) || 0;
+    if (hours <= 0 && minutes <= 0) {
+      toast.info('Enter hours or minutes');
+      return;
+    }
+    if (minutes < 0 || minutes > 59) {
+      toast.error('Minutes must be between 0 and 59');
+      return;
+    }
+    try {
+      await axios.post(`/tasks/${taskId}/time`, { hours, minutes });
+      toast.success('Time logged');
+      // Clear inputs and refresh
+      setTimeInputs(prev => ({ ...prev, [taskId]: { hours: '', minutes: '' } }));
+      fetchTasks();
+    } catch (error) {
+      const apiMsg = error?.response?.data?.message;
+      const valMsg = error?.response?.data?.errors?.[0]?.msg;
+      toast.error(apiMsg || valMsg || 'Failed to log time');
+    }
+  };
+
+  // Auto-open edit dialog if redirected with ?edit=<taskId>
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const editId = params.get('edit');
+    if (!editId || !tasks || tasks.length === 0) return;
+
+    const taskToEdit = tasks.find(t => (t._id === editId));
+    if (taskToEdit) {
+      openEditTask(taskToEdit);
+      // Clean the URL so it doesn't reopen on re-render
+      navigate('/tasks', { replace: true });
+    }
+  }, [location.search, tasks]);
+
+  const [editTask, setEditTask] = useState({
+    title: '',
+    description: '',
+    project: '',
+    priority: 'medium',
+    type: 'task',
+    assignee: '',
+    dueDate: null,
+    estimatedHours: '',
+    tags: ''
+  });
+
+  const openEditTask = (task) => {
+    setSelectedTask(task);
+    setEditTask({
+      title: task.title || '',
+      description: task.description || '',
+      project: task.project?._id || task.project || '',
+      priority: task.priority || 'medium',
+      type: task.type || 'task',
+      assignee: task.assignee?._id || task.assignee || '',
+      dueDate: task.dueDate ? dayjs(task.dueDate) : null,
+      estimatedHours: task.estimatedHours || '',
+      tags: (task.tags || []).join(', ')
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleUpdateTask = async () => {
+    try {
+      if (!selectedTask) return;
+      const payload = {
+        ...editTask,
+        dueDate: editTask.dueDate ? editTask.dueDate.toISOString() : null,
+        estimatedHours: parseFloat(editTask.estimatedHours) || 0,
+        tags: editTask.tags.split(',').map(t => t.trim()).filter(Boolean)
+      };
+      await axios.put(`/tasks/${selectedTask._id}`, payload);
+      toast.success('Task updated successfully');
+      setEditDialogOpen(false);
+      setMenuAnchorEl(null);
+      setSelectedTask(null);
+      fetchTasks();
+    } catch (error) {
+      console.error('Error updating task:', error);
+      toast.error('Failed to update task');
+    }
+  };
+
+  const fetchProjects = async () => {
+    try {
+      const response = await axios.get('/projects');
+      setProjects(response.data.projects);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('/users');
+      setUsers(response.data.users);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const handleCreateTask = async () => {
+    try {
+      // Normalize due date (supports Date, Dayjs, or string)
+      let dueISO = null;
+      if (newTask.dueDate) {
+        const d = newTask.dueDate;
+        if (typeof d?.toISOString === 'function') {
+          dueISO = d.toISOString();
+        } else if (d?.$d) {
+          // Dayjs instance
+          dueISO = new Date(d.$d).toISOString();
+        } else {
+          const parsed = new Date(d);
+          dueISO = isNaN(parsed.getTime()) ? null : parsed.toISOString();
+        }
+      }
+
+      const taskData = {
+        ...newTask,
+        dueDate: dueISO,
+        estimatedHours: parseFloat(newTask.estimatedHours) || 0,
+        tags: (newTask.tags || '').split(',').map(tag => tag.trim()).filter(tag => tag)
+      };
+
+      await axios.post('/tasks', taskData);
+      toast.success('Task created successfully');
+      setCreateDialogOpen(false);
+      setNewTask({
+        title: '',
+        description: '',
+        project: '',
+        priority: 'medium',
+        type: 'task',
+        assignee: '',
+        dueDate: null,
+        estimatedHours: '',
+        tags: ''
+      });
+      fetchTasks();
+    } catch (error) {
+      console.error('Error creating task:', error);
+      const apiMsg = error?.response?.data?.message;
+      const valMsg = error?.response?.data?.errors?.[0]?.msg;
+      toast.error(apiMsg || valMsg || 'Failed to create task');
+    }
+  };
+
+  const handleMenuOpen = (event, task) => {
+    setMenuAnchorEl(event.currentTarget);
+    setSelectedTask(task);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+    setSelectedTask(null);
+  };
+
+  const handleDeleteTask = async () => {
+    try {
+      if (!selectedTask) return;
+      await axios.delete(`/tasks/${selectedTask._id}`);
+      toast.success('Task archived successfully');
+      fetchTasks();
+    } catch (error) {
+      console.error('Error archiving task:', error);
+      toast.error('Failed to archive task');
+    }
+    handleMenuClose();
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+    setFilters({ ...filters, status: statusTabs[newValue].value });
+  };
+
+  const getStatusColor = (status) => {
+    const colors = {
+      todo: '#f44336',
+      'in-progress': '#ff9800',
+      review: '#2196f3',
+      testing: '#9c27b0',
+      done: '#4caf50'
+    };
+    return colors[status] || '#757575';
+  };
+
+  const getPriorityColor = (priority) => {
+    const colors = {
+      low: '#4caf50',
+      medium: '#ff9800',
+      high: '#f44336',
+      critical: '#d32f2f'
+    };
+    return colors[priority] || '#757575';
+  };
+
+  const getTypeIcon = (type) => {
+    const icons = {
+      feature: '🚀',
+      bug: '🐛',
+      improvement: '⚡',
+      task: '📋',
+      story: '📖'
+    };
+    return icons[type] || '📋';
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const isOverdue = (dueDate, status) => {
+    if (!dueDate || status === 'done') return false;
+    return new Date(dueDate) < new Date();
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h4" gutterBottom>
+          Tasks
+        </Typography>
+        <LinearProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography variant="h4" gutterBottom>
+            Tasks
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => setCreateDialogOpen(true)}
+          >
+            New Task
+          </Button>
+        </Box>
+
+        {/* Status Tabs */}
+        <Paper sx={{ mb: 3, borderRadius: 999, px: 1, py: 0.75, backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)' }}>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              '& .MuiTabs-flexContainer': { gap: 0.5 },
+              '& .MuiTabs-indicator': { display: 'none' },
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontWeight: 700,
+                minHeight: 44,
+                color: '#374151'
+              },
+              '& .MuiTab-root.Mui-selected': {
+                color: '#111827',
+                backgroundColor: 'rgba(255,255,255,0.95)'
+              }
+            }}
+          >
+            {statusTabs.map((tab, index) => {
+              const v = tab.value;
+              const count = tabCounts[v];
+              const colorMap = { '': '#9ca3af', todo: '#ef4444', 'in-progress': '#f59e0b', review: '#3b82f6', testing: '#8b5cf6', done: '#10b981' };
+              const isSelected = activeTab === index;
+              return (
+                <Tab
+                  key={index}
+                  disableRipple
+                  sx={{
+                    borderRadius: 999,
+                    px: 2.25,
+                    mx: 0.25,
+                    border: `1.5px solid ${isSelected ? colorMap[v] : 'rgba(255,255,255,0.25)'}`,
+                    boxShadow: isSelected ? '0 6px 16px rgba(0,0,0,0.15)' : 'none',
+                    backgroundColor: isSelected ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.6)'
+                  }}
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: colorMap[v] || 'rgba(255,255,255,0.7)' }} />
+                      <span style={{ fontWeight: 700 }}>{tab.label}</span>
+                      <Chip
+                        size="small"
+                        label={count ?? 0}
+                        sx={{
+                          ml: 0.5,
+                          height: 20,
+                          color: isSelected ? '#111827' : '#374151',
+                          bgcolor: isSelected ? 'rgba(17,24,39,0.08)' : 'rgba(17,24,39,0.06)',
+                          fontWeight: 700
+                        }}
+                      />
+                    </Box>
+                  }
+                />
+              );
+            })}
+          </Tabs>
+        </Paper>
+
+        {/* Filters */}
+        <Paper sx={{ p: 2, mb: 3, borderRadius: 3, backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)' }}>
+          <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={3}>
+            <FormControl fullWidth size="small">
+              <Select
+                value={filters.priority}
+                onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
+                displayEmpty
+                inputProps={{ 'aria-label': 'Priority filter' }}
+                renderValue={(selected) => {
+                  if (!selected) {
+                    return <span style={{ color: '#9ca3af', fontSize: '14px', fontWeight: 500 }}>Priority</span>;
+                  }
+                  const map = { low: 'Low', medium: 'Medium', high: 'High', critical: 'Critical' };
+                  return <span style={{ fontSize: '14px', fontWeight: 500 }}>{map[selected] || 'Priority'}</span>;
+                }}
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.98)',
+                  borderRadius: 2,
+                  '& fieldset': { border: 'none' },
+                  color: '#111827',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                  '& .MuiSelect-icon': { color: '#6b7280' }
+                }}
+              >
+                <MenuItem value="">All Priorities</MenuItem>
+                <MenuItem value="low">Low</MenuItem>
+                <MenuItem value="medium">Medium</MenuItem>
+                <MenuItem value="high">High</MenuItem>
+                <MenuItem value="critical">Critical</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <FormControl fullWidth size="small">
+              <Select
+                value={filters.project}
+                onChange={(e) => setFilters({ ...filters, project: e.target.value })}
+                displayEmpty
+                inputProps={{ 'aria-label': 'Project filter' }}
+                renderValue={(selected) => {
+                  if (!selected) {
+                    return <span style={{ color: '#9ca3af', fontSize: '14px', fontWeight: 500 }}>Project</span>;
+                  }
+                  const p = projects.find(pr => pr._id === selected);
+                  return <span style={{ fontSize: '14px', fontWeight: 500 }}>{p?.name || 'Project'}</span>;
+                }}
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.98)',
+                  borderRadius: 2,
+                  '& fieldset': { border: 'none' },
+                  color: '#111827',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                  '& .MuiSelect-icon': { color: '#6b7280' }
+                }}
+              >
+                <MenuItem value="">All Projects</MenuItem>
+                {projects.map((project) => (
+                  <MenuItem key={project._id} value={project._id}>
+                    {project.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          {users.length > 0 && (
+            <Grid item xs={12} sm={6} md={3}>
+              <FormControl fullWidth size="small">
+                <Select
+                  value={filters.assignee}
+                  onChange={(e) => setFilters({ ...filters, assignee: e.target.value })}
+                  displayEmpty
+                  inputProps={{ 'aria-label': 'Assignee filter' }}
+                  renderValue={(selected) => {
+                    if (!selected) {
+                      return <span style={{ color: '#9ca3af', fontSize: '14px', fontWeight: 500 }}>Assignee</span>;
+                    }
+                    const u = users.find(us => us._id === selected);
+                    return <span style={{ fontSize: '14px', fontWeight: 500 }}>{u?.name || 'Assignee'}</span>;
+                  }}
+                  sx={{
+                    bgcolor: 'rgba(255,255,255,0.98)',
+                    borderRadius: 2,
+                    '& fieldset': { border: 'none' },
+                    color: '#111827',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                    '& .MuiSelect-icon': { color: '#6b7280' }
+                  }}
+                >
+                  <MenuItem value="">All Assignees</MenuItem>
+                  {users.map((user) => (
+                    <MenuItem key={user._id} value={user._id}>
+                      {user.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
+          </Grid>
+        </Paper>
+
+        {/* View Mode Toggle */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>Tasks</Typography>
+          <ToggleButtonGroup
+            size="small"
+            value={viewMode}
+            exclusive
+            onChange={(e, val) => { if (val) setViewMode(val); }}
+          >
+            <ToggleButton value="cards" aria-label="card view">
+              <ViewModule fontSize="small" />
+            </ToggleButton>
+            <ToggleButton value="list" aria-label="list view">
+              <ViewList fontSize="small" />
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+
+        {viewMode === 'cards' ? (
+          <Grid container spacing={3}>
+            {tasks.map((task) => (
+            <Grid item xs={12} sm={6} md={4} key={task._id}>
+              <Card 
+                sx={{ 
+                  height: '100%', 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  cursor: 'pointer',
+                  border: isOverdue(task.dueDate, task.status) ? '2px solid #f44336' : 'none',
+                  '&:hover': {
+                    boxShadow: 4
+                  }
+                }}
+                onClick={() => navigate(`/tasks/${task._id}`)}
+              >
+                <CardContent sx={{ flexGrow: 1, position: 'relative' }}>
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleMenuOpen(e, task);
+                    }}
+                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                  >
+                    <MoreVert />
+                  </IconButton>
+
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2, px: 1, textAlign: 'center' }}>
+                    <Typography variant="h6" component="span" sx={{ mr: 1 }}>
+                      {getTypeIcon(task.type)}
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      sx={{
+                        textAlign: 'center',
+                        overflowWrap: 'anywhere',
+                        wordBreak: 'break-word'
+                      }}
+                    >
+                      {task.title}
+                    </Typography>
+                  </Box>
+
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    {task.description.length > 100 
+                      ? `${task.description.substring(0, 100)}...`
+                      : task.description
+                    }
+                  </Typography>
+
+                  <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+                    <Chip
+                      label={task.status.replace('-', ' ')}
+                      size="small"
+                      sx={{
+                        bgcolor: getStatusColor(task.status),
+                        color: 'white'
+                      }}
+                    />
+                    <Chip
+                      label={task.priority}
+                      size="small"
+                      sx={{
+                        bgcolor: getPriorityColor(task.priority),
+                        color: 'white'
+                      }}
+                    />
+                    <Chip
+                      label={task.type}
+                      size="small"
+                      variant="outlined"
+                    />
+                  </Box>
+
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      <Assignment sx={{ fontSize: 16, mr: 1, verticalAlign: 'middle' }} />
+                      {task.project?.name}
+                    </Typography>
+                  </Box>
+
+                  {task.assignee && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <Person sx={{ fontSize: 16, color: 'text.secondary' }} />
+                      <Avatar sx={{ width: 24, height: 24 }}>
+                        {task.assignee.name.charAt(0)}
+                      </Avatar>
+                      <Typography variant="body2" color="text.secondary">
+                        {task.assignee.name}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {task.dueDate && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <CalendarToday sx={{ fontSize: 16, color: isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary' }} />
+                      <Typography 
+                        variant="body2" 
+                        color={isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary'}
+                      >
+                        Due: {formatDate(task.dueDate)}
+                        {isOverdue(task.dueDate, task.status) && ' (Overdue)'}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {task.estimatedHours > 0 && (
+                    <Typography variant="body2" color="text.secondary">
+                      Estimated: {task.estimatedHours}h
+                    </Typography>
+                  )}
+
+                  {/* Time tracker on card */}
+                  <Box sx={{ mt: 1 }}>
+                    <Typography variant="caption" color="text.secondary">
+                      Logged: {task.actualHours ? task.actualHours.toFixed(2) : 0}h
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }} onClick={(e) => e.stopPropagation()}>
+                      <TextField
+                        size="small"
+                        type="number"
+                        placeholder="H"
+                        value={(timeInputs[task._id]?.hours) ?? ''}
+                        onChange={(e) => updateTimeInput(task._id, 'hours', e.target.value)}
+                        sx={{ width: 70 }}
+                        inputProps={{ min: 0 }}
+                      />
+                      <TextField
+                        size="small"
+                        type="number"
+                        placeholder="M"
+                        value={(timeInputs[task._id]?.minutes) ?? ''}
+                        onChange={(e) => updateTimeInput(task._id, 'minutes', e.target.value)}
+                        sx={{ width: 70 }}
+                        inputProps={{ min: 0, max: 59 }}
+                      />
+                      <Button variant="outlined" size="small" onClick={(e) => { e.stopPropagation(); handleLogTime(task._id); }}>
+                        Log
+                      </Button>
+                    </Box>
+                  </Box>
+                </CardContent>
+
+                <CardActions>
+                  <Button size="small" startIcon={<Edit />} onClick={(e) => { e.stopPropagation(); openEditTask(task); }}>
+                    Edit
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Paper sx={{ p: 0 }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Task</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Due Date</TableCell>
+                  <TableCell>Assigned To</TableCell>
+                  <TableCell align="right">Logged (h)</TableCell>
+                  <TableCell align="right">Estimated (h)</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {tasks.map((task) => (
+                  <TableRow key={task._id} hover sx={{ cursor: 'pointer' }} onClick={() => navigate(`/tasks/${task._id}`)}>
+                    <TableCell>
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{task.title}</Typography>
+                        <Typography variant="caption" color="text.secondary">{task.project?.name || '—'}</Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={task.status?.replace('-', ' ') || '—'}
+                        size="small"
+                        sx={{ bgcolor: getStatusColor(task.status), color: 'white' }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {task.dueDate ? (
+                        <Typography variant="body2" color={isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary'}>
+                          {formatDate(task.dueDate)}
+                          {isOverdue(task.dueDate, task.status) && ' (Overdue)'}
+                        </Typography>
+                      ) : (
+                        <Typography variant="body2" color="text.secondary">—</Typography>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Avatar sx={{ width: 24, height: 24 }}>
+                          {task.assignee?.name ? task.assignee.name[0] : '?'}
+                        </Avatar>
+                        <Typography variant="body2">{task.assignee?.name || 'Unassigned'}</Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell align="right">{task.actualHours ? task.actualHours.toFixed(2) : '0.00'}</TableCell>
+                    <TableCell align="right">{task.estimatedHours ? Number(task.estimatedHours).toFixed(2) : '0.00'}</TableCell>
+                  </TableRow>
+                ))}
+                {tasks.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">No tasks found</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </Paper>
+        )}
+
+        {tasks.length === 0 && (
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant="h6" color="text.secondary">
+              No tasks found
+            </Typography>
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              onClick={() => setCreateDialogOpen(true)}
+              sx={{ mt: 2 }}
+            >
+              Create Your First Task
+            </Button>
+          </Box>
+        )}
+
+        {/* Task Menu */}
+        <Menu
+          anchorEl={menuAnchorEl}
+          open={Boolean(menuAnchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={() => { const t = selectedTask; handleMenuClose(); if (t) openEditTask(t); }}>
+            <Edit sx={{ mr: 1 }} />
+            Edit
+          </MenuItem>
+          <MenuItem onClick={handleDeleteTask}>
+            <Delete sx={{ mr: 1 }} />
+            Archive
+          </MenuItem>
+        </Menu>
+
+        {/* Create Task Dialog */}
+        <Dialog
+          open={createDialogOpen}
+          onClose={() => setCreateDialogOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Create New Task
+            </Typography>
+
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Task Title"
+                  value={newTask.title}
+                  onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Description"
+                  multiline
+                  rows={3}
+                  value={newTask.description}
+                  onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth required>
+                  <InputLabel>Project</InputLabel>
+                  <Select
+                    value={newTask.project}
+                    label="Project"
+                    onChange={(e) => setNewTask({ ...newTask, project: e.target.value })}
+                  >
+                    {projects.map((project) => (
+                      <MenuItem key={project._id} value={project._id}>
+                        {project.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Type</InputLabel>
+                  <Select
+                    value={newTask.type}
+                    label="Type"
+                    onChange={(e) => setNewTask({ ...newTask, type: e.target.value })}
+                  >
+                    <MenuItem value="feature">Feature</MenuItem>
+                    <MenuItem value="bug">Bug</MenuItem>
+                    <MenuItem value="improvement">Improvement</MenuItem>
+                    <MenuItem value="task">Task</MenuItem>
+                    <MenuItem value="story">Story</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Priority</InputLabel>
+                  <Select
+                    value={newTask.priority}
+                    label="Priority"
+                    onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
+                  >
+                    <MenuItem value="low">Low</MenuItem>
+                    <MenuItem value="medium">Medium</MenuItem>
+                    <MenuItem value="high">High</MenuItem>
+                    <MenuItem value="critical">Critical</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Assignee</InputLabel>
+                  <Select
+                    value={newTask.assignee}
+                    label="Assignee"
+                    onChange={(e) => setNewTask({ ...newTask, assignee: e.target.value })}
+                  >
+                    <MenuItem value="">Unassigned</MenuItem>
+                    {users.map((user) => (
+                      <MenuItem key={user._id} value={user._id}>
+                        {user.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <DatePicker
+                  label="Due Date"
+                  value={newTask.dueDate}
+                  onChange={(date) => setNewTask({ ...newTask, dueDate: date })}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Estimated Hours"
+                  type="number"
+                  value={newTask.estimatedHours}
+                  onChange={(e) => setNewTask({ ...newTask, estimatedHours: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Tags (comma separated)"
+                  value={newTask.tags}
+                  onChange={(e) => setNewTask({ ...newTask, tags: e.target.value })}
+                  placeholder="frontend, urgent, feature"
+                />
+              </Grid>
+            </Grid>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+              <Button onClick={() => setCreateDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleCreateTask}
+                disabled={!newTask.title || !newTask.description || !newTask.project}
+              >
+                Create Task
+              </Button>
+            </Box>
+          </Box>
+        </Dialog>
+
+        {/* Edit Task Dialog */}
+        <Dialog
+          open={editDialogOpen}
+          onClose={() => setEditDialogOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Edit Task
+            </Typography>
+
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Task Title"
+                  value={editTask.title}
+                  onChange={(e) => setEditTask({ ...editTask, title: e.target.value })}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Description"
+                  multiline
+                  rows={3}
+                  value={editTask.description}
+                  onChange={(e) => setEditTask({ ...editTask, description: e.target.value })}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth required>
+                  <InputLabel>Project</InputLabel>
+                  <Select
+                    value={editTask.project}
+                    label="Project"
+                    onChange={(e) => setEditTask({ ...editTask, project: e.target.value })}
+                  >
+                    {projects.map((project) => (
+                      <MenuItem key={project._id} value={project._id}>
+                        {project.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Type</InputLabel>
+                  <Select
+                    value={editTask.type}
+                    label="Type"
+                    onChange={(e) => setEditTask({ ...editTask, type: e.target.value })}
+                  >
+                    <MenuItem value="feature">Feature</MenuItem>
+                    <MenuItem value="bug">Bug</MenuItem>
+                    <MenuItem value="improvement">Improvement</MenuItem>
+                    <MenuItem value="task">Task</MenuItem>
+                    <MenuItem value="story">Story</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Priority</InputLabel>
+                  <Select
+                    value={editTask.priority}
+                    label="Priority"
+                    onChange={(e) => setEditTask({ ...editTask, priority: e.target.value })}
+                  >
+                    <MenuItem value="low">Low</MenuItem>
+                    <MenuItem value="medium">Medium</MenuItem>
+                    <MenuItem value="high">High</MenuItem>
+                    <MenuItem value="critical">Critical</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Assignee</InputLabel>
+                  <Select
+                    value={editTask.assignee}
+                    label="Assignee"
+                    onChange={(e) => setEditTask({ ...editTask, assignee: e.target.value })}
+                  >
+                    <MenuItem value="">Unassigned</MenuItem>
+                    {users.map((user) => (
+                      <MenuItem key={user._id} value={user._id}>
+                        {user.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <DatePicker
+                  label="Due Date"
+                  value={editTask.dueDate}
+                  onChange={(date) => setEditTask({ ...editTask, dueDate: date })}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Estimated Hours"
+                  type="number"
+                  value={editTask.estimatedHours}
+                  onChange={(e) => setEditTask({ ...editTask, estimatedHours: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Tags (comma separated)"
+                  value={editTask.tags}
+                  onChange={(e) => setEditTask({ ...editTask, tags: e.target.value })}
+                />
+              </Grid>
+            </Grid>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+              <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
+              <Button variant="contained" onClick={handleUpdateTask} disabled={!editTask.title || !editTask.description || !editTask.project}>Save Changes</Button>
+            </Box>
+          </Box>
+        </Dialog>
+      </Box>
+    </LocalizationProvider>
+  );
+};
+
+export default Tasks;

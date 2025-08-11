@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:5.0
+    container_name: projecthub-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: project_management
+    volumes:
+      - mongodb_data:/data/db
+      - ./server/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - projecthub-network
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: projecthub-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: production
+      MONGODB_URI: mongodb://admin:password123@mongodb:27017/project_management?authSource=admin
+      JWT_SECRET: your-super-secret-jwt-key-for-production-change-this
+      PORT: 5000
+    depends_on:
+      - mongodb
+    networks:
+      - projecthub-network
+    volumes:
+      - ./server/uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: projecthub-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - projecthub-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  projecthub-network:
+    driver: bridge
