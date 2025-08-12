@@ -23,7 +23,8 @@ import {
   MenuItem,
   Checkbox,
   FormControlLabel,
-  LinearProgress
+  LinearProgress,
+  Tooltip
 } from '@mui/material';
 import {
   ArrowBack,
@@ -39,6 +40,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { getTaskProgress, getProgressColor } from '../../utils/taskProgress';
 
 const TaskDetails = () => {
   const { id } = useParams();
@@ -239,25 +241,60 @@ const TaskDetails = () => {
             {task.title}
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          startIcon={<Edit />}
-          onClick={() => navigate(`/tasks?edit=${id}`)}
-          sx={{ bgcolor: 'white', color: 'primary.main', '&:hover': { bgcolor: '#f7f7f7' } }}
-        >
-          Edit Task
-        </Button>
       </Box>
 
       <Grid container spacing={3}>
         {/* Main Content */}
         <Grid item xs={12} md={8}>
           {/* Task Description */}
-          <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Description
-            </Typography>
-            <Typography variant="body1" paragraph>
+          {/* Progress Bar */}
+          <Paper sx={{ p: 3, mb: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+            <Box sx={{ mb: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  Task Progress
+                </Typography>
+                <Typography variant="subtitle2" color="text.secondary" fontWeight="medium">
+                  {getTaskProgress(task.status)}% Complete
+                </Typography>
+              </Box>
+              <LinearProgress 
+                variant="determinate" 
+                value={getTaskProgress(task.status)} 
+                sx={{ 
+                  height: 8, 
+                  borderRadius: 4,
+                  bgcolor: 'rgba(0, 0, 0, 0.05)',
+                  '& .MuiLinearProgress-bar': {
+                    backgroundColor: getProgressColor(task.status),
+                    borderRadius: 4
+                  }
+                }}
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="caption" color="text.secondary">
+                  {task.status.replace('-', ' ').toUpperCase()}
+                </Typography>
+                <Typography variant="caption" color={getProgressColor(task.status)} fontWeight="medium">
+                  {getTaskProgress(task.status)}%
+                </Typography>
+              </Box>
+            </Box>
+          </Paper>
+
+          {/* Task Description */}
+          <Paper sx={{ p: 3, mb: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant="h6" gutterBottom sx={{ mb: 0 }}>
+                Description
+              </Typography>
+              <Tooltip title="Edit task">
+                <IconButton size="small" onClick={() => navigate(`/tasks?edit=${id}`)}>
+                  <Edit fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+            <Typography variant="body1" paragraph sx={{ whiteSpace: 'pre-wrap' }}>
               {task.description}
             </Typography>
           </Paper>
@@ -277,7 +314,7 @@ const TaskDetails = () => {
                 type="number"
                 value={timeHours}
                 onChange={(e) => setTimeHours(e.target.value.replace(/[^0-9]/g, ''))}
-                sx={{ width: 120 }}
+                sx={{ width: 90 }}
                 inputProps={{ min: 0 }}
               />
               <TextField
@@ -286,7 +323,7 @@ const TaskDetails = () => {
                 type="number"
                 value={timeMinutes}
                 onChange={(e) => setTimeMinutes(e.target.value.replace(/[^0-9]/g, ''))}
-                sx={{ width: 120 }}
+                sx={{ width: 90 }}
                 inputProps={{ min: 0, max: 59 }}
               />
               <Button variant="contained" onClick={handleLogTime}>

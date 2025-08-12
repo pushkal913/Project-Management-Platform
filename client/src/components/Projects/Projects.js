@@ -237,7 +237,7 @@ const Projects = () => {
   if (loading) {
     return (
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
+              <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
           Projects
         </Typography>
         <LinearProgress />
@@ -249,7 +249,7 @@ const Projects = () => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" gutterBottom>
+                <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
             Projects
           </Typography>
           {canCreateProject && (
@@ -294,7 +294,7 @@ const Projects = () => {
                     </IconButton>
                   </Box>
 
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2, whiteSpace: 'pre-wrap' }}>
                     {project.description.length > 100 
                       ? `${project.description.substring(0, 100)}...`
                       : project.description
@@ -320,16 +320,6 @@ const Projects = () => {
                     />
                   </Box>
 
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Progress: {project.progress}%
-                    </Typography>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={project.progress} 
-                      sx={{ height: 8, borderRadius: 4 }}
-                    />
-                  </Box>
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
                     <CalendarToday sx={{ fontSize: 16, color: 'text.secondary' }} />

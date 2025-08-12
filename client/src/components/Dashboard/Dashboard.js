@@ -134,7 +134,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
+                <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
           Dashboard
         </Typography>
         <LinearProgress />
@@ -164,7 +164,7 @@ const Dashboard = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" gutterBottom>
+                <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
           Dashboard
         </Typography>
         <Tooltip title="Refresh">

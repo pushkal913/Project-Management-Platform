@@ -132,7 +132,7 @@ const Users = () => {
   if (!canManageUsers) {
     return (
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
+              <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
           Team Members
         </Typography>
         <Typography variant="body1" color="text.secondary">
@@ -145,7 +145,7 @@ const Users = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" gutterBottom>
+              <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
           Team Members
         </Typography>
         {user?.role === 'admin' && (

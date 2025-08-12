@@ -7,7 +7,6 @@ import {
   Grid,
   Chip,
   LinearProgress,
-  Button,
   Avatar,
   AvatarGroup,
   Divider,
@@ -18,7 +17,11 @@ import {
   ListItemText,
   ListItemAvatar,
   IconButton,
-  Tooltip
+  Tooltip,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import {
   ArrowBack,
@@ -32,6 +35,7 @@ import {
 import axios from 'axios';
 import { useSocket } from '../../contexts/SocketContext';
 import { toast } from 'react-toastify';
+import StatusPill from './StatusPill';
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -45,12 +49,10 @@ const ProjectDetails = () => {
   useEffect(() => {
     fetchProjectDetails();
     
-    // Join project room for real-time updates
     if (id) {
       joinProject(id);
     }
 
-    // Cleanup on unmount
     return () => {
       if (id) {
         leaveProject(id);
@@ -74,13 +76,25 @@ const ProjectDetails = () => {
     }
   };
 
+  const handleStatusChange = async (event) => {
+    const newStatus = event.target.value;
+    try {
+      const response = await axios.put(`/projects/${id}`, { status: newStatus });
+      setProject(response.data.project);
+      toast.success('Project status updated successfully!');
+    } catch (error) {
+      console.error('Error updating project status:', error);
+      toast.error('Failed to update project status.');
+    }
+  };
+
   const getStatusColor = (status) => {
     const colors = {
       planning: '#757575',
       active: '#4caf50',
       'on-hold': '#ff9800',
-      completed: '#4caf50',
-      cancelled: '#f44336'
+      completed: '#2196f3',
+      archived: '#f44336'
     };
     return colors[status] || '#757575';
   };
@@ -125,35 +139,27 @@ const ProjectDetails = () => {
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
           {project.name}
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<Edit />}
-          onClick={() => navigate(`/projects?edit=${id}`)}
-          sx={{ bgcolor: 'white', color: 'primary.main', '&:hover': { bgcolor: '#f7f7f7' } }}
-        >
-          Edit Project
-        </Button>
       </Box>
 
       <Grid container spacing={3}>
         {/* Project Overview */}
         <Grid item xs={12} md={8}>
           <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Project Overview
-            </Typography>
-            <Typography variant="body1" paragraph>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant="h6" gutterBottom sx={{ mb: 0 }}>
+                Project Overview
+              </Typography>
+              <Tooltip title="Edit project">
+                <IconButton size="small" onClick={() => navigate(`/projects?edit=${id}`)}>
+                  <Edit fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+            <Typography variant="body1" paragraph sx={{ whiteSpace: 'pre-wrap' }}>
               {project.description}
             </Typography>
             
             <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-              <Chip
-                label={project.status}
-                sx={{
-                  bgcolor: getStatusColor(project.status),
-                  color: 'white'
-                }}
-              />
               <Chip
                 label={project.priority}
                 sx={{
@@ -163,16 +169,6 @@ const ProjectDetails = () => {
               />
             </Box>
 
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                Progress: {project.progress}%
-              </Typography>
-              <LinearProgress 
-                variant="determinate" 
-                value={project.progress} 
-                sx={{ height: 10, borderRadius: 5 }}
-              />
-            </Box>
 
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -354,6 +350,15 @@ const ProjectDetails = () => {
 
         {/* Sidebar */}
         <Grid item xs={12} md={4}>
+          {/* Status Editor */}
+          <Box sx={{ mb: 3 }}>
+            <StatusPill 
+              status={project.status} 
+              onStatusChange={handleStatusChange} 
+              getStatusColor={getStatusColor} 
+            />
+          </Box>
+          
           {/* Project Manager */}
           <Paper sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>

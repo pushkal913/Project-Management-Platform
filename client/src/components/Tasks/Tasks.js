@@ -51,6 +51,7 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-toastify';
+import { getTaskProgress, getProgressColor } from '../../utils/taskProgress';
 
 const Tasks = () => {
   const navigate = useNavigate();
@@ -363,7 +364,7 @@ const Tasks = () => {
   if (loading) {
     return (
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
+              <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
           Tasks
         </Typography>
         <LinearProgress />
@@ -375,7 +376,7 @@ const Tasks = () => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" gutterBottom>
+                <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
             Tasks
           </Typography>
           <Button
@@ -622,7 +623,7 @@ const Tasks = () => {
                     </Typography>
                   </Box>
 
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2, whiteSpace: 'pre-wrap' }}>
                     {task.description.length > 100 
                       ? `${task.description.substring(0, 100)}...`
                       : task.description
@@ -703,7 +704,7 @@ const Tasks = () => {
                         placeholder="H"
                         value={(timeInputs[task._id]?.hours) ?? ''}
                         onChange={(e) => updateTimeInput(task._id, 'hours', e.target.value)}
-                        sx={{ width: 70 }}
+                        sx={{ width: 56 }}
                         inputProps={{ min: 0 }}
                       />
                       <TextField
@@ -712,13 +713,38 @@ const Tasks = () => {
                         placeholder="M"
                         value={(timeInputs[task._id]?.minutes) ?? ''}
                         onChange={(e) => updateTimeInput(task._id, 'minutes', e.target.value)}
-                        sx={{ width: 70 }}
+                        sx={{ width: 56 }}
                         inputProps={{ min: 0, max: 59 }}
                       />
                       <Button variant="outlined" size="small" onClick={(e) => { e.stopPropagation(); handleLogTime(task._id); }}>
                         Log
                       </Button>
                     </Box>
+                  </Box>
+
+                  {/* Progress Bar */}
+                  <Box sx={{ width: '100%', mb: 2, mt: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                      <Typography variant="caption" color="text.secondary">
+                        Progress
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" fontWeight="medium">
+                        {getTaskProgress(task.status)}%
+                      </Typography>
+                    </Box>
+                    <LinearProgress 
+                      variant="determinate" 
+                      value={getTaskProgress(task.status)} 
+                      sx={{ 
+                        height: 6, 
+                        borderRadius: 3,
+                        bgcolor: 'rgba(0, 0, 0, 0.05)',
+                        '& .MuiLinearProgress-bar': {
+                          backgroundColor: getProgressColor(task.status),
+                          borderRadius: 3
+                        }
+                      }}
+                    />
                   </Box>
                 </CardContent>
 

@@ -16,8 +16,7 @@ import {
   Email,
   Lock,
   Visibility,
-  VisibilityOff,
-  Business
+  VisibilityOff
 } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -118,36 +117,72 @@ const Login = () => {
                 },
               }}
             >
-              <Box
+              <Box 
                 sx={{
-                  background: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
-                  borderRadius: '50%',
-                  p: 1.5,
-                  mr: 2,
-                  animation: 'pulse 2s infinite',
-                  '@keyframes pulse': {
-                    '0%': { transform: 'scale(1)' },
-                    '50%': { transform: 'scale(1.05)' },
-                    '100%': { transform: 'scale(1)' },
+                  width: '60px',
+                  height: '60px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mr: 3,
+                  animation: 'fadeIn 0.8s ease-out 0.2s both',
+                  '@keyframes fadeIn': {
+                    '0%': { opacity: 0, transform: 'translateY(10px)' },
+                    '100%': { opacity: 1, transform: 'translateY(0)' },
                   },
                 }}
               >
-                <Business sx={{ fontSize: 32, color: 'white' }} />
+                <img 
+                  src="/assets/techknogeeks-logo.png" 
+                  alt="TechKnoGeeks Logo"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
+                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+                    transition: 'transform 0.3s ease',
+                    '&:hover': {
+                      transform: 'scale(1.05)'
+                    }
+                  }}
+                />
               </Box>
-              <Typography 
-                component="h1" 
-                variant="h4" 
-                sx={{
-                  background: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  fontWeight: 700,
-                  letterSpacing: '-0.02em',
-                }}
-              >
-                ProjectHub • TechKnoGeeks
-              </Typography>
+              <Box sx={{ animation: 'fadeIn 0.8s ease-out 0.3s both' }}>
+                <Typography 
+                  component="h1" 
+                  variant="h3" 
+                  sx={{
+                    background: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    fontWeight: 800,
+                    letterSpacing: '-0.02em',
+                    lineHeight: 1.1,
+                    mb: 0.5,
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                    textShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                  }}
+                >
+                  ProjectHub
+                </Typography>
+                <Typography 
+                  variant="subtitle1" 
+                  sx={{
+                    color: 'text.secondary',
+                    fontWeight: 400,
+                    fontSize: '1rem',
+                    letterSpacing: '0.02em',
+                    fontFamily: '"Inter", sans-serif',
+                    opacity: 0.9,
+                    mt: -0.5,
+                    mb: 1
+                  }}
+                >
+                  by TechKnoGeeks
+                </Typography>
+              </Box>
             </Box>
             
 

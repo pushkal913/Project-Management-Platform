@@ -193,9 +193,14 @@ router.post('/', authenticate, [
       return res.status(403).json({ message: 'Access denied to this project' });
     }
 
-    // Validate assignee if provided
-    if (assignee) {
-      const assigneeUser = await User.findById(assignee);
+    // Determine effective assignee
+    let effectiveAssignee = assignee || null;
+    // If a non-admin user creates a task, auto-assign to themselves
+    if (req.user.role !== 'admin') {
+      effectiveAssignee = req.user._id;
+    } else if (effectiveAssignee) {
+      // Admin-provided assignee, validate it
+      const assigneeUser = await User.findById(effectiveAssignee);
       if (!assigneeUser) {
         return res.status(404).json({ message: 'Assignee not found' });
       }
@@ -208,7 +213,7 @@ router.post('/', authenticate, [
       project,
       priority: priority || 'medium',
       type: type || 'task',
-      assignee: assignee || null,
+      assignee: effectiveAssignee,
       reporter: req.user._id,
       dueDate: dueDate ? new Date(dueDate) : null,
       estimatedHours: estimatedHours || 0,
