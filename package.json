@@ -8,7 +8,11 @@
     "server": "cd server && npm run dev",
     "client": "cd client && npm start",
     "build": "cd client && npm run build",
-    "install-all": "npm install && cd server && npm install && cd ../client && npm install"
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "start": "cd server && npm start",
+    "render-build": "npm run install-all && npm run build",
+    "backup": "cd server && npm run backup",
+    "seed": "cd server && npm run seed"
   },
   "keywords": [
     "project-management",

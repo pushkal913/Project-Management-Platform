@@ -1,0 +1,36 @@
+services:
+  # Backend API Service
+  - type: web
+    name: project-management-api
+    env: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromDatabase:
+          name: mongodb
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 10000
+
+  # Frontend React App
+  - type: web
+    name: project-management-frontend
+    env: static
+    plan: free
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: ./client/build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://project-management-api.onrender.com
+
+databases:
+  # MongoDB Atlas (if using managed MongoDB)
+  # Remove this section if using MongoDB Atlas
+  - name: mongodb
+    plan: free

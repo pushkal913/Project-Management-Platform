@@ -185,7 +185,9 @@ router.put('/:id', authenticate, [
   body('endDate').optional().isISO8601(),
   body('priority').optional().isIn(['low', 'medium', 'high', 'critical']),
   body('status').optional().isIn(['planning', 'active', 'on-hold', 'completed', 'cancelled']),
-  body('progress').optional().isInt({ min: 0, max: 100 })
+  body('progress').optional().isInt({ min: 0, max: 100 }),
+  body('teamMembers').optional().isArray().withMessage('Team members must be an array'),
+  body('teamMembers.*').optional().isMongoId().withMessage('Each team member must be a valid user ID')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -205,7 +207,7 @@ router.put('/:id', authenticate, [
       return res.status(403).json({ message: 'Access denied' });
     }
 
-    const { name, description, startDate, endDate, priority, status, progress, budget, tags } = req.body;
+    const { name, description, startDate, endDate, priority, status, progress, budget, tags, teamMembers } = req.body;
 
     // Validate dates if provided
     const newStartDate = startDate ? new Date(startDate) : project.startDate;
@@ -215,7 +217,7 @@ router.put('/:id', authenticate, [
       return res.status(400).json({ message: 'End date must be after start date' });
     }
 
-    // Update fields
+    // Update basic fields
     if (name) project.name = name;
     if (description) project.description = description;
     if (startDate) project.startDate = newStartDate;
@@ -225,6 +227,46 @@ router.put('/:id', authenticate, [
     if (progress !== undefined) project.progress = progress;
     if (budget !== undefined) project.budget = budget;
     if (tags) project.tags = tags;
+
+    // Handle team members update
+    if (teamMembers !== undefined && Array.isArray(teamMembers)) {
+      // Get current team member IDs
+      const currentTeamIds = project.team.map(member => member.user.toString());
+      
+      // Remove project from users who are no longer team members
+      const removedUserIds = currentTeamIds.filter(id => !teamMembers.includes(id));
+      for (const userId of removedUserIds) {
+        const user = await User.findById(userId);
+        if (user) {
+          user.projects = user.projects.filter(projectId => 
+            projectId.toString() !== project._id.toString()
+          );
+          await user.save();
+        }
+      }
+
+      // Add project to new team members
+      const newUserIds = teamMembers.filter(id => !currentTeamIds.includes(id));
+      for (const userId of newUserIds) {
+        const user = await User.findById(userId);
+        if (user && !user.projects.includes(project._id)) {
+          user.projects.push(project._id);
+          await user.save();
+        }
+      }
+
+      // Update project team
+      project.team = [];
+      for (const memberId of teamMembers) {
+        const user = await User.findById(memberId);
+        if (user) {
+          project.team.push({
+            user: memberId,
+            role: 'member' // Default role, could be enhanced to preserve existing roles
+          });
+        }
+      }
+    }
 
     await project.save();
 

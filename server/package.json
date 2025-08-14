@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "seed": "node scripts/seedData.js"
+    "seed": "node scripts/seedData.js",
+    "backup": "node scripts/backupData.js",
+    "restore": "node scripts/restoreData.js"
   },
   "dependencies": {
     "express": "^4.18.2",

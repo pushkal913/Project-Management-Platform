@@ -1,0 +1,83 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          server/package-lock.json
+          client/package-lock.json
+    
+    - name: Install server dependencies
+      run: |
+        cd server
+        npm ci
+        
+    - name: Install client dependencies
+      run: |
+        cd client
+        npm ci
+        
+    - name: Build client
+      run: |
+        cd client
+        npm run build
+        
+    - name: Run tests (if any)
+      run: |
+        cd server
+        npm test --if-present
+        
+    # Uncomment and configure based on your hosting platform:
+    
+    # For Vercel deployment:
+    # - name: Deploy to Vercel
+    #   uses: amondnet/vercel-action@v25
+    #   with:
+    #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+    #     vercel-org-id: ${{ secrets.ORG_ID }}
+    #     vercel-project-id: ${{ secrets.PROJECT_ID }}
+    
+    # For Heroku deployment:
+    # - name: Deploy to Heroku
+    #   uses: akhileshns/heroku-deploy@v3.12.14
+    #   with:
+    #     heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+    #     heroku_app_name: "your-app-name"
+    #     heroku_email: "your-email@example.com"
+    
+    # For Railway deployment:
+    # - name: Deploy to Railway
+    #   uses: bervProject/railway-deploy@v1.0.0
+    #   with:
+    #     railway_token: ${{ secrets.RAILWAY_TOKEN }}
+    #     service: "your-service-name"
+    
+    # For custom server deployment via SSH:
+    # - name: Deploy to Server
+    #   uses: appleboy/ssh-action@v1.0.0
+    #   with:
+    #     host: ${{ secrets.HOST }}
+    #     username: ${{ secrets.USERNAME }}
+    #     key: ${{ secrets.KEY }}
+    #     script: |
+    #       cd /path/to/your/app
+    #       git pull origin main
+    #       cd server && npm install
+    #       cd ../client && npm install && npm run build
+    #       pm2 restart your-app-name

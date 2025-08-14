@@ -19,12 +19,19 @@ const seedData = async () => {
 
     console.log('Connected to MongoDB');
 
-    // Clear existing data
-    await User.deleteMany({});
-    await Project.deleteMany({});
-    await Task.deleteMany({});
-
-    console.log('Cleared existing data');
+    // Check for existing data - DO NOT DELETE
+    const existingUsers = await User.countDocuments();
+    const existingProjects = await Project.countDocuments();
+    const existingTasks = await Task.countDocuments();
+    
+    console.log(`Found existing data: ${existingUsers} users, ${existingProjects} projects, ${existingTasks} tasks`);
+    console.log('⚠️  SAFE MODE: This script will NOT delete existing data');
+    
+    if (existingUsers > 0) {
+      console.log('❌ Data already exists. Skipping seed to protect existing data.');
+      console.log('💡 If you really want to reseed, manually delete data first or use a fresh database.');
+      return;
+    }
 
     // Create required users only
     const users = [

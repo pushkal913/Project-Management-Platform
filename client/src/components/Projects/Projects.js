@@ -121,7 +121,13 @@ const Projects = () => {
         teamMembers: editProject.teamMembers
       };
       await axios.put(`/projects/${selectedProject._id}`, payload);
-      toast.success('Project updated successfully');
+      
+      // Enhanced success message
+      const teamChanged = JSON.stringify(editProject.teamMembers.sort()) !== 
+                          JSON.stringify((selectedProject.team || []).map(tm => tm.user?._id || tm.user).filter(Boolean).sort());
+      const message = teamChanged ? 'Project and team members updated successfully!' : 'Project updated successfully!';
+      
+      toast.success(message);
       setEditDialogOpen(false);
       setMenuAnchorEl(null);
       setSelectedProject(null);
@@ -493,14 +499,42 @@ const Projects = () => {
                       value={newProject.teamMembers}
                       label="Team Members"
                       onChange={(e) => setNewProject({ ...newProject, teamMembers: e.target.value })}
+                      renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.map((value) => {
+                            const user = users.find(u => u._id === value);
+                            return (
+                              <Chip
+                                key={value}
+                                label={user ? user.name : value}
+                                size="small"
+                                sx={{ m: 0.25 }}
+                              />
+                            );
+                          })}
+                        </Box>
+                      )}
                     >
-                      {users.map((user) => (
-                        <MenuItem key={user._id} value={user._id}>
-                          {user.name} ({user.email})
+                      {users.filter(u => u._id !== user._id).map((u) => (
+                        <MenuItem key={u._id} value={u._id}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Avatar sx={{ width: 24, height: 24, fontSize: 12 }}>
+                              {u.name.charAt(0)}
+                            </Avatar>
+                            <Box>
+                              <Typography variant="body2">{u.name}</Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {u.email} • {u.role}
+                              </Typography>
+                            </Box>
+                          </Box>
                         </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
+                  <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                    💡 You (project manager) will be automatically included
+                  </Typography>
                 </Grid>
               )}
             </Grid>
@@ -602,6 +636,30 @@ const Projects = () => {
                   placeholder="frontend, backend, mobile"
                 />
               </Grid>
+              {selectedProject?.team && selectedProject.team.length > 0 && (
+                <Grid item xs={12}>
+                  <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                    Current Team Members:
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+                    <Chip
+                      label={`${selectedProject.manager?.name} (Manager)`}
+                      color="primary"
+                      variant="outlined"
+                      size="small"
+                    />
+                    {selectedProject.team.map((member) => (
+                      <Chip
+                        key={member.user._id}
+                        label={member.user.name}
+                        color="default"
+                        variant="outlined"
+                        size="small"
+                      />
+                    ))}
+                  </Box>
+                </Grid>
+              )}
               {users.length > 0 && (
                 <Grid item xs={12}>
                   <FormControl fullWidth>
@@ -611,14 +669,42 @@ const Projects = () => {
                       value={editProject.teamMembers}
                       label="Team Members"
                       onChange={(e) => setEditProject({ ...editProject, teamMembers: e.target.value })}
+                      renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.map((value) => {
+                            const user = users.find(u => u._id === value);
+                            return (
+                              <Chip
+                                key={value}
+                                label={user ? user.name : value}
+                                size="small"
+                                sx={{ m: 0.25 }}
+                              />
+                            );
+                          })}
+                        </Box>
+                      )}
                     >
-                      {users.map((u) => (
+                      {users.filter(u => u._id !== selectedProject?.manager?._id).map((u) => (
                         <MenuItem key={u._id} value={u._id}>
-                          {u.name} ({u.email})
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Avatar sx={{ width: 24, height: 24, fontSize: 12 }}>
+                              {u.name.charAt(0)}
+                            </Avatar>
+                            <Box>
+                              <Typography variant="body2">{u.name}</Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {u.email} • {u.role}
+                              </Typography>
+                            </Box>
+                          </Box>
                         </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
+                  <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                    💡 Project manager is automatically included and cannot be removed
+                  </Typography>
                 </Grid>
               )}
             </Grid>
