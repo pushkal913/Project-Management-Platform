@@ -877,10 +877,16 @@ const Tasks = () => {
                   fullWidth
                   label="Description"
                   multiline
-                  rows={6}
+                  rows={9}
                   value={newTask.description}
                   onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
                   required
+                  sx={{
+                    '& .MuiInputBase-root': {
+                      maxHeight: '240px',
+                      overflow: 'auto'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -1017,10 +1023,16 @@ const Tasks = () => {
                   fullWidth
                   label="Description"
                   multiline
-                  rows={6}
+                  rows={9}
                   value={editTask.description}
                   onChange={(e) => setEditTask({ ...editTask, description: e.target.value })}
                   required
+                  sx={{
+                    '& .MuiInputBase-root': {
+                      maxHeight: '240px',
+                      overflow: 'auto'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>

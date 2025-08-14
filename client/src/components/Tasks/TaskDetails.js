@@ -470,10 +470,16 @@ const TaskDetails = () => {
               <TextField
                 fullWidth
                 multiline
-                rows={4}
+                rows={6}
                 placeholder="Add a comment..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
+                sx={{
+                  '& .MuiInputBase-root': {
+                    maxHeight: '160px',
+                    overflow: 'auto'
+                  }
+                }}
               />
               <Button
                 variant="contained"
