@@ -820,7 +820,7 @@ const Projects = () => {
                   fullWidth
                   label="Description"
                   multiline
-                  rows={3}
+                  rows={6}
                   value={newTask.description}
                   onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
                   required

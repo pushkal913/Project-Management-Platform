@@ -470,7 +470,7 @@ const TaskDetails = () => {
               <TextField
                 fullWidth
                 multiline
-                rows={2}
+                rows={4}
                 placeholder="Add a comment..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
