@@ -48,6 +48,7 @@ const Projects = () => {
   const [loading, setLoading] = useState(true);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [createTaskDialogOpen, setCreateTaskDialogOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
   const [users, setUsers] = useState([]);
@@ -61,6 +62,19 @@ const Projects = () => {
     budget: '',
     tags: '',
     teamMembers: []
+  });
+
+  // New task state for global task creation
+  const [newTask, setNewTask] = useState({
+    title: '',
+    description: '',
+    project: '',
+    priority: 'medium',
+    type: 'task',
+    assignee: '',
+    dueDate: null,
+    estimatedHours: '',
+    tags: ''
   });
 
   useEffect(() => {
@@ -191,6 +205,51 @@ const Projects = () => {
     }
   };
 
+  const handleCreateTask = async () => {
+    try {
+      // Auto-assign to current user if they're a standard user
+      const assigneeId = user?.role === 'admin' && newTask.assignee ? newTask.assignee : 
+                          user?.role !== 'admin' ? user._id : newTask.assignee;
+
+      const taskData = {
+        ...newTask,
+        assignee: assigneeId,
+        dueDate: newTask.dueDate ? newTask.dueDate.toISOString() : null,
+        estimatedHours: parseFloat(newTask.estimatedHours) || 0,
+        tags: (newTask.tags || '').split(',').map(tag => tag.trim()).filter(tag => tag)
+      };
+
+      await axios.post('/tasks', taskData);
+      
+      const assigneeText = user?.role !== 'admin' ? ' and assigned to you' : 
+                          assigneeId ? ` and assigned to ${users.find(u => u._id === assigneeId)?.name || 'user'}` : '';
+      const projectName = projects.find(p => p._id === newTask.project)?.name || 'project';
+      
+      toast.success(`Task created successfully in ${projectName}${assigneeText}!`);
+      setCreateTaskDialogOpen(false);
+      
+      // Reset form
+      setNewTask({
+        title: '',
+        description: '',
+        project: '',
+        priority: 'medium',
+        type: 'task',
+        assignee: '',
+        dueDate: null,
+        estimatedHours: '',
+        tags: ''
+      });
+      
+      fetchProjects(); // Refresh to update any task counts if displayed
+    } catch (error) {
+      console.error('Error creating task:', error);
+      const apiMsg = error?.response?.data?.message;
+      const valMsg = error?.response?.data?.errors?.[0]?.msg;
+      toast.error(apiMsg || valMsg || 'Failed to create task');
+    }
+  };
+
   const handleMenuOpen = (event, project) => {
     setMenuAnchorEl(event.currentTarget);
     setSelectedProject(project);
@@ -258,15 +317,25 @@ const Projects = () => {
                 <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
             Projects
           </Typography>
-          {canCreateProject && (
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <Button
-              variant="contained"
+              variant="outlined"
               startIcon={<Add />}
-              onClick={() => setCreateDialogOpen(true)}
+              onClick={() => setCreateTaskDialogOpen(true)}
+              sx={{ color: 'white', borderColor: 'white' }}
             >
-              New Project
+              New Task
             </Button>
-          )}
+            {canCreateProject && (
+              <Button
+                variant="contained"
+                startIcon={<Add />}
+                onClick={() => setCreateDialogOpen(true)}
+              >
+                New Project
+              </Button>
+            )}
+          </Box>
         </Box>
 
         <Grid container spacing={3}>
@@ -379,16 +448,24 @@ const Projects = () => {
             <Typography variant="h6" color="text.secondary">
               No projects found
             </Typography>
-            {canCreateProject && (
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 2 }}>
               <Button
-                variant="contained"
+                variant="outlined"
                 startIcon={<Add />}
-                onClick={() => setCreateDialogOpen(true)}
-                sx={{ mt: 2 }}
+                onClick={() => setCreateTaskDialogOpen(true)}
               >
-                Create Your First Project
+                Create a Task
               </Button>
-            )}
+              {canCreateProject && (
+                <Button
+                  variant="contained"
+                  startIcon={<Add />}
+                  onClick={() => setCreateDialogOpen(true)}
+                >
+                  Create Your First Project
+                </Button>
+              )}
+            </Box>
           </Box>
         )}
 
@@ -712,6 +789,157 @@ const Projects = () => {
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
               <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
               <Button variant="contained" onClick={handleUpdateProject} disabled={!editProject.name || !editProject.description}>Save Changes</Button>
+            </Box>
+          </Box>
+        </Dialog>
+
+        {/* Create Task Dialog */}
+        <Dialog
+          open={createTaskDialogOpen}
+          onClose={() => setCreateTaskDialogOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Create New Task
+            </Typography>
+
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Task Title"
+                  value={newTask.title}
+                  onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Description"
+                  multiline
+                  rows={3}
+                  value={newTask.description}
+                  onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth required>
+                  <InputLabel>Project</InputLabel>
+                  <Select
+                    value={newTask.project}
+                    label="Project"
+                    onChange={(e) => setNewTask({ ...newTask, project: e.target.value })}
+                  >
+                    {projects.map((project) => (
+                      <MenuItem key={project._id} value={project._id}>
+                        {project.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Type</InputLabel>
+                  <Select
+                    value={newTask.type}
+                    label="Type"
+                    onChange={(e) => setNewTask({ ...newTask, type: e.target.value })}
+                  >
+                    <MenuItem value="feature">Feature</MenuItem>
+                    <MenuItem value="bug">Bug</MenuItem>
+                    <MenuItem value="improvement">Improvement</MenuItem>
+                    <MenuItem value="task">Task</MenuItem>
+                    <MenuItem value="story">Story</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Priority</InputLabel>
+                  <Select
+                    value={newTask.priority}
+                    label="Priority"
+                    onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
+                  >
+                    <MenuItem value="low">Low</MenuItem>
+                    <MenuItem value="medium">Medium</MenuItem>
+                    <MenuItem value="high">High</MenuItem>
+                    <MenuItem value="critical">Critical</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              {user?.role === 'admin' && users.length > 0 && (
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>Assignee</InputLabel>
+                    <Select
+                      value={newTask.assignee}
+                      label="Assignee"
+                      onChange={(e) => setNewTask({ ...newTask, assignee: e.target.value })}
+                    >
+                      <MenuItem value="">Unassigned</MenuItem>
+                      {users.map((u) => (
+                        <MenuItem key={u._id} value={u._id}>
+                          {u.name} ({u.email})
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              )}
+              {user?.role !== 'admin' && (
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ p: 2, bgcolor: 'info.light', borderRadius: 1, display: 'flex', alignItems: 'center', height: '56px' }}>
+                    <Typography variant="body2" color="info.dark">
+                      💡 Task will be assigned to you
+                    </Typography>
+                  </Box>
+                </Grid>
+              )}
+              <Grid item xs={12} sm={6}>
+                <DatePicker
+                  label="Due Date"
+                  value={newTask.dueDate}
+                  onChange={(date) => setNewTask({ ...newTask, dueDate: date })}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Estimated Hours"
+                  type="number"
+                  value={newTask.estimatedHours}
+                  onChange={(e) => setNewTask({ ...newTask, estimatedHours: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Tags (comma separated)"
+                  value={newTask.tags}
+                  onChange={(e) => setNewTask({ ...newTask, tags: e.target.value })}
+                  placeholder="frontend, urgent, feature"
+                />
+              </Grid>
+            </Grid>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+              <Button onClick={() => setCreateTaskDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleCreateTask}
+                disabled={!newTask.title || !newTask.description || !newTask.project}
+              >
+                Create Task
+              </Button>
             </Box>
           </Box>
         </Dialog>
