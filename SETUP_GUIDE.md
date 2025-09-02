@@ -116,10 +116,7 @@ After running the seed script, you can use these accounts:
 
 | Role | Email | Password | Description |
 |------|-------|----------|-------------|
-| Admin | admin@projecthub.com | admin123 | Full system access |
-| Standard | shubhamkatoch@techknogeeks.com | shubham123katoch | Standard user – can create/edit tasks and view all project/task details |
-| Standard | samar@techknogeeks.com | samar123marwaha | Standard user – can create/edit tasks and view all project/task details |
-| Standard | muskan@techknogeeks.com | muskan123dhillon | Standard user – can create/edit tasks and view all project/task details |
+| Admin | Standard 
 
 ## 🔧 Troubleshooting
 
