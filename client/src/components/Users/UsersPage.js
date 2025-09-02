@@ -3,7 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import LoadingScreen from '../Common/LoadingScreen';
 import Login from '../Auth/Login';
 import AppLayout from '../Layout/AppLayout';
-import Users from './Users';
+import Dashboard from '../Dashboard/Dashboard'; // TEST: Use Dashboard component
 
 const UsersPage = () => {
   const { user, loading } = useAuth();
@@ -18,7 +18,7 @@ const UsersPage = () => {
   
   return (
     <AppLayout>
-      <Users />
+      <Dashboard />
     </AppLayout>
   );
 };
