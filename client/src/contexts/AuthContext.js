@@ -15,11 +15,30 @@ export const useAuth = () => {
 // Configure axios defaults
 const API_URL = process.env.REACT_APP_API_URL || 
   (process.env.NODE_ENV === 'production' 
-    ? 'https://project-management-api.onrender.com/api' 
+    ? 'https://project-management-platform-ye0w.onrender.com/api' 
     : 'http://localhost:5000/api');
 console.log('API URL configured as:', API_URL);
 console.log('Environment:', process.env.NODE_ENV);
 console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+
+// Test backend connectivity
+const testBackend = async () => {
+  try {
+    const response = await fetch('https://project-management-api.onrender.com/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    console.log('Backend test response:', response.status, response.statusText);
+    const data = await response.json();
+    console.log('Backend test data:', data);
+  } catch (error) {
+    console.error('Backend test failed:', error);
+  }
+};
+testBackend();
+
 axios.defaults.baseURL = API_URL;
 
 // Add request interceptor to include auth token

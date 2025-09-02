@@ -18,7 +18,11 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "*",
+    origin: [
+      "http://localhost:3000",
+      "https://project-management-platform-teal.vercel.app",
+      "https://project-management-platform-ye0w.onrender.com"
+    ],
     methods: ["GET", "POST"],
     credentials: false
   },
@@ -27,9 +31,13 @@ const io = socketIo(server, {
 
 // Middleware
 const corsOptions = {
-  origin: "*",
+  origin: [
+    "http://localhost:3000",
+    "https://project-management-platform-teal.vercel.app",
+    "https://project-management-platform-ye0w.onrender.com"
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  credentials: false, // Set to false for wildcard origin
+  credentials: false,
   optionsSuccessStatus: 200,
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 };
