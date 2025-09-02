@@ -19,5 +19,8 @@
       "src": "/(.*)",
       "dest": "client/build/index.html"
     }
-  ]
+  ],
+  "env": {
+    "REACT_APP_API_URL": "https://project-management-platform-ye0w.onrender.com/api"
+  }
 }
