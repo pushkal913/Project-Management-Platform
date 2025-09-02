@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../../hooks/useManualRouter';
 import { Home, ArrowBack } from '@mui/icons-material';
 
 const NotFound = () => {
@@ -31,7 +31,7 @@ const NotFound = () => {
           <Button
             variant="contained"
             startIcon={<Home />}
-            onClick={() => window.location.href = '/dashboard'}
+            onClick={() => navigate('/dashboard')}
           >
             Go to Dashboard
           </Button>

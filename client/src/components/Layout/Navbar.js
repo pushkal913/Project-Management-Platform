@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../../hooks/useManualRouter';
 import {
   AppBar,
   Toolbar,
@@ -52,18 +52,18 @@ const Navbar = ({ onSidebarToggle }) => {
 
   const handleProfileClick = () => {
     handleProfileMenuClose();
-    window.location.href = '/profile';
+    navigate('/profile');
   };
 
   const handleLogout = () => {
     handleProfileMenuClose();
     logout();
-    window.location.href = '/login';
+    navigate('/login');
   };
 
   const handleSettingsClick = () => {
     handleProfileMenuClose();
-    window.location.href = '/settings';
+    navigate('/settings');
   };
 
   const getInitials = (name) => {

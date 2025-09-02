@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from '../../hooks/useManualRouter';
 import {
   Container,
   Paper,
@@ -253,11 +253,14 @@ const Login = () => {
               {loading ? <CircularProgress size={24} /> : 'Sign In'}
             </Button>
             <Box textAlign="center">
-              <Link to="/register" style={{ textDecoration: 'none' }}>
-                <Typography variant="body2" color="primary">
-                  Don't have an account? Sign Up
-                </Typography>
-              </Link>
+              <Typography 
+                variant="body2" 
+                color="primary" 
+                onClick={() => navigate('/register')}
+                sx={{ cursor: 'pointer', textDecoration: 'none' }}
+              >
+                Don't have an account? Sign Up
+              </Typography>
             </Box>
           </Box>
           </Paper>

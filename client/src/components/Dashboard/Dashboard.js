@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../../hooks/useManualRouter';
 import {
   Grid,
   Paper,
@@ -223,7 +223,7 @@ const Dashboard = () => {
                 '&::before': { opacity: 1 }
               },
             }}
-            onClick={() => window.location.href = '/tasks'}
+            onClick={() => navigate('/tasks')}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -280,7 +280,7 @@ const Dashboard = () => {
                 '&::before': { opacity: 1 }
               },
             }}
-            onClick={() => window.location.href = '/projects'}
+            onClick={() => navigate('/projects')}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -337,7 +337,7 @@ const Dashboard = () => {
                 '&::before': { opacity: 1 }
               },
             }}
-            onClick={() => window.location.href = '/tasks'}
+            onClick={() => navigate('/tasks')}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -394,7 +394,7 @@ const Dashboard = () => {
                 '&::before': { opacity: 1 }
               },
             }}
-            onClick={() => window.location.href = '/tasks'}
+            onClick={() => navigate('/tasks')}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -434,7 +434,7 @@ const Dashboard = () => {
                 boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
               }
             }}
-            onClick={() => window.location.href = '/tasks'}
+            onClick={() => navigate('/tasks')}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
@@ -501,7 +501,7 @@ const Dashboard = () => {
                 boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
               }
             }}
-            onClick={() => window.location.href = '/projects'}
+            onClick={() => navigate('/projects')}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
