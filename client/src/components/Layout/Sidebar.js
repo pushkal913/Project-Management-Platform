@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Drawer,
   List,
@@ -23,7 +23,6 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 
 const Sidebar = ({ open, onToggle }) => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -74,8 +73,9 @@ const Sidebar = ({ open, onToggle }) => {
     navigate(path);
   };
 
+  // Remove location-based active detection - causes redirect blocker issues
   const isActive = (path) => {
-    return location.pathname === path;
+    return false; // Disable active highlighting to avoid redirect blocker
   };
 
   const hasAccess = (roles) => {
