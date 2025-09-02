@@ -31,7 +31,7 @@ export const SocketProvider = ({ children }) => {
         if (window.location.hostname === 'localhost') {
           return 'http://localhost:5000';
         } else {
-          // Use the backend URL for production
+          // Use the same domain but replace with backend URL
           return 'https://project-management-platform-p8zh-1.onrender.com';
         }
       };
@@ -85,6 +85,62 @@ export const SocketProvider = ({ children }) => {
         setConnected(false);
       });
 
+  useEffect(() => {
+    if (user) {
+      // Get the correct socket URL based on environment
+      const getSocketUrl = () => {
+        if (process.env.REACT_APP_SOCKET_URL) {
+          return process.env.REACT_APP_SOCKET_URL;
+        }
+        
+        // Determine URL based on current location
+        if (window.location.hostname === 'localhost') {
+          return 'http://localhost:5000';
+        } else {
+          // Use the same domain but replace with backend URL
+          return 'https://project-management-platform-p8zh-1.onrender.com';
+        }
+      };
+
+      const socketUrl = getSocketUrl();
+      console.log('Connecting to socket at:', socketUrl);
+
+      // Initialize socket connection
+      const newSocket = io(socketUrl, {
+        auth: {
+          userId: user.id
+        },
+        transports: ['websocket', 'polling'],
+        timeout: 20000,
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionAttempts: 5
+      });
+
+      newSocket.on('connect', () => {
+        console.log('Connected to server');
+        setConnected(true);
+      });
+
+      newSocket.on('disconnect', (reason) => {
+        console.log('Disconnected from server, reason:', reason);
+        setConnected(false);
+      });
+
+      newSocket.on('connect_error', (error) => {
+        console.error('Socket connection error:', error);
+        setConnected(false);
+      });
+
+      newSocket.on('reconnect', (attemptNumber) => {
+        console.log('Reconnected after', attemptNumber, 'attempts');
+        setConnected(true);
+      });
+
+      newSocket.on('reconnect_error', (error) => {
+        console.error('Reconnection failed:', error);
+      });
+
       // Listen for real-time updates
       newSocket.on('project-created', (data) => {
         toast.info(`New project created: ${data.project.name}`);
@@ -119,7 +175,7 @@ export const SocketProvider = ({ children }) => {
         setConnected(false);
       }
     }
-  }, [user, socket]);
+  }, [user]);
 
   const joinProject = (projectId) => {
     if (socket) {
@@ -142,7 +198,6 @@ export const SocketProvider = ({ children }) => {
   const value = {
     socket,
     connected,
-    connectionAttempts,
     joinProject,
     leaveProject,
     emitTaskUpdate

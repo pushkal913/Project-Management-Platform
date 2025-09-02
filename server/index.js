@@ -18,9 +18,15 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
+    origin: [
+      "http://localhost:3000",
+      "https://app.projects.techknogeeks.com",
+      "https://project-management-platform-p8zh.onrender.com"
+    ],
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  transports: ['websocket', 'polling']
 });
 
 // Middleware
