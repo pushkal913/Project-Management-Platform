@@ -117,18 +117,26 @@ app.get('/', (req, res) => {
   });
 });
 
-// Create admin user endpoint (for testing)
-app.post('/create-admin', async (req, res) => {
+// Create admin user endpoint (for testing) - SAFE, won't affect existing data
+app.get('/create-admin', async (req, res) => {
   try {
     const User = require('./models/User');
+    
+    // Count total users
+    const totalUsers = await User.countDocuments();
     
     // Check if admin already exists
     const existingAdmin = await User.findOne({ email: 'admin@projecthub.com' });
     if (existingAdmin) {
-      return res.json({ message: 'Admin user already exists', email: 'admin@projecthub.com' });
+      return res.json({ 
+        message: 'Admin user already exists', 
+        email: 'admin@projecthub.com',
+        totalUsers: totalUsers,
+        status: 'exists'
+      });
     }
     
-    // Create admin user
+    // Create admin user (SAFE - only creates if doesn't exist)
     const admin = new User({
       name: 'Admin User',
       email: 'admin@projecthub.com',
@@ -141,10 +149,50 @@ app.post('/create-admin', async (req, res) => {
     });
     
     await admin.save();
-    res.json({ message: 'Admin user created successfully', email: 'admin@projecthub.com', password: 'admin123' });
+    const newTotal = await User.countDocuments();
+    
+    res.json({ 
+      message: 'Admin user created successfully', 
+      email: 'admin@projecthub.com', 
+      password: 'admin123',
+      totalUsers: newTotal,
+      status: 'created'
+    });
   } catch (error) {
     console.error('Error creating admin:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ 
+      error: error.message,
+      details: 'Database connection or model issue'
+    });
+  }
+});
+
+// Check database status
+app.get('/db-status', async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const Project = require('./models/Project');
+    const Task = require('./models/Task');
+    
+    const userCount = await User.countDocuments();
+    const projectCount = await Project.countDocuments();
+    const taskCount = await Task.countDocuments();
+    
+    const adminExists = await User.findOne({ email: 'admin@projecthub.com' });
+    
+    res.json({
+      database: 'connected',
+      users: userCount,
+      projects: projectCount,
+      tasks: taskCount,
+      adminUserExists: !!adminExists,
+      mongoUri: process.env.MONGODB_URI ? 'configured' : 'not configured'
+    });
+  } catch (error) {
+    res.status(500).json({
+      database: 'error',
+      error: error.message
+    });
   }
 });
 
