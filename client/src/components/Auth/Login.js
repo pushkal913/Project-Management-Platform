@@ -120,12 +120,17 @@ const Login = () => {
             >
               <Box 
                 sx={{
-                  width: '60px',
-                  height: '60px',
+                  width: '80px',
+                  height: '80px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   mr: 3,
+                  backgroundColor: 'white',
+                  borderRadius: '12px',
+                  padding: '8px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  border: '1px solid rgba(0, 0, 0, 0.05)',
                   animation: 'fadeIn 0.8s ease-out 0.2s both',
                   '@keyframes fadeIn': {
                     '0%': { opacity: 0, transform: 'translateY(10px)' },
@@ -134,18 +139,16 @@ const Login = () => {
                 }}
               >
                 <img 
-                  src="/assets/techknogeeks-logo.png" 
-                  alt="TechKnoGeeks Logo"
+                  src="/assets/company-logo.png" 
+                  alt="Company Logo"
                   style={{
                     maxWidth: '100%',
                     maxHeight: '100%',
                     objectFit: 'contain',
-                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
                     transition: 'transform 0.3s ease',
-                    '&:hover': {
-                      transform: 'scale(1.05)'
-                    }
                   }}
+                  onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                 />
               </Box>
               <Box sx={{ animation: 'fadeIn 0.8s ease-out 0.3s both' }}>
@@ -181,7 +184,7 @@ const Login = () => {
                     mb: 1
                   }}
                 >
-                  by TechKnoGeeks
+                  by Your Company
                 </Typography>
               </Box>
             </Box>
