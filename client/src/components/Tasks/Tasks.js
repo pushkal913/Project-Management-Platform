@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -56,7 +56,6 @@ import { getTaskProgress, getProgressColor } from '../../utils/taskProgress';
 
 const Tasks = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -186,18 +185,16 @@ const Tasks = () => {
     }
   };
 
-  // Auto-open edit dialog if redirected with ?edit=<taskId>
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const editId = params.get('edit');
-    if (!editId || !tasks || tasks.length === 0) return;
-
-    const taskToEdit = tasks.find(t => (t._id === editId));
-    if (taskToEdit) {
-      openEditTask(taskToEdit);
-      // NO URL cleanup - let it stay as is
-    }
-  }, [location.search, tasks]);
+  // REMOVED: Auto-open edit dialog - was triggering redirect blocker
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+  //   const editId = params.get('edit');
+  //   if (!editId || !tasks || tasks.length === 0) return;
+  //   const taskToEdit = tasks.find(t => (t._id === editId));
+  //   if (taskToEdit) {
+  //     openEditTask(taskToEdit);
+  //   }
+  // }, [location.search, tasks]);
 
   const [editTask, setEditTask] = useState({
     title: '',

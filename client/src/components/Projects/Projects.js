@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -42,7 +42,6 @@ import { toast } from 'react-toastify';
 
 const Projects = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -161,18 +160,16 @@ const Projects = () => {
     }
   };
 
-  // Auto-open edit dialog if redirected with ?edit=<projectId>
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const editId = params.get('edit');
-    if (!editId || !projects || projects.length === 0) return;
-
-    const projectToEdit = projects.find(p => (p._id === editId));
-    if (projectToEdit) {
-      openEditProject(projectToEdit);
-      // NO URL cleanup - let it stay as is
-    }
-  }, [location.search, projects]);
+  // REMOVED: Auto-open edit dialog - was triggering redirect blocker
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+  //   const editId = params.get('edit');
+  //   if (!editId || !projects || projects.length === 0) return;
+  //   const projectToEdit = projects.find(p => (p._id === editId));
+  //   if (projectToEdit) {
+  //     openEditProject(projectToEdit);
+  //   }
+  // }, [location.search, projects]);
 
   const handleCreateProject = async () => {
     try {
