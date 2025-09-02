@@ -20,6 +20,7 @@ const io = socketIo(server, {
   cors: {
     origin: [
       "http://localhost:3000",
+      "https://project-management-platform-gs9ak41r.vercel.app",
       "https://project-management-platform-teal.vercel.app",
       "https://project-management-platform-ye0w.onrender.com"
     ],
@@ -33,6 +34,7 @@ const io = socketIo(server, {
 const corsOptions = {
   origin: [
     "http://localhost:3000",
+    "https://project-management-platform-gs9ak41r.vercel.app",
     "https://project-management-platform-teal.vercel.app",
     "https://project-management-platform-ye0w.onrender.com"
   ],
@@ -61,7 +63,19 @@ mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('Connected to MongoDB'))
+.then(async () => {
+  console.log('Connected to MongoDB');
+  
+  // Check if we need to seed data
+  const User = require('./models/User');
+  const userCount = await User.countDocuments();
+  console.log(`Found ${userCount} users in database`);
+  
+  if (userCount === 0) {
+    console.log('No users found, database might need seeding');
+    console.log('Run: npm run seed to create default admin user');
+  }
+})
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Socket.io connection handling
@@ -101,6 +115,37 @@ app.get('/', (req, res) => {
     timestamp: new Date().toISOString(),
     endpoints: ['/api/auth', '/api/users', '/api/projects', '/api/tasks', '/api/dashboard']
   });
+});
+
+// Create admin user endpoint (for testing)
+app.post('/create-admin', async (req, res) => {
+  try {
+    const User = require('./models/User');
+    
+    // Check if admin already exists
+    const existingAdmin = await User.findOne({ email: 'admin@projecthub.com' });
+    if (existingAdmin) {
+      return res.json({ message: 'Admin user already exists', email: 'admin@projecthub.com' });
+    }
+    
+    // Create admin user
+    const admin = new User({
+      name: 'Admin User',
+      email: 'admin@projecthub.com',
+      password: 'admin123',
+      role: 'admin',
+      department: 'Management',
+      position: 'System Administrator',
+      phone: '+1-555-0001',
+      isActive: true
+    });
+    
+    await admin.save();
+    res.json({ message: 'Admin user created successfully', email: 'admin@projecthub.com', password: 'admin123' });
+  } catch (error) {
+    console.error('Error creating admin:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Health check
