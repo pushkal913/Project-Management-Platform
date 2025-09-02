@@ -119,7 +119,7 @@ export const SocketProvider = ({ children }) => {
         setConnected(false);
       }
     }
-  }, [user, socket]);
+  }, [user]); // Remove 'socket' from dependency array to prevent infinite loop
 
   const joinProject = (projectId) => {
     if (socket) {

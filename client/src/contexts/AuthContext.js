@@ -38,7 +38,11 @@ axios.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Use a more subtle approach instead of direct window redirect
+      if (window.location.pathname !== '/login') {
+        // Set a flag for the auth context to handle
+        window.dispatchEvent(new CustomEvent('auth-error'));
+      }
     }
     return Promise.reject(error);
   }
@@ -65,6 +69,7 @@ export const AuthProvider = ({ children }) => {
           // If API is down or token invalid, clear storage and continue
           localStorage.removeItem('token');
           localStorage.removeItem('user');
+          setUser(null);
           
           // Show toast only if it's not a network error
           if (!error.code || error.code !== 'ECONNABORTED') {
@@ -73,11 +78,20 @@ export const AuthProvider = ({ children }) => {
         }
       }
       
-      // Always set loading to false after 8 seconds max
-      setTimeout(() => setLoading(false), 100);
+      // Set loading to false after a short delay
+      setTimeout(() => setLoading(false), 500);
     };
 
     initializeAuth();
+
+    // Listen for auth errors
+    const handleAuthError = () => {
+      setUser(null);
+      toast.error('Session expired. Please login again.');
+    };
+
+    window.addEventListener('auth-error', handleAuthError);
+    return () => window.removeEventListener('auth-error', handleAuthError);
   }, []);
 
   const login = async (email, password) => {
