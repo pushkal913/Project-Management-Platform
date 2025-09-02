@@ -80,7 +80,8 @@ const Register = () => {
     const result = await register(registerData);
     
     if (result.success) {
-      navigate('/dashboard');
+      // Use window.location.href instead of navigate to bypass redirect blocker
+      window.location.href = '/dashboard';
     } else {
       setError(result.error);
     }

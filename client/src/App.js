@@ -175,7 +175,7 @@ const theme = createTheme({
   },
 });
 
-// Protected Route Component
+// Protected Route Component - NO REDIRECTS
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
@@ -183,14 +183,15 @@ const ProtectedRoute = ({ children }) => {
     return <LoadingScreen message="Loading application..." />;
   }
   
+  // Instead of Navigate, just show content or login form
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Login />;
   }
   
   return children;
 };
 
-// Public Route Component
+// Public Route Component - NO REDIRECTS  
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
@@ -198,14 +199,19 @@ const PublicRoute = ({ children }) => {
     return <LoadingScreen message="Loading application..." />;
   }
   
+  // Instead of Navigate, just show content or dashboard
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return (
+      <AppLayout>
+        <Dashboard />
+      </AppLayout>
+    );
   }
   
   return children;
 };
 
-// Admin Route Component
+// Admin Route Component - NO REDIRECTS
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
@@ -214,11 +220,15 @@ const AdminRoute = ({ children }) => {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Login />;
   }
 
   if (user.role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
+    return (
+      <AppLayout>
+        <Dashboard />
+      </AppLayout>
+    );
   }
 
   return children;
@@ -393,7 +403,16 @@ function App() {
                   />
 
                   {/* Default Routes */}
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route 
+                    path="/" 
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <Dashboard />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    } 
+                  />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
             </Router>

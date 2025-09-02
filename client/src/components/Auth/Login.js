@@ -48,7 +48,8 @@ const Login = () => {
     const result = await login(formData.email, formData.password);
     
     if (result.success) {
-      navigate('/dashboard');
+      // Use window.location.href instead of navigate to bypass redirect blocker
+      window.location.href = '/dashboard';
     } else {
       setError(result.error);
     }
