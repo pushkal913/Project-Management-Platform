@@ -22,7 +22,7 @@ const io = socketIo(server, {
       "http://localhost:3000",
       "https://app.projects.techknogeeks.com",
       "https://project-management-platform-p8zh.onrender.com",
-      /^https:\/\/.*\.vercel\.app$/
+      "https://project-management-platform-teal.vercel.app"
     ],
     methods: ["GET", "POST"],
     credentials: true
@@ -36,7 +36,7 @@ const corsOptions = {
     "http://localhost:3000",
     "https://app.projects.techknogeeks.com",
     "https://project-management-platform-p8zh.onrender.com",
-    /^https:\/\/.*\.vercel\.app$/
+    "https://project-management-platform-teal.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
