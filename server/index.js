@@ -126,6 +126,16 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
+// API health check
+app.get('/api', (req, res) => {
+  res.json({ 
+    status: 'ProjectHub API is running', 
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: ['/api/auth', '/api/users', '/api/projects', '/api/tasks', '/api/dashboard']
+  });
+});
+
 // Root health check
 app.get('/', (req, res) => {
   res.json({ 

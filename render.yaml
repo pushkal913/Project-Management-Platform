@@ -1,7 +1,7 @@
 services:
-  # Backend API Service
+  # Backend API Service - Updated to match current deployment
   - type: web
-    name: project-management-api
+    name: project-management-platform
     env: node
     plan: free
     buildCommand: cd server && npm install

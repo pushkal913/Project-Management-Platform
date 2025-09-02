@@ -25,6 +25,8 @@ console.log('Force refresh - deployment check v2');
 // Test backend connectivity
 const testBackend = async () => {
   try {
+    console.log('=== TESTING BACKEND CONNECTIVITY ===');
+    console.log('Testing URL:', 'https://project-management-platform-ye0w.onrender.com/');
     const response = await fetch('https://project-management-platform-ye0w.onrender.com/', {
       method: 'GET',
       headers: {
@@ -34,6 +36,7 @@ const testBackend = async () => {
     console.log('Backend test response:', response.status, response.statusText);
     const data = await response.json();
     console.log('Backend test data:', data);
+    console.log('=== BACKEND TEST COMPLETE ===');
   } catch (error) {
     console.error('Backend test failed:', error);
   }
