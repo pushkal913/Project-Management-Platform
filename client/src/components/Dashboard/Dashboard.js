@@ -163,62 +163,88 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
-          Dashboard
-        </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" sx={{ color: 'white', fontWeight: 700, mb: 0.5 }}>
+            Dashboard
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+            Welcome back! Here's what's happening with your projects
+          </Typography>
+        </Box>
         <Tooltip title="Refresh">
-          <IconButton onClick={fetchDashboardData}>
+          <IconButton 
+            onClick={fetchDashboardData}
+            sx={{ 
+              color: 'white',
+              bgcolor: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)',
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.2)',
+                transform: 'rotate(180deg)'
+              },
+              transition: 'all 0.3s ease'
+            }}
+          >
             <Refresh />
           </IconButton>
         </Tooltip>
       </Box>
 
       <Grid container spacing={3}>
-        {/* Statistics Cards */}
+        {/* Modern Statistics Cards */}
         <Grid item xs={12} sm={6} md={3}>
           <Card 
             sx={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: 'white',
+              borderRadius: 4,
+              border: 'none',
+              boxShadow: '0 20px 40px rgba(102, 126, 234, 0.3)',
               transform: 'translateY(0)',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
               cursor: 'pointer',
-              '@keyframes bounce': {
-                '0%, 20%, 50%, 80%, 100%': { transform: 'translateY(0)' },
-                '40%': { transform: 'translateY(-10px)' },
-                '60%': { transform: 'translateY(-5px)' },
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
+                opacity: 0,
+                transition: 'opacity 0.3s ease'
               },
               '&:hover': {
-                transform: 'translateY(-8px) scale(1.02)',
-                boxShadow: '0 20px 40px rgba(99, 102, 241, 0.4)',
-                '& .bounceIcon': { animation: 'bounce 2s infinite' }
+                transform: 'translateY(-12px) scale(1.02)',
+                boxShadow: '0 25px 50px rgba(102, 126, 234, 0.4)',
+                '&::before': { opacity: 1 }
               },
             }}
             onClick={() => navigate('/tasks')}
           >
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography variant="h3" component="div" sx={{ fontWeight: 800, mb: 0.5 }}>
+                    {dashboardData?.totalTasks || 0}
+                  </Typography>
+                  <Typography sx={{ opacity: 0.9, fontWeight: 600, fontSize: '1.1rem' }}>
+                    Total Tasks
+                  </Typography>
+                </Box>
                 <Box
                   sx={{
                     background: 'rgba(255, 255, 255, 0.2)',
                     borderRadius: '50%',
-                    p: 1.5,
-                    mr: 2,
-                    '&.bounceIcon': {},
+                    p: 2,
+                    backdropFilter: 'blur(10px)'
                   }}
-                  className="bounceIcon"
                 >
                   <Assignment sx={{ fontSize: 32, color: 'white' }} />
                 </Box>
-                <Box>
-                  <Typography variant="h4" component="div" sx={{ fontWeight: 700 }}>
-                    {dashboardData?.totalTasks || 0}
-                  </Typography>
-                  <Typography sx={{ opacity: 0.9, fontWeight: 500 }}>
-                    Total Tasks
-                  </Typography>
-                </Box>
               </Box>
             </CardContent>
           </Card>
@@ -226,20 +252,56 @@ const Dashboard = () => {
 
         <Grid item xs={12} sm={6} md={3}>
           <Card
-            sx={{ cursor: 'pointer', '&:hover': { boxShadow: 4, transform: 'translateY(-4px)' }, transition: 'all .2s' }}
+            sx={{
+              background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+              color: 'white',
+              borderRadius: 4,
+              border: 'none',
+              boxShadow: '0 20px 40px rgba(17, 153, 142, 0.3)',
+              transform: 'translateY(0)',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              cursor: 'pointer',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
+                opacity: 0,
+                transition: 'opacity 0.3s ease'
+              },
+              '&:hover': {
+                transform: 'translateY(-12px) scale(1.02)',
+                boxShadow: '0 25px 50px rgba(17, 153, 142, 0.4)',
+                '&::before': { opacity: 1 }
+              },
+            }}
             onClick={() => navigate('/projects')}
           >
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <FolderOpen sx={{ fontSize: 40, color: 'success.main', mr: 2 }} />
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Box>
-                  <Typography variant="h4" component="div">
+                  <Typography variant="h3" component="div" sx={{ fontWeight: 800, mb: 0.5 }}>
                     {dashboardData?.totalProjects || 0}
                   </Typography>
-                  <Typography color="text.secondary">
+                  <Typography sx={{ opacity: 0.9, fontWeight: 600, fontSize: '1.1rem' }}>
                     Total Projects
                   </Typography>
                 </Box>
+                <Box
+                  sx={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '50%',
+                    p: 2,
+                    backdropFilter: 'blur(10px)'
+                  }}
+                >
+                  <FolderOpen sx={{ fontSize: 32, color: 'white' }} />
+                </Box>
               </Box>
             </CardContent>
           </Card>
@@ -247,20 +309,56 @@ const Dashboard = () => {
 
         <Grid item xs={12} sm={6} md={3}>
           <Card
-            sx={{ cursor: 'pointer', '&:hover': { boxShadow: 4, transform: 'translateY(-4px)' }, transition: 'all .2s' }}
+            sx={{
+              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+              color: 'white',
+              borderRadius: 4,
+              border: 'none',
+              boxShadow: '0 20px 40px rgba(59, 130, 246, 0.3)',
+              transform: 'translateY(0)',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              cursor: 'pointer',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
+                opacity: 0,
+                transition: 'opacity 0.3s ease'
+              },
+              '&:hover': {
+                transform: 'translateY(-12px) scale(1.02)',
+                boxShadow: '0 25px 50px rgba(59, 130, 246, 0.4)',
+                '&::before': { opacity: 1 }
+              },
+            }}
             onClick={() => navigate('/tasks')}
           >
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Person sx={{ fontSize: 40, color: 'info.main', mr: 2 }} />
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Box>
-                  <Typography variant="h4" component="div">
+                  <Typography variant="h3" component="div" sx={{ fontWeight: 800, mb: 0.5 }}>
                     {dashboardData?.myTasks || 0}
                   </Typography>
-                  <Typography color="text.secondary">
+                  <Typography sx={{ opacity: 0.9, fontWeight: 600, fontSize: '1.1rem' }}>
                     My Tasks
                   </Typography>
                 </Box>
+                <Box
+                  sx={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '50%',
+                    p: 2,
+                    backdropFilter: 'blur(10px)'
+                  }}
+                >
+                  <Person sx={{ fontSize: 32, color: 'white' }} />
+                </Box>
               </Box>
             </CardContent>
           </Card>
@@ -268,182 +366,439 @@ const Dashboard = () => {
 
         <Grid item xs={12} sm={6} md={3}>
           <Card
-            sx={{ cursor: 'pointer', '&:hover': { boxShadow: 4, transform: 'translateY(-4px)' }, transition: 'all .2s' }}
+            sx={{
+              background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
+              color: 'white',
+              borderRadius: 4,
+              border: 'none',
+              boxShadow: '0 20px 40px rgba(245, 158, 11, 0.3)',
+              transform: 'translateY(0)',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              cursor: 'pointer',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
+                opacity: 0,
+                transition: 'opacity 0.3s ease'
+              },
+              '&:hover': {
+                transform: 'translateY(-12px) scale(1.02)',
+                boxShadow: '0 25px 50px rgba(245, 158, 11, 0.4)',
+                '&::before': { opacity: 1 }
+              },
+            }}
             onClick={() => navigate('/tasks')}
           >
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Warning sx={{ fontSize: 40, color: 'error.main', mr: 2 }} />
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Box>
-                  <Typography variant="h4" component="div">
+                  <Typography variant="h3" component="div" sx={{ fontWeight: 800, mb: 0.5 }}>
                     {dashboardData?.overdueTasks || 0}
                   </Typography>
-                  <Typography color="text.secondary">
+                  <Typography sx={{ opacity: 0.9, fontWeight: 600, fontSize: '1.1rem' }}>
                     Overdue Tasks
                   </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '50%',
+                    p: 2,
+                    backdropFilter: 'blur(10px)'
+                  }}
+                >
+                  <Warning sx={{ fontSize: 32, color: 'white' }} />
                 </Box>
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        {/* Task Status Chart */}
+        {/* Modern Chart Cards */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, cursor: 'pointer' }} onClick={() => navigate('/tasks')}>
-            <Typography variant="h6" gutterBottom>
-              Task Status Distribution
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={nonZeroTaskData}
-                  cx="50%"
-                  cy="50%"
-                  startAngle={90}
-                  endAngle={-270}
-                  labelLine={false}
-                  paddingAngle={nonZeroTaskData.length > 1 ? 2 : 0}
-                  label={nonZeroTaskData.length > 1 ? (({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`) : false}
-                  innerRadius={60}
-                  outerRadius={90}
-                  fill="#8884d8"
-                  dataKey="value"
+          <Card 
+            sx={{ 
+              borderRadius: 4,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
+              }
+            }}
+            onClick={() => navigate('/tasks')}
+          >
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Box
+                  sx={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    borderRadius: '50%',
+                    p: 1,
+                    mr: 2
+                  }}
                 >
-                  {nonZeroTaskData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                {nonZeroTaskData.length === 1 && (
-                  <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 14, fill: '#555' }}>
-                    {`${nonZeroTaskData[0].name} 100%`}
-                  </text>
+                  <Assignment sx={{ fontSize: 24, color: 'white' }} />
+                </Box>
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+                    Task Status Distribution
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Overview of all task statuses
+                  </Typography>
+                </Box>
+              </Box>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={nonZeroTaskData}
+                    cx="50%"
+                    cy="50%"
+                    startAngle={90}
+                    endAngle={-270}
+                    labelLine={false}
+                    paddingAngle={nonZeroTaskData.length > 1 ? 2 : 0}
+                    label={nonZeroTaskData.length > 1 ? (({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`) : false}
+                    innerRadius={60}
+                    outerRadius={90}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {nonZeroTaskData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  {nonZeroTaskData.length === 1 && (
+                    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 14, fill: '#555', fontWeight: 600 }}>
+                      {`${nonZeroTaskData[0].name} 100%`}
+                    </text>
+                  )}
+                  <RechartsTooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Card 
+            sx={{ 
+              borderRadius: 4,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
+              }
+            }}
+            onClick={() => navigate('/projects')}
+          >
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Box
+                  sx={{
+                    background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                    borderRadius: '50%',
+                    p: 1,
+                    mr: 2
+                  }}
+                >
+                  <FolderOpen sx={{ fontSize: 24, color: 'white' }} />
+                </Box>
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+                    Project Status Distribution
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Overview of all project statuses
+                  </Typography>
+                </Box>
+              </Box>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={projectChartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <RechartsTooltip 
+                    contentStyle={{
+                      backgroundColor: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                    }}
+                  />
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                    {projectChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Modern Recent Activities */}
+        <Grid item xs={12} md={6}>
+          <Card 
+            sx={{ 
+              borderRadius: 4,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
+              }
+            }}
+          >
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Box
+                  sx={{
+                    background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+                    borderRadius: '50%',
+                    p: 1,
+                    mr: 2
+                  }}
+                >
+                  <TrendingUp sx={{ fontSize: 24, color: 'white' }} />
+                </Box>
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+                    Recent Activities
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Latest task updates
+                  </Typography>
+                </Box>
+              </Box>
+              <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+                {dashboardData?.recentActivities?.slice(0, 5).map((task, index) => (
+                  <Box
+                    key={task._id}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      p: 2,
+                      mb: 1.5,
+                      borderRadius: 2,
+                      backgroundColor: 'rgba(0,0,0,0.02)',
+                      border: '1px solid rgba(0,0,0,0.05)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        backgroundColor: 'rgba(0,0,0,0.04)',
+                        transform: 'translateX(4px)'
+                      }
+                    }}
+                    onClick={() => navigate(`/tasks/${task._id}`)}
+                  >
+                    <Avatar 
+                      sx={{ 
+                        bgcolor: getStatusColor(task.status),
+                        width: 40,
+                        height: 40,
+                        mr: 2
+                      }}
+                    >
+                      <Assignment sx={{ fontSize: 20 }} />
+                    </Avatar>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                        {task.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                        {task.project?.name}
+                      </Typography>
+                      <Chip
+                        label={task.status.replace('-', ' ')}
+                        size="small"
+                        sx={{
+                          bgcolor: getStatusColor(task.status),
+                          color: 'white',
+                          fontWeight: 600,
+                          fontSize: '0.7rem'
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                )) || (
+                  <Box sx={{ textAlign: 'center', py: 4 }}>
+                    <Typography color="text.secondary">No recent activities</Typography>
+                  </Box>
                 )}
-                <RechartsTooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </Paper>
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
 
-        {/* Project Status Chart */}
+        {/* Modern Upcoming Deadlines */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, cursor: 'pointer' }} onClick={() => navigate('/projects')}>
-            <Typography variant="h6" gutterBottom>
-              Project Status Distribution
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={projectChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <RechartsTooltip />
-                <Bar dataKey="value" fill="#8884d8">
-                  {projectChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
-
-        {/* Recent Activities */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Recent Activities
-            </Typography>
-            <List>
-              {dashboardData?.recentActivities?.slice(0, 5).map((task, index) => (
-                <ListItem key={task._id} button onClick={() => navigate(`/tasks/${task._id}`)}>
-                  <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: getStatusColor(task.status) }}>
-                      <Assignment />
+          <Card 
+            sx={{ 
+              borderRadius: 4,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
+              }
+            }}
+          >
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Box
+                  sx={{
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
+                    borderRadius: '50%',
+                    p: 1,
+                    mr: 2
+                  }}
+                >
+                  <Schedule sx={{ fontSize: 24, color: 'white' }} />
+                </Box>
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+                    Upcoming Deadlines
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Tasks due soon
+                  </Typography>
+                </Box>
+              </Box>
+              <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+                {dashboardData?.upcomingDeadlines?.map((task, index) => (
+                  <Box
+                    key={task._id}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      p: 2,
+                      mb: 1.5,
+                      borderRadius: 2,
+                      backgroundColor: 'rgba(0,0,0,0.02)',
+                      border: '1px solid rgba(0,0,0,0.05)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        backgroundColor: 'rgba(0,0,0,0.04)',
+                        transform: 'translateX(4px)'
+                      }
+                    }}
+                    onClick={() => navigate(`/tasks/${task._id}`)}
+                  >
+                    <Avatar 
+                      sx={{ 
+                        bgcolor: getPriorityColor(task.priority),
+                        width: 40,
+                        height: 40,
+                        mr: 2
+                      }}
+                    >
+                      <Schedule sx={{ fontSize: 20 }} />
                     </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={task.title}
-                    secondary={
-                      <Box>
-                        <Typography variant="body2" color="text.secondary">
-                          {task.project?.name}
-                        </Typography>
-                        <Chip
-                          label={task.status}
-                          size="small"
-                          sx={{
-                            bgcolor: getStatusColor(task.status),
-                            color: 'white',
-                            mt: 0.5
-                          }}
-                        />
-                      </Box>
-                    }
-                  />
-                </ListItem>
-              )) || (
-                <ListItem>
-                  <ListItemText primary="No recent activities" />
-                </ListItem>
-              )}
-            </List>
-          </Paper>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                        {task.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                        {task.project?.name}
+                      </Typography>
+                      <Typography variant="body2" sx={{ 
+                        fontWeight: 600,
+                        color: new Date(task.dueDate) < new Date() ? 'error.main' : 'warning.main'
+                      }}>
+                        Due: {formatDate(task.dueDate)}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )) || (
+                  <Box sx={{ textAlign: 'center', py: 4 }}>
+                    <Typography color="text.secondary">No upcoming deadlines</Typography>
+                  </Box>
+                )}
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
 
-        {/* Upcoming Deadlines */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Upcoming Deadlines
-            </Typography>
-            <List>
-              {dashboardData?.upcomingDeadlines?.map((task, index) => (
-                <ListItem key={task._id} button onClick={() => navigate(`/tasks/${task._id}`)}>
-                  <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: getPriorityColor(task.priority) }}>
-                      <Schedule />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={task.title}
-                    secondary={
-                      <Box>
-                        <Typography variant="body2" color="text.secondary">
-                          Due: {formatDate(task.dueDate)}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {task.project?.name}
-                        </Typography>
-                      </Box>
-                    }
-                  />
-                </ListItem>
-              )) || (
-                <ListItem>
-                  <ListItemText primary="No upcoming deadlines" />
-                </ListItem>
-              )}
-            </List>
-          </Paper>
-        </Grid>
-
-        {/* Team Workload (admin only) */}
+        {/* Modern Team Workload (admin only) */}
         {user?.role === 'admin' && dashboardData?.teamWorkload?.length > 0 && (
           <Grid item xs={12}>
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                Team Workload
-              </Typography>
-              <Grid container spacing={2}>
-                {dashboardData.teamWorkload.map((member, index) => (
-                  <Grid item xs={12} sm={6} md={4} key={member._id}>
-                    <Card variant="outlined">
-                      <CardContent>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <Avatar sx={{ mr: 2 }}>
+            <Card 
+              sx={{ 
+                borderRadius: 4,
+                boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
+                }
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                  <Box
+                    sx={{
+                      background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)',
+                      borderRadius: '50%',
+                      p: 1,
+                      mr: 2
+                    }}
+                  >
+                    <Person sx={{ fontSize: 24, color: 'white' }} />
+                  </Box>
+                  <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+                      Team Workload
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Overview of team member assignments
+                    </Typography>
+                  </Box>
+                </Box>
+                <Grid container spacing={3}>
+                  {dashboardData.teamWorkload.map((member, index) => (
+                    <Grid item xs={12} sm={6} md={4} key={member._id}>
+                      <Box
+                        sx={{
+                          p: 3,
+                          borderRadius: 3,
+                          backgroundColor: 'rgba(0,0,0,0.02)',
+                          border: '1px solid rgba(0,0,0,0.05)',
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
+                          }
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                          <Avatar 
+                            sx={{ 
+                              mr: 2,
+                              width: 48,
+                              height: 48,
+                              bgcolor: 'primary.main',
+                              fontSize: '1.2rem',
+                              fontWeight: 700
+                            }}
+                          >
                             {member.user.name.charAt(0)}
                           </Avatar>
                           <Box>
-                            <Typography variant="subtitle1">
+                            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                               {member.user.name}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
@@ -451,92 +806,159 @@ const Dashboard = () => {
                             </Typography>
                           </Box>
                         </Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                          <Typography variant="body2">
-                            Tasks: {member.taskCount}
-                          </Typography>
-                          <Typography variant="body2" color="error">
-                            High Priority: {member.highPriorityTasks}
-                          </Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Box sx={{ textAlign: 'center' }}>
+                            <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                              {member.taskCount}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Tasks
+                            </Typography>
+                          </Box>
+                          <Box sx={{ textAlign: 'center' }}>
+                            <Typography variant="h6" sx={{ fontWeight: 700, color: 'error.main' }}>
+                              {member.highPriorityTasks}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              High Priority
+                            </Typography>
+                          </Box>
                         </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </Paper>
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
+              </CardContent>
+            </Card>
           </Grid>
         )}
 
-        {/* Time Report (admin only) */}
+        {/* Modern Time Report (admin only) */}
         {user?.role === 'admin' && (
           <Grid item xs={12}>
-            <Paper sx={{ p: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="h6">Time Report (Per User)</Typography>
-                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                  <FormControl size="small">
-                    <InputLabel id="report-period-label">Period</InputLabel>
-                    <Select
-                      labelId="report-period-label"
-                      label="Period"
-                      value={reportPeriod}
-                      onChange={(e) => setReportPeriod(e.target.value)}
+            <Card 
+              sx={{ 
+                borderRadius: 4,
+                boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
+                }
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                      sx={{
+                        background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+                        borderRadius: '50%',
+                        p: 1,
+                        mr: 2
+                      }}
                     >
-                      <MenuItem value={'7'}>Last 7 days</MenuItem>
-                      <MenuItem value={'30'}>Last 30 days</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <Tooltip title="Refresh">
-                    <IconButton onClick={() => fetchTimeReport(reportPeriod)}>
-                      <Refresh />
-                    </IconButton>
-                  </Tooltip>
+                      <TrendingUp sx={{ fontSize: 24, color: 'white' }} />
+                    </Box>
+                    <Box>
+                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+                        Time Report (Per User)
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Team productivity overview
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <FormControl size="small">
+                      <InputLabel id="report-period-label">Period</InputLabel>
+                      <Select
+                        labelId="report-period-label"
+                        label="Period"
+                        value={reportPeriod}
+                        onChange={(e) => setReportPeriod(e.target.value)}
+                        sx={{ minWidth: 120 }}
+                      >
+                        <MenuItem value={'7'}>Last 7 days</MenuItem>
+                        <MenuItem value={'30'}>Last 30 days</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <Tooltip title="Refresh">
+                      <IconButton 
+                        onClick={() => fetchTimeReport(reportPeriod)}
+                        sx={{
+                          bgcolor: 'rgba(0,0,0,0.04)',
+                          '&:hover': { bgcolor: 'rgba(0,0,0,0.08)' }
+                        }}
+                      >
+                        <Refresh />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </Box>
-              </Box>
 
-              {timeReportLoading ? (
-                <LinearProgress />
-              ) : (
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    {timeReport?.period?.start ? new Date(timeReport.period.start).toLocaleDateString() : ''}
-                    {timeReport?.period?.end ? ` - ${new Date(timeReport.period.end).toLocaleDateString()}` : ''}
-                  </Typography>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>User</TableCell>
-                        <TableCell align="right">Total Hours</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {(timeReport?.totalsByUser || []).map((row) => (
-                        <TableRow key={row.user._id} hover>
-                          <TableCell>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <Avatar sx={{ width: 24, height: 24 }}>
-                                {row.user.name ? row.user.name[0] : '?'}
-                              </Avatar>
-                              <Box>
-                                <Typography variant="body2">{row.user.name}</Typography>
-                                <Typography variant="caption" color="text.secondary">{row.user.email}</Typography>
-                              </Box>
-                            </Box>
-                          </TableCell>
-                          <TableCell align="right">{row.totalHours?.toFixed(2)}</TableCell>
-                        </TableRow>
-                      ))}
-                      {(timeReport?.totalsByUser || []).length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={2} align="center">No time logs in selected period</TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </Box>
-              )}
-            </Paper>
+                {timeReportLoading ? (
+                  <LinearProgress sx={{ borderRadius: 1 }} />
+                ) : (
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      {timeReport?.period?.start ? new Date(timeReport.period.start).toLocaleDateString() : ''}
+                      {timeReport?.period?.end ? ` - ${new Date(timeReport.period.end).toLocaleDateString()}` : ''}
+                    </Typography>
+                    <Box sx={{ borderRadius: 2, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)' }}>
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
+                            <TableCell sx={{ fontWeight: 700 }}>User</TableCell>
+                            <TableCell align="right" sx={{ fontWeight: 700 }}>Total Hours</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {(timeReport?.totalsByUser || []).map((row) => (
+                            <TableRow 
+                              key={row.user._id} 
+                              hover
+                              sx={{ 
+                                '&:hover': { bgcolor: 'rgba(0,0,0,0.02)' },
+                                transition: 'background-color 0.2s ease'
+                              }}
+                            >
+                              <TableCell>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                  <Avatar sx={{ width: 32, height: 32 }}>
+                                    {row.user.name ? row.user.name[0] : '?'}
+                                  </Avatar>
+                                  <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                      {row.user.name}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                      {row.user.email}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              </TableCell>
+                              <TableCell align="right">
+                                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                  {row.totalHours?.toFixed(2)}
+                                </Typography>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                          {(timeReport?.totalsByUser || []).length === 0 && (
+                            <TableRow>
+                              <TableCell colSpan={2} align="center" sx={{ py: 4 }}>
+                                <Typography color="text.secondary">No time logs in selected period</Typography>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </Box>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
           </Grid>
         )}
       </Grid>
