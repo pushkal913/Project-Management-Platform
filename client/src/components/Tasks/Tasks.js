@@ -196,9 +196,9 @@ const Tasks = () => {
     if (taskToEdit) {
       openEditTask(taskToEdit);
       // Clean the URL so it doesn't reopen on re-render
-      window.location.href = '/tasks';
+      navigate('/tasks', { replace: true });
     }
-  }, [location.search, tasks]);
+  }, [location.search, tasks, navigate]);
 
   const [editTask, setEditTask] = useState({
     title: '',

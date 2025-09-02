@@ -1,48 +1,21 @@
-// Redirect Blocker Bypass Script
-// This script detects redirect blocking and handles it
-
+// Minimal redirect handler - only handle login/logout, not navigation
 window.addEventListener('DOMContentLoaded', function() {
-  // Check if we're on a page that needs authentication
-  const path = window.location.pathname;
-  const protectedRoutes = ['/dashboard', '/projects', '/tasks', '/users', '/profile', '/settings'];
-  const publicRoutes = ['/login', '/register'];
-  
-  // Function to check authentication
-  function isAuthenticated() {
-    return localStorage.getItem('token') && localStorage.getItem('user');
-  }
-  
-  // Function to handle authentication redirect
-  function handleAuthRedirect() {
-    const isAuth = isAuthenticated();
-    const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
-    const isPublicRoute = publicRoutes.includes(path);
-    
-    // If user is not authenticated and on protected route
-    if (!isAuth && isProtectedRoute) {
-      // Use location.replace to avoid history issues
-      window.location.replace('/login');
-      return;
-    }
-    
-    // If user is authenticated and on public route
-    if (isAuth && isPublicRoute) {
-      // Use location.replace to avoid history issues
-      window.location.replace('/dashboard');
-      return;
-    }
-  }
-  
-  // Check auth status after a small delay
-  setTimeout(handleAuthRedirect, 100);
+  // Only handle login/logout events, not route-based redirects
+  console.log('Redirect handler loaded');
 });
 
 // Handle login success redirects
 window.addEventListener('loginSuccess', function() {
-  window.location.replace('/dashboard');
+  console.log('Login success, redirecting to dashboard');
+  setTimeout(() => {
+    window.location.replace('/dashboard');
+  }, 100);
 });
 
 // Handle logout redirects
 window.addEventListener('logout', function() {
-  window.location.replace('/login');
+  console.log('Logout, redirecting to login');
+  setTimeout(() => {
+    window.location.replace('/login');
+  }, 100);
 });
