@@ -1,24 +1,47 @@
 import { useState, useEffect } from 'react';
 
-export const useManualRouter = () => {
-  const [pathname, setPathname] = useState(window.location.pathname);
-  const [search, setSearch] = useState(window.location.search);
+// Singleton router state
+let routerState = {
+  pathname: window.location.pathname,
+  search: window.location.search,
+  listeners: new Set(),
+  initialized: false
+};
 
-  useEffect(() => {
-    const handleLocationChange = () => {
-      setPathname(window.location.pathname);
-      setSearch(window.location.search);
-    };
-
-    // Listen for browser navigation
-    window.addEventListener('popstate', handleLocationChange);
+const updateRouterState = () => {
+  const newPathname = window.location.pathname;
+  const newSearch = window.location.search;
+  
+  if (newPathname !== routerState.pathname || newSearch !== routerState.search) {
+    routerState.pathname = newPathname;
+    routerState.search = newSearch;
     
-    // Check for changes periodically (for programmatic navigation)
-    const interval = setInterval(handleLocationChange, 100);
+    // Notify all listeners
+    routerState.listeners.forEach(listener => listener());
+  }
+};
 
+const initializeRouter = () => {
+  if (routerState.initialized) return;
+  
+  // Listen for browser navigation
+  window.addEventListener('popstate', updateRouterState);
+  
+  routerState.initialized = true;
+};
+
+export const useManualRouter = () => {
+  const [, forceUpdate] = useState({});
+  
+  useEffect(() => {
+    initializeRouter();
+    
+    // Add this component as a listener
+    const listener = () => forceUpdate({});
+    routerState.listeners.add(listener);
+    
     return () => {
-      window.removeEventListener('popstate', handleLocationChange);
-      clearInterval(interval);
+      routerState.listeners.delete(listener);
     };
   }, []);
 
@@ -28,13 +51,12 @@ export const useManualRouter = () => {
     } else {
       window.history.pushState({}, '', path);
     }
-    setPathname(path.split('?')[0]);
-    setSearch(path.includes('?') ? path.split('?')[1] : '');
+    updateRouterState();
   };
 
   const location = {
-    pathname,
-    search,
+    pathname: routerState.pathname,
+    search: routerState.search,
     hash: window.location.hash,
     state: window.history.state
   };

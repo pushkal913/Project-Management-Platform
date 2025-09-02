@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from '../../hooks/useManualRouter';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -170,10 +170,7 @@ const Projects = () => {
     const projectToEdit = projects.find(p => (p._id === editId));
     if (projectToEdit) {
       openEditProject(projectToEdit);
-      // Don't navigate - just clear the param from URL without triggering navigation
-      if (window.history.replaceState) {
-        window.history.replaceState({}, '', '/projects');
-      }
+      // NO URL cleanup - let it stay as is
     }
   }, [location.search, projects]);
 

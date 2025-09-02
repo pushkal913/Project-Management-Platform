@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
-import { useNavigate } from '../../hooks/useManualRouter';
+import { useNavigate } from 'react-router-dom';
 import { Home, ArrowBack } from '@mui/icons-material';
 
 const NotFound = () => {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { ToastContainer } from 'react-toastify';
@@ -23,46 +24,6 @@ import TaskDetailsPage from './components/Tasks/TaskDetailsPage';
 import UsersPage from './components/Users/UsersPage';
 import ProfilePage from './components/Profile/ProfilePage';
 import SettingsPage from './components/Settings/SettingsPage';
-
-// Manual Router Component
-const ManualRouter = ({ children }) => {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
-
-  useEffect(() => {
-    const handlePopState = () => {
-      setCurrentPath(window.location.pathname);
-    };
-
-    // Listen for browser back/forward
-    window.addEventListener('popstate', handlePopState);
-    
-    // Also listen for manual navigation
-    const handlePathChange = () => {
-      const newPath = window.location.pathname;
-      if (newPath !== currentPath) {
-        setCurrentPath(newPath);
-      }
-    };
-
-    // Check for path changes every 100ms
-    const interval = setInterval(handlePathChange, 100);
-
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-      clearInterval(interval);
-    };
-  }, [currentPath]);
-
-  // Custom navigate function that can be used globally
-  window.navigateTo = (path) => {
-    if (path !== currentPath) {
-      window.history.pushState({}, '', path);
-      setCurrentPath(path);
-    }
-  };
-
-  return children(currentPath);
-};
 
 // Modern Theme with Vibrant Colors
 const theme = createTheme({
@@ -214,34 +175,28 @@ const theme = createTheme({
 });
 
 function App() {
-  const renderPage = (path) => {
-    // Extract path without query params
-    const basePath = path.split('?')[0];
-    
-    // Route matching
-    if (basePath === '/login') return <Login />;
-    if (basePath === '/register') return <Register />;
-    if (basePath === '/dashboard' || basePath === '/') return <DashboardPage />;
-    if (basePath === '/projects') return <ProjectsPage />;
-    if (basePath.startsWith('/projects/')) return <ProjectDetailsPage />;
-    if (basePath === '/tasks') return <TasksPage />;
-    if (basePath.startsWith('/tasks/')) return <TaskDetailsPage />;
-    if (basePath === '/users') return <UsersPage />;
-    if (basePath === '/profile') return <ProfilePage />;
-    if (basePath === '/settings') return <SettingsPage />;
-    
-    return <NotFound />;
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <SettingsProvider>
         <AuthProvider>
           <SocketProvider>
-            <ManualRouter>
-              {(currentPath) => renderPage(currentPath)}
-            </ManualRouter>
+            <Router>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/projects/:id" element={<ProjectDetailsPage />} />
+                <Route path="/tasks" element={<TasksPage />} />
+                <Route path="/tasks/:id" element={<TaskDetailsPage />} />
+                <Route path="/users" element={<UsersPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Router>
             <ToastContainer
               position="top-right"
               autoClose={5000}

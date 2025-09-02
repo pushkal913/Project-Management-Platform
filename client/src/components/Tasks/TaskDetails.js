@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from '../../hooks/useManualRouter';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,

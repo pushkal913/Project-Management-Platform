@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from '../../hooks/useManualRouter';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -195,10 +195,7 @@ const Tasks = () => {
     const taskToEdit = tasks.find(t => (t._id === editId));
     if (taskToEdit) {
       openEditTask(taskToEdit);
-      // Don't navigate - just clear the param from URL without triggering navigation
-      if (window.history.replaceState) {
-        window.history.replaceState({}, '', '/tasks');
-      }
+      // NO URL cleanup - let it stay as is
     }
   }, [location.search, tasks]);
 
