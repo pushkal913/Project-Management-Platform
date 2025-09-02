@@ -13,7 +13,9 @@ export const useAuth = () => {
 };
 
 // Configure axios defaults
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || '/api';
+console.log('API URL configured as:', API_URL);
+axios.defaults.baseURL = API_URL;
 
 // Add request interceptor to include auth token
 axios.interceptors.request.use(
@@ -53,16 +55,26 @@ export const AuthProvider = ({ children }) => {
 
       if (token && savedUser) {
         try {
-          // Verify token is still valid
-          const response = await axios.get('/auth/profile');
+          // Add timeout and detailed logging
+          console.log('Verifying token with API...');
+          const response = await axios.get('/auth/profile', { timeout: 8000 });
+          console.log('Token verification successful');
           setUser(response.data.user);
         } catch (error) {
-          // Token is invalid, clear storage
+          console.error('Auth verification failed:', error.message);
+          // If API is down or token invalid, clear storage and continue
           localStorage.removeItem('token');
           localStorage.removeItem('user');
+          
+          // Show toast only if it's not a network error
+          if (!error.code || error.code !== 'ECONNABORTED') {
+            toast.error('Session expired. Please login again.');
+          }
         }
       }
-      setLoading(false);
+      
+      // Always set loading to false after 8 seconds max
+      setTimeout(() => setLoading(false), 100);
     };
 
     initializeAuth();
