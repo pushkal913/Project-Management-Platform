@@ -15,16 +15,18 @@ import Navbar from './components/Layout/Navbar';
 import Sidebar from './components/Layout/Sidebar';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
-import Dashboard from './components/Dashboard/Dashboard';
-import Projects from './components/Projects/Projects';
-import ProjectDetails from './components/Projects/ProjectDetails';
-import Tasks from './components/Tasks/Tasks';
-import TaskDetails from './components/Tasks/TaskDetails';
-import Users from './components/Users/Users';
-import Profile from './components/Profile/Profile';
-import Settings from './components/Settings/Settings';
 import NotFound from './components/Common/NotFound';
 import LoadingScreen from './components/Common/LoadingScreen';
+
+// Page Components
+import DashboardPage from './components/Dashboard/DashboardPage';
+import ProjectsPage from './components/Projects/ProjectsPage';
+import ProjectDetailsPage from './components/Projects/ProjectDetailsPage';
+import TasksPage from './components/Tasks/TasksPage';
+import TaskDetailsPage from './components/Tasks/TaskDetailsPage';
+import UsersPage from './components/Users/UsersPage';
+import ProfilePage from './components/Profile/ProfilePage';
+import SettingsPage from './components/Settings/SettingsPage';
 
 // Modern Theme with Vibrant Colors
 const theme = createTheme({
