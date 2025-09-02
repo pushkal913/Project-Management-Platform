@@ -180,10 +180,14 @@ const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
   if (loading) {
-    return <LoadingScreen message="Verifying authentication..." />;
+    return <LoadingScreen message="Loading application..." />;
   }
   
-  return user ? children : <Navigate to="/login" replace />;
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
 };
 
 // Public Route Component
@@ -194,7 +198,11 @@ const PublicRoute = ({ children }) => {
     return <LoadingScreen message="Loading application..." />;
   }
   
-  return !user ? children : <Navigate to="/dashboard" replace />;
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return children;
 };
 
 // Admin Route Component
@@ -202,14 +210,18 @@ const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <LoadingScreen message="Checking permissions..." />;
+    return <LoadingScreen message="Loading application..." />;
   }
 
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  return user.role === 'admin' ? children : <Navigate to="/dashboard" replace />;
+  if (user.role !== 'admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
 };
 
 // Main App Layout with Center Alignment

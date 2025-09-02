@@ -80,8 +80,8 @@ export const AuthProvider = ({ children }) => {
         }
       }
       
-      // Set loading to false after a short delay
-      setTimeout(() => setLoading(false), 500);
+      // Set loading to false after auth check
+      setTimeout(() => setLoading(false), 100);
     };
 
     initializeAuth();
