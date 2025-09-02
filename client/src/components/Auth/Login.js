@@ -120,17 +120,13 @@ const Login = () => {
             >
               <Box 
                 sx={{
-                  width: '80px',
-                  height: '80px',
+                  width: '104px', // Increased by 30% from 80px
+                  height: '104px', // Increased by 30% from 80px
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   mr: 3,
-                  backgroundColor: 'white',
-                  borderRadius: '12px',
-                  padding: '8px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                  border: '1px solid rgba(0, 0, 0, 0.05)',
+                  // Removed background and borders to blend with page background
                   animation: 'fadeIn 0.8s ease-out 0.2s both',
                   '@keyframes fadeIn': {
                     '0%': { opacity: 0, transform: 'translateY(10px)' },
@@ -181,7 +177,9 @@ const Login = () => {
                     fontFamily: '"Inter", sans-serif',
                     opacity: 0.9,
                     mt: -0.5,
-                    mb: 1
+                    mb: 1,
+                    textAlign: 'right', // Shift text to the right
+                    ml: 2 // Add some left margin for better positioning
                   }}
                 >
                   by TechKnoGeeks
