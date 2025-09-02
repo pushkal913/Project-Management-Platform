@@ -43,11 +43,8 @@ axios.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Use a more subtle approach instead of direct window redirect
-      if (window.location.pathname !== '/login') {
-        // Set a flag for the auth context to handle
-        window.dispatchEvent(new CustomEvent('auth-error'));
-      }
+      // Simple approach - just remove tokens and let the app handle the routing
+      console.log('Authentication failed - tokens removed');
     }
     return Promise.reject(error);
   }
@@ -88,15 +85,6 @@ export const AuthProvider = ({ children }) => {
     };
 
     initializeAuth();
-
-    // Listen for auth errors
-    const handleAuthError = () => {
-      setUser(null);
-      toast.error('Session expired. Please login again.');
-    };
-
-    window.addEventListener('auth-error', handleAuthError);
-    return () => window.removeEventListener('auth-error', handleAuthError);
   }, []);
 
   const login = async (email, password) => {

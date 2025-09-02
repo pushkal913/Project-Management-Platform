@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline, Box } from '@mui/material';
 import { ToastContainer } from 'react-toastify';
@@ -25,6 +25,7 @@ import Profile from './components/Profile/Profile';
 import Settings from './components/Settings/Settings';
 import NotFound from './components/Common/NotFound';
 import LoadingScreen from './components/Common/LoadingScreen';
+import RedirectBlockerFix from './components/Common/RedirectBlockerFix';
 
 // Modern Theme with Vibrant Colors
 const theme = createTheme({
@@ -183,10 +184,10 @@ const ProtectedRoute = ({ children }) => {
     return <LoadingScreen message="Verifying authentication..." />;
   }
   
-  return user ? children : <Navigate to="/login" replace />;
+  return user ? children : <LoadingScreen message="Please login to continue..." />;
 };
 
-// Public Route Component (redirect if authenticated)
+// Public Route Component
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
@@ -194,7 +195,7 @@ const PublicRoute = ({ children }) => {
     return <LoadingScreen message="Loading application..." />;
   }
   
-  return !user ? children : <Navigate to="/dashboard" replace />;
+  return children;
 };
 
 // Admin Route Component
@@ -206,10 +207,10 @@ const AdminRoute = ({ children }) => {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <LoadingScreen message="Please login to continue..." />;
   }
 
-  return user.role === 'admin' ? children : <Navigate to="/dashboard" replace />;
+  return user.role === 'admin' ? children : <LoadingScreen message="Access denied. Admin privileges required." />;
 };
 
 // Main App Layout with Center Alignment
@@ -279,111 +280,122 @@ function App() {
         <AuthProvider>
           <SocketProvider>
             <Router>
-              <Routes>
-                {/* Public Routes */}
-                <Route
-                  path="/login"
-                  element={
-                    <PublicRoute>
-                      <Login />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/register"
-                  element={
-                    <PublicRoute>
-                      <Register />
-                    </PublicRoute>
-                  }
-                />
+              <RedirectBlockerFix>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route
+                    path="/login"
+                    element={
+                      <PublicRoute>
+                        <Login />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/register"
+                    element={
+                      <PublicRoute>
+                        <Register />
+                      </PublicRoute>
+                    }
+                  />
 
-                {/* Protected Routes */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <Dashboard />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/projects"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <Projects />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/projects/:id"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <ProjectDetails />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/tasks"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <Tasks />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/tasks/:id"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <TaskDetails />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/users"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <Users />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <Profile />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/settings"
-                  element={
-                    <AdminRoute>
-                      <AppLayout>
-                        <Settings />
-                      </AppLayout>
-                    </AdminRoute>
-                  }
-                />
+                  {/* Protected Routes */}
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <Dashboard />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/projects"
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <Projects />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/projects/:id"
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <ProjectDetails />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/tasks"
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <Tasks />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/tasks/:id"
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <TaskDetails />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/users"
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <Users />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <Profile />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/settings"
+                    element={
+                      <AdminRoute>
+                        <AppLayout>
+                          <Settings />
+                        </AppLayout>
+                      </AdminRoute>
+                    }
+                  />
 
-                {/* Default Routes */}
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+                  {/* Default Routes */}
+                  <Route 
+                    path="/" 
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <Dashboard />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </RedirectBlockerFix>
             </Router>
             <ToastContainer
               position="top-right"
