@@ -42,7 +42,8 @@ import {
   Assignment,
   FilterList,
   ViewModule,
-  ViewList
+  ViewList,
+  FolderOpen
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -74,6 +75,26 @@ const Tasks = () => {
     project: '',
     timeFilter: ''
   });
+
+  // Function to generate consistent colors for users
+  const getUserColor = (userId) => {
+    const colors = [
+      '#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5',
+      '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50',
+      '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800',
+      '#ff5722', '#795548', '#9e9e9e', '#607d8b', '#6366f1'
+    ];
+    
+    if (!userId) return colors[0];
+    
+    // Create a simple hash from userId
+    let hash = 0;
+    for (let i = 0; i < userId.length; i++) {
+      hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    return colors[Math.abs(hash) % colors.length];
+  };
 
   const [newTask, setNewTask] = useState({
     title: '',
@@ -392,13 +413,29 @@ const Tasks = () => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
+          <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
             Tasks
           </Typography>
           <Button
             variant="contained"
             startIcon={<Add />}
             onClick={() => setCreateDialogOpen(true)}
+            sx={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: 2,
+              px: 3,
+              py: 1.5,
+              fontSize: '1rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 12px 35px rgba(0,0,0,0.2)'
+              },
+              transition: 'all 0.3s ease'
+            }}
           >
             New Task
           </Button>
@@ -713,7 +750,7 @@ const Tasks = () => {
 
                   <Box sx={{ mb: 1 }}>
                     <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center' }}>
-                      <Assignment sx={{ fontSize: 14, mr: 0.5 }} />
+                      <FolderOpen sx={{ fontSize: 14, mr: 0.5, color: '#3b82f6' }} />
                       {task.project?.name}
                     </Typography>
                   </Box>
@@ -721,10 +758,27 @@ const Tasks = () => {
                   {task.assignee && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
                       <Person sx={{ fontSize: 14, color: 'text.secondary' }} />
-                      <Avatar sx={{ width: 20, height: 20, fontSize: '0.7rem' }}>
-                        {task.assignee.name.charAt(0)}
+                      <Avatar 
+                        sx={{ 
+                          width: 24, 
+                          height: 24, 
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          bgcolor: getUserColor(task.assignee._id),
+                          color: 'white',
+                          border: '2px solid rgba(255,255,255,0.2)'
+                        }}
+                      >
+                        {task.assignee.name.charAt(0).toUpperCase()}
                       </Avatar>
-                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          color: getUserColor(task.assignee._id)
+                        }}
+                      >
                         {task.assignee.name}
                       </Typography>
                     </Box>
@@ -883,10 +937,28 @@ const Tasks = () => {
                     </TableCell>
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Avatar sx={{ width: 24, height: 24 }}>
-                          {task.assignee?.name ? task.assignee.name[0] : '?'}
+                        <Avatar 
+                          sx={{ 
+                            width: 28, 
+                            height: 28,
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            bgcolor: task.assignee ? getUserColor(task.assignee._id) : '#9e9e9e',
+                            color: 'white',
+                            border: '2px solid rgba(255,255,255,0.2)'
+                          }}
+                        >
+                          {task.assignee?.name ? task.assignee.name[0].toUpperCase() : '?'}
                         </Avatar>
-                        <Typography variant="body2">{task.assignee?.name || 'Unassigned'}</Typography>
+                        <Typography 
+                          variant="body2"
+                          sx={{
+                            fontWeight: 600,
+                            color: task.assignee ? getUserColor(task.assignee._id) : 'text.secondary'
+                          }}
+                        >
+                          {task.assignee?.name || 'Unassigned'}
+                        </Typography>
                       </Box>
                     </TableCell>
                     <TableCell align="right">{task.actualHours ? task.actualHours.toFixed(2) : '0.00'}</TableCell>
