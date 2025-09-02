@@ -184,7 +184,7 @@ const Login = () => {
                     mb: 1
                   }}
                 >
-                  by Your Company
+                  by TechKnoGeeks
                 </Typography>
               </Box>
             </Box>
