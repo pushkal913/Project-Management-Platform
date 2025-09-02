@@ -24,7 +24,7 @@ console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
 // Test backend connectivity
 const testBackend = async () => {
   try {
-    const response = await fetch('https://project-management-api.onrender.com/', {
+    const response = await fetch('https://project-management-platform-ye0w.onrender.com/', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

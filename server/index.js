@@ -32,17 +32,35 @@ const io = socketIo(server, {
 
 // Middleware
 const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "https://project-management-platform-gs9ak41r.vercel.app",
-    "https://project-management-platform-teal.vercel.app",
-    "https://project-management-platform-ye0w.onrender.com"
-  ],
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "https://project-management-platform-gs9ak41r.vercel.app",
+      "https://project-management-platform-teal.vercel.app", 
+      "https://project-management-platform-ye0w.onrender.com"
+    ];
+    
+    // Allow requests with no origin (like mobile apps, curl, postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: false,
   optionsSuccessStatus: 200,
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"]
 };
+
+// Add debugging middleware before CORS
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path} - Origin: ${req.headers.origin}`);
+  next();
+});
 
 app.use(cors(corsOptions));
 app.use(express.json());
