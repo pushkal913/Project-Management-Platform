@@ -20,6 +20,7 @@ const API_URL = process.env.REACT_APP_API_URL ||
 console.log('API URL configured as:', API_URL);
 console.log('Environment:', process.env.NODE_ENV);
 console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+console.log('Force refresh - deployment check v2');
 
 // Test backend connectivity
 const testBackend = async () => {
