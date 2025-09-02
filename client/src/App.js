@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline, Box } from '@mui/material';
 import { ToastContainer } from 'react-toastify';
@@ -25,7 +25,6 @@ import Profile from './components/Profile/Profile';
 import Settings from './components/Settings/Settings';
 import NotFound from './components/Common/NotFound';
 import LoadingScreen from './components/Common/LoadingScreen';
-import RedirectBlockerFix from './components/Common/RedirectBlockerFix';
 
 // Modern Theme with Vibrant Colors
 const theme = createTheme({
@@ -184,7 +183,7 @@ const ProtectedRoute = ({ children }) => {
     return <LoadingScreen message="Verifying authentication..." />;
   }
   
-  return user ? children : <LoadingScreen message="Please login to continue..." />;
+  return user ? children : <Navigate to="/login" replace />;
 };
 
 // Public Route Component
@@ -195,7 +194,7 @@ const PublicRoute = ({ children }) => {
     return <LoadingScreen message="Loading application..." />;
   }
   
-  return children;
+  return !user ? children : <Navigate to="/dashboard" replace />;
 };
 
 // Admin Route Component
@@ -207,10 +206,10 @@ const AdminRoute = ({ children }) => {
   }
 
   if (!user) {
-    return <LoadingScreen message="Please login to continue..." />;
+    return <Navigate to="/login" replace />;
   }
 
-  return user.role === 'admin' ? children : <LoadingScreen message="Access denied. Admin privileges required." />;
+  return user.role === 'admin' ? children : <Navigate to="/dashboard" replace />;
 };
 
 // Main App Layout with Center Alignment
@@ -280,8 +279,7 @@ function App() {
         <AuthProvider>
           <SocketProvider>
             <Router>
-              <RedirectBlockerFix>
-                <Routes>
+              <Routes>
                   {/* Public Routes */}
                   <Route
                     path="/login"
@@ -383,19 +381,9 @@ function App() {
                   />
 
                   {/* Default Routes */}
-                  <Route 
-                    path="/" 
-                    element={
-                      <ProtectedRoute>
-                        <AppLayout>
-                          <Dashboard />
-                        </AppLayout>
-                      </ProtectedRoute>
-                    } 
-                  />
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </RedirectBlockerFix>
             </Router>
             <ToastContainer
               position="top-right"
