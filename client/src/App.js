@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Box } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Context
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { SocketProvider } from './contexts/SocketContext';
 
 // Components
-import Navbar from './components/Layout/Navbar';
-import Sidebar from './components/Layout/Sidebar';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import NotFound from './components/Common/NotFound';
-import LoadingScreen from './components/Common/LoadingScreen';
 
 // Page Components
 import DashboardPage from './components/Dashboard/DashboardPage';
@@ -177,124 +174,6 @@ const theme = createTheme({
   },
 });
 
-// Protected Route Component - NO REDIRECTS
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return <LoadingScreen message="Loading application..." />;
-  }
-  
-  // Instead of Navigate, just show content or login form
-  if (!user) {
-    return <Login />;
-  }
-  
-  return children;
-};
-
-// Public Route Component - NO REDIRECTS  
-const PublicRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return <LoadingScreen message="Loading application..." />;
-  }
-  
-  // Instead of Navigate, just show content or dashboard
-  if (user) {
-    return (
-      <AppLayout>
-        <Dashboard />
-      </AppLayout>
-    );
-  }
-  
-  return children;
-};
-
-// Admin Route Component - NO REDIRECTS
-const AdminRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return <LoadingScreen message="Loading application..." />;
-  }
-
-  if (!user) {
-    return <Login />;
-  }
-
-  if (user.role !== 'admin') {
-    return (
-      <AppLayout>
-        <Dashboard />
-      </AppLayout>
-    );
-  }
-
-  return children;
-};
-
-// Main App Layout with Center Alignment
-const AppLayout = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
-
-  const handleSidebarToggle = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  return (
-    <Box 
-      sx={{ 
-        display: 'flex',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        minHeight: '100vh',
-      }}
-    >
-      <Navbar onSidebarToggle={handleSidebarToggle} />
-      <Sidebar open={sidebarOpen} onToggle={handleSidebarToggle} />
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: { xs: 2, sm: 3, md: 4 },
-          mt: 8,
-          ml: sidebarOpen ? '240px' : '60px',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          minHeight: 'calc(100vh - 64px)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          maxWidth: '1400px',
-          mx: 'auto',
-          width: '100%',
-        }}
-      >
-        <Box
-          sx={{
-            width: '100%',
-            maxWidth: '1200px',
-            animation: 'fadeInUp 0.6s ease-out',
-            '@keyframes fadeInUp': {
-              '0%': {
-                opacity: 0,
-                transform: 'translateY(30px)',
-              },
-              '100%': {
-                opacity: 1,
-                transform: 'translateY(0)',
-              },
-            },
-          }}
-        >
-          {children}
-        </Box>
-      </Box>
-    </Box>
-  );
-};
-
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -304,119 +183,20 @@ function App() {
           <SocketProvider>
             <Router>
               <Routes>
-                  {/* Public Routes */}
-                  <Route
-                    path="/login"
-                    element={
-                      <PublicRoute>
-                        <Login />
-                      </PublicRoute>
-                    }
-                  />
-                  <Route
-                    path="/register"
-                    element={
-                      <PublicRoute>
-                        <Register />
-                      </PublicRoute>
-                    }
-                  />
-
-                  {/* Protected Routes */}
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <ProtectedRoute>
-                        <AppLayout>
-                          <Dashboard />
-                        </AppLayout>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/projects"
-                    element={
-                      <ProtectedRoute>
-                        <AppLayout>
-                          <Projects />
-                        </AppLayout>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/projects/:id"
-                    element={
-                      <ProtectedRoute>
-                        <AppLayout>
-                          <ProjectDetails />
-                        </AppLayout>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/tasks"
-                    element={
-                      <ProtectedRoute>
-                        <AppLayout>
-                          <Tasks />
-                        </AppLayout>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/tasks/:id"
-                    element={
-                      <ProtectedRoute>
-                        <AppLayout>
-                          <TaskDetails />
-                        </AppLayout>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/users"
-                    element={
-                      <ProtectedRoute>
-                        <AppLayout>
-                          <Users />
-                        </AppLayout>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/profile"
-                    element={
-                      <ProtectedRoute>
-                        <AppLayout>
-                          <Profile />
-                        </AppLayout>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/settings"
-                    element={
-                      <AdminRoute>
-                        <AppLayout>
-                          <Settings />
-                        </AppLayout>
-                      </AdminRoute>
-                    }
-                  />
-
-                  {/* Default Routes */}
-                  <Route 
-                    path="/" 
-                    element={
-                      <ProtectedRoute>
-                        <AppLayout>
-                          <Dashboard />
-                        </AppLayout>
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                {/* All routes - no guards, components handle auth */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/projects/:id" element={<ProjectDetailsPage />} />
+                <Route path="/tasks" element={<TasksPage />} />
+                <Route path="/tasks/:id" element={<TaskDetailsPage />} />
+                <Route path="/users" element={<UsersPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
             </Router>
             <ToastContainer
               position="top-right"
