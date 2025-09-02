@@ -18,12 +18,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: [
-      "http://localhost:3000",
-      "https://app.projects.techknogeeks.com",
-      "https://project-management-platform-p8zh.onrender.com",
-      "https://project-management-platform-teal.vercel.app"
-    ],
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true
   },
@@ -32,12 +27,7 @@ const io = socketIo(server, {
 
 // Middleware
 const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "https://app.projects.techknogeeks.com",
-    "https://project-management-platform-p8zh.onrender.com",
-    "https://project-management-platform-teal.vercel.app"
-  ],
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
   optionsSuccessStatus: 200
