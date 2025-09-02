@@ -52,18 +52,18 @@ const Navbar = ({ onSidebarToggle }) => {
 
   const handleProfileClick = () => {
     handleProfileMenuClose();
-    navigate('/profile');
+    window.location.href = '/profile';
   };
 
   const handleLogout = () => {
     handleProfileMenuClose();
     logout();
-    navigate('/login');
+    window.location.href = '/login';
   };
 
   const handleSettingsClick = () => {
     handleProfileMenuClose();
-    navigate('/settings');
+    window.location.href = '/settings';
   };
 
   const getInitials = (name) => {

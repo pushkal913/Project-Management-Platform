@@ -223,7 +223,7 @@ const Dashboard = () => {
                 '&::before': { opacity: 1 }
               },
             }}
-            onClick={() => navigate('/tasks')}
+            onClick={() => window.location.href = '/tasks'}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -280,7 +280,7 @@ const Dashboard = () => {
                 '&::before': { opacity: 1 }
               },
             }}
-            onClick={() => navigate('/projects')}
+            onClick={() => window.location.href = '/projects'}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -337,7 +337,7 @@ const Dashboard = () => {
                 '&::before': { opacity: 1 }
               },
             }}
-            onClick={() => navigate('/tasks')}
+            onClick={() => window.location.href = '/tasks'}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -394,7 +394,7 @@ const Dashboard = () => {
                 '&::before': { opacity: 1 }
               },
             }}
-            onClick={() => navigate('/tasks')}
+            onClick={() => window.location.href = '/tasks'}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -434,7 +434,7 @@ const Dashboard = () => {
                 boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
               }
             }}
-            onClick={() => navigate('/tasks')}
+            onClick={() => window.location.href = '/tasks'}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
@@ -501,7 +501,7 @@ const Dashboard = () => {
                 boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
               }
             }}
-            onClick={() => navigate('/projects')}
+            onClick={() => window.location.href = '/projects'}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>

@@ -31,7 +31,7 @@ const NotFound = () => {
           <Button
             variant="contained"
             startIcon={<Home />}
-            onClick={() => navigate('/dashboard')}
+            onClick={() => window.location.href = '/dashboard'}
           >
             Go to Dashboard
           </Button>
