@@ -18,17 +18,6 @@ services:
       - key: PORT
         value: 10000
 
-  # Frontend React App
-  - type: web
-    name: project-management-frontend
-    env: node
-    plan: free
-    buildCommand: cd client && npm install && npm run build
-    startCommand: cd client && node server.js
-    envVars:
-      - key: REACT_APP_API_URL
-        value: https://project-management-api.onrender.com/api
-
 databases:
   # MongoDB Atlas (if using managed MongoDB)
   # Remove this section if using MongoDB Atlas
