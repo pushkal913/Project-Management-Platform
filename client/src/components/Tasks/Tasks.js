@@ -362,6 +362,21 @@ const Tasks = () => {
     return new Date(dueDate) < new Date();
   };
 
+  const isCompleted = (status, progress) => {
+    return status === 'done' || progress === 100;
+  };
+
+  const getCardBorder = (task) => {
+    const progress = getTaskProgress(task.status);
+    if (isCompleted(task.status, progress)) {
+      return '2px solid #4caf50'; // Green for completed
+    }
+    if (isOverdue(task.dueDate, task.status)) {
+      return '2px solid #f44336'; // Red for overdue
+    }
+    return 'none'; // No border for normal tasks
+  };
+
   if (loading) {
     return (
       <Box sx={{ p: 3 }}>
@@ -626,7 +641,7 @@ const Tasks = () => {
                   display: 'flex', 
                   flexDirection: 'column',
                   cursor: 'pointer',
-                  border: isOverdue(task.dueDate, task.status) ? '2px solid #f44336' : 'none',
+                  border: getCardBorder(task),
                   '&:hover': {
                     boxShadow: 4
                   }
