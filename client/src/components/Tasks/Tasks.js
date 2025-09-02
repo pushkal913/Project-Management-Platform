@@ -706,7 +706,7 @@ const Tasks = () => {
                       component="div"
                       sx={{
                         fontWeight: 600,
-                        fontSize: '0.95rem',
+                        fontSize: '1.15rem',
                         lineHeight: 1.3,
                         overflowWrap: 'anywhere',
                         wordBreak: 'break-word'
@@ -749,7 +749,7 @@ const Tasks = () => {
                   </Box>
 
                   <Box sx={{ mb: 1 }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center' }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem', fontWeight: 700, display: 'flex', alignItems: 'center' }}>
                       <FolderOpen sx={{ fontSize: 14, mr: 0.5, color: '#3b82f6' }} />
                       {task.project?.name}
                     </Typography>
@@ -803,7 +803,7 @@ const Tasks = () => {
                   )}
 
                   {task.estimatedHours > 0 && (
-                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem', mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem', fontWeight: 700, mb: 1 }}>
                       Estimated: {task.estimatedHours}h
                     </Typography>
                   )}
