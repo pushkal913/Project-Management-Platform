@@ -156,13 +156,6 @@ router.post('/:id/time', authenticate, [
   }
 });
 
-    res.json({ tasks });
-  } catch (error) {
-    console.error('Get tasks error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
 // Get task by ID
 router.get('/:id', authenticate, async (req, res) => {
   try {

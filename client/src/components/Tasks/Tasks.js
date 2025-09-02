@@ -452,14 +452,8 @@ const Tasks = () => {
         </Paper>
 
         {/* Filters */}
-        <Paper sx={{ p: 2, mb: 3, borderRadius: 3, backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-            <FilterList sx={{ color: '#6b7280' }} />
-            <Typography variant="h6" sx={{ fontWeight: 600, color: '#374151' }}>
-              Filters
-            </Typography>
-          </Box>
-          <Grid container spacing={2}>
+        <Paper sx={{ p: 1.5, mb: 3, borderRadius: 3, backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)' }}>
+          <Grid container spacing={1.5}>
           <Grid item xs={12} sm={6} md={2.4}>
             <FormControl fullWidth size="small">
               <Select
