@@ -13,8 +13,13 @@ export const useAuth = () => {
 };
 
 // Configure axios defaults
-const API_URL = process.env.REACT_APP_API_URL || '/api';
+const API_URL = process.env.REACT_APP_API_URL || 
+  (process.env.NODE_ENV === 'production' 
+    ? 'https://project-management-api.onrender.com/api' 
+    : 'http://localhost:5000/api');
 console.log('API URL configured as:', API_URL);
+console.log('Environment:', process.env.NODE_ENV);
+console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
 axios.defaults.baseURL = API_URL;
 
 // Add request interceptor to include auth token

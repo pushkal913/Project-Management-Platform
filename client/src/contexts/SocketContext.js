@@ -32,7 +32,7 @@ export const SocketProvider = ({ children }) => {
           return 'http://localhost:5000';
         } else {
           // Use the backend URL for production
-          return 'https://project-management-platform-p8zh-1.onrender.com';
+          return 'https://project-management-api.onrender.com';
         }
       };
 
