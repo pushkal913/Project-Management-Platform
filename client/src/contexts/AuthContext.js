@@ -29,6 +29,9 @@ axios.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // Add necessary headers for CORS
+    config.headers['Content-Type'] = 'application/json';
+    config.withCredentials = false; // Set to false for cross-origin requests
     return config;
   },
   (error) => {
