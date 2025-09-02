@@ -253,7 +253,11 @@ router.get('/overview', authenticate, async (req, res) => {
     // Team workload (admin only)
     let teamWorkload = [];
     if (userRole === 'admin') {
-      teamWorkload = await Task.aggregate([
+      // First get all active users
+      const allUsers = await User.find({ isActive: true }).select('_id name email avatar');
+      
+      // Then get task counts for each user
+      const taskCounts = await Task.aggregate([
         {
           $match: {
             assignee: { $exists: true, $ne: null },
@@ -269,33 +273,32 @@ router.get('/overview', authenticate, async (req, res) => {
               $sum: { $cond: [{ $in: ['$priority', ['high', 'critical']] }, 1, 0] }
             }
           }
-        },
-        {
-          $lookup: {
-            from: 'users',
-            localField: '_id',
-            foreignField: '_id',
-            as: 'user'
-          }
-        },
-        {
-          $unwind: '$user'
-        },
-        {
-          $project: {
-            _id: 1,
-            taskCount: 1,
-            highPriorityTasks: 1,
-            user: {
-              name: '$user.name',
-              email: '$user.email',
-              avatar: '$user.avatar'
-            }
-          }
-        },
-        { $sort: { taskCount: -1 } },
-        { $limit: 10 }
+        }
       ]);
+
+      // Create a map for quick lookup
+      const taskCountMap = new Map();
+      taskCounts.forEach(tc => {
+        taskCountMap.set(tc._id.toString(), tc);
+      });
+
+      // Build the team workload array with all users
+      teamWorkload = allUsers.map(user => {
+        const userTaskData = taskCountMap.get(user._id.toString()) || { taskCount: 0, highPriorityTasks: 0 };
+        return {
+          _id: user._id,
+          taskCount: userTaskData.taskCount,
+          highPriorityTasks: userTaskData.highPriorityTasks,
+          user: {
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar
+          }
+        };
+      });
+
+      // Sort by task count descending
+      teamWorkload.sort((a, b) => b.taskCount - a.taskCount);
     }
 
     // Format statistics

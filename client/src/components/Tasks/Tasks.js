@@ -771,16 +771,20 @@ const Tasks = () => {
                       >
                         {task.assignee.name.charAt(0).toUpperCase()}
                       </Avatar>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontSize: '0.8rem',
+                      <Chip
+                        label={task.assignee.name}
+                        size="small"
+                        sx={{
+                          bgcolor: '#10b981',
+                          color: 'white',
+                          fontSize: '0.75rem',
                           fontWeight: 600,
-                          color: getUserColor(task.assignee._id)
+                          height: 24,
+                          '& .MuiChip-label': {
+                            px: 1.5
+                          }
                         }}
-                      >
-                        {task.assignee.name}
-                      </Typography>
+                      />
                     </Box>
                   )}
 
@@ -950,15 +954,26 @@ const Tasks = () => {
                         >
                           {task.assignee?.name ? task.assignee.name[0].toUpperCase() : '?'}
                         </Avatar>
-                        <Typography 
-                          variant="body2"
-                          sx={{
-                            fontWeight: 600,
-                            color: task.assignee ? getUserColor(task.assignee._id) : 'text.secondary'
-                          }}
-                        >
-                          {task.assignee?.name || 'Unassigned'}
-                        </Typography>
+                        {task.assignee ? (
+                          <Chip
+                            label={task.assignee.name}
+                            size="small"
+                            sx={{
+                              bgcolor: '#10b981',
+                              color: 'white',
+                              fontSize: '0.8rem',
+                              fontWeight: 600,
+                              height: 28,
+                              '& .MuiChip-label': {
+                                px: 1.5
+                              }
+                            }}
+                          />
+                        ) : (
+                          <Typography variant="body2" color="text.secondary">
+                            Unassigned
+                          </Typography>
+                        )}
                       </Box>
                     </TableCell>
                     <TableCell align="right">{task.actualHours ? task.actualHours.toFixed(2) : '0.00'}</TableCell>
