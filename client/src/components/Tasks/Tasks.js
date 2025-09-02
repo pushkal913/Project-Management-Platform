@@ -764,7 +764,7 @@ const Tasks = () => {
                           height: 24, 
                           fontSize: '0.75rem',
                           fontWeight: 600,
-                          bgcolor: getUserColor(task.assignee._id),
+                          bgcolor: '#3b82f6',
                           color: 'white',
                           border: '2px solid rgba(255,255,255,0.2)'
                         }}
@@ -775,7 +775,7 @@ const Tasks = () => {
                         label={task.assignee.name}
                         size="small"
                         sx={{
-                          bgcolor: '#10b981',
+                          bgcolor: '#3b82f6',
                           color: 'white',
                           fontSize: '0.75rem',
                           fontWeight: 600,
@@ -947,7 +947,7 @@ const Tasks = () => {
                             height: 28,
                             fontSize: '0.8rem',
                             fontWeight: 600,
-                            bgcolor: task.assignee ? getUserColor(task.assignee._id) : '#9e9e9e',
+                            bgcolor: task.assignee ? '#3b82f6' : '#9e9e9e',
                             color: 'white',
                             border: '2px solid rgba(255,255,255,0.2)'
                           }}
@@ -959,7 +959,7 @@ const Tasks = () => {
                             label={task.assignee.name}
                             size="small"
                             sx={{
-                              bgcolor: '#10b981',
+                              bgcolor: '#3b82f6',
                               color: 'white',
                               fontSize: '0.8rem',
                               fontWeight: 600,
