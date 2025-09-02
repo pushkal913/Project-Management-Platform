@@ -195,10 +195,12 @@ const Tasks = () => {
     const taskToEdit = tasks.find(t => (t._id === editId));
     if (taskToEdit) {
       openEditTask(taskToEdit);
-      // Clean the URL so it doesn't reopen on re-render
-      navigate('/tasks', { replace: true });
+      // Don't navigate - just clear the param from URL without triggering navigation
+      if (window.history.replaceState) {
+        window.history.replaceState({}, '', '/tasks');
+      }
     }
-  }, [location.search, tasks, navigate]);
+  }, [location.search, tasks]);
 
   const [editTask, setEditTask] = useState({
     title: '',

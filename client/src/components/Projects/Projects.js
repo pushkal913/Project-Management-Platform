@@ -170,8 +170,10 @@ const Projects = () => {
     const projectToEdit = projects.find(p => (p._id === editId));
     if (projectToEdit) {
       openEditProject(projectToEdit);
-      // Clean the URL so it doesn't reopen on re-render
-      navigate('/projects', { replace: true });
+      // Don't navigate - just clear the param from URL without triggering navigation
+      if (window.history.replaceState) {
+        window.history.replaceState({}, '', '/projects');
+      }
     }
   }, [location.search, projects]);
 

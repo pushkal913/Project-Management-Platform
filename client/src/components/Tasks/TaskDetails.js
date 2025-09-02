@@ -65,7 +65,8 @@ const TaskDetails = () => {
     } catch (error) {
       console.error('Error fetching task details:', error);
       toast.error('Failed to fetch task details');
-      navigate('/tasks');
+      // Don't auto-navigate on error - let user decide
+      // navigate('/tasks');
     } finally {
       setLoading(false);
     }

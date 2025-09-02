@@ -97,7 +97,8 @@ const ProjectDetails = () => {
     } catch (error) {
       console.error('Error fetching project details:', error);
       toast.error('Failed to fetch project details');
-      navigate('/projects');
+      // Don't auto-navigate on error - let user decide
+      // navigate('/projects');
     } finally {
       setLoading(false);
     }
