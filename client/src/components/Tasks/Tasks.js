@@ -71,7 +71,8 @@ const Tasks = () => {
     status: '',
     priority: '',
     assignee: '',
-    project: ''
+    project: '',
+    timeFilter: ''
   });
 
   const [newTask, setNewTask] = useState({
@@ -452,8 +453,14 @@ const Tasks = () => {
 
         {/* Filters */}
         <Paper sx={{ p: 2, mb: 3, borderRadius: 3, backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <FilterList sx={{ color: '#6b7280' }} />
+            <Typography variant="h6" sx={{ fontWeight: 600, color: '#374151' }}>
+              Filters
+            </Typography>
+          </Box>
           <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={2.4}>
             <FormControl fullWidth size="small">
               <Select
                 value={filters.priority}
@@ -486,7 +493,7 @@ const Tasks = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={2.4}>
             <FormControl fullWidth size="small">
               <Select
                 value={filters.project}
@@ -521,7 +528,7 @@ const Tasks = () => {
             </FormControl>
           </Grid>
           {users.length > 0 && (
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={2.4}>
               <FormControl fullWidth size="small">
                 <Select
                   value={filters.assignee}
@@ -556,6 +563,44 @@ const Tasks = () => {
               </FormControl>
             </Grid>
           )}
+          <Grid item xs={12} sm={6} md={2.4}>
+            <FormControl fullWidth size="small">
+              <Select
+                value={filters.timeFilter}
+                onChange={(e) => setFilters({ ...filters, timeFilter: e.target.value })}
+                displayEmpty
+                inputProps={{ 'aria-label': 'Time filter' }}
+                renderValue={(selected) => {
+                  if (!selected) {
+                    return <span style={{ color: '#9ca3af', fontSize: '14px', fontWeight: 500 }}>Time Filter</span>;
+                  }
+                  const map = { 
+                    'this-month': 'This Month', 
+                    'last-month': 'Last Month',
+                    'last-3-months': 'Last 3 Months',
+                    'this-year': 'This Year'
+                  };
+                  return <span style={{ fontSize: '14px', fontWeight: 500 }}>{map[selected] || 'Time Filter'}</span>;
+                }}
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.98)',
+                  borderRadius: 2,
+                  '& fieldset': { border: 'none' },
+                  color: '#111827',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                  '& .MuiSelect-icon': { color: '#6b7280' }
+                }}
+              >
+                <MenuItem value="">All Time</MenuItem>
+                <MenuItem value="this-month">This Month</MenuItem>
+                <MenuItem value="last-month">Last Month</MenuItem>
+                <MenuItem value="last-3-months">Last 3 Months</MenuItem>
+                <MenuItem value="this-year">This Year</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
           </Grid>
         </Paper>
 
@@ -578,9 +623,9 @@ const Tasks = () => {
         </Box>
 
         {viewMode === 'cards' ? (
-          <Grid container spacing={3}>
+          <Grid container spacing={2}>
             {tasks.map((task) => (
-            <Grid item xs={12} sm={6} md={4} key={task._id}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={task._id}>
               <Card 
                 sx={{ 
                   height: '100%', 
@@ -594,27 +639,29 @@ const Tasks = () => {
                 }}
                 onClick={() => navigate(`/tasks/${task._id}`)}
               >
-                <CardContent sx={{ flexGrow: 1, position: 'relative' }}>
+                <CardContent sx={{ flexGrow: 1, position: 'relative', p: 2, pb: 1 }}>
                   <IconButton
                     size="small"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleMenuOpen(e, task);
                     }}
-                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                    sx={{ position: 'absolute', top: 4, right: 4 }}
                   >
                     <MoreVert />
                   </IconButton>
 
-                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2, px: 1, textAlign: 'center' }}>
-                    <Typography variant="h6" component="span" sx={{ mr: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, pr: 4 }}>
+                    <Typography variant="body2" component="span" sx={{ mr: 1, fontSize: '16px' }}>
                       {getTypeIcon(task.type)}
                     </Typography>
                     <Typography
-                      variant="h6"
+                      variant="subtitle1"
                       component="div"
                       sx={{
-                        textAlign: 'center',
+                        fontWeight: 600,
+                        fontSize: '0.95rem',
+                        lineHeight: 1.3,
                         overflowWrap: 'anywhere',
                         wordBreak: 'break-word'
                       }}
@@ -623,20 +670,15 @@ const Tasks = () => {
                     </Typography>
                   </Box>
 
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2, whiteSpace: 'pre-wrap' }}>
-                    {task.description.length > 100 
-                      ? `${task.description.substring(0, 100)}...`
-                      : task.description
-                    }
-                  </Typography>
-
-                  <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+                  <Box sx={{ display: 'flex', gap: 0.5, mb: 1.5, flexWrap: 'wrap' }}>
                     <Chip
                       label={task.status.replace('-', ' ')}
                       size="small"
                       sx={{
                         bgcolor: getStatusColor(task.status),
-                        color: 'white'
+                        color: 'white',
+                        fontSize: '0.7rem',
+                        height: 20
                       }}
                     />
                     <Chip
@@ -644,41 +686,48 @@ const Tasks = () => {
                       size="small"
                       sx={{
                         bgcolor: getPriorityColor(task.priority),
-                        color: 'white'
+                        color: 'white',
+                        fontSize: '0.7rem',
+                        height: 20
                       }}
                     />
                     <Chip
                       label={task.type}
                       size="small"
                       variant="outlined"
+                      sx={{
+                        fontSize: '0.7rem',
+                        height: 20
+                      }}
                     />
                   </Box>
 
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      <Assignment sx={{ fontSize: 16, mr: 1, verticalAlign: 'middle' }} />
+                  <Box sx={{ mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center' }}>
+                      <Assignment sx={{ fontSize: 14, mr: 0.5 }} />
                       {task.project?.name}
                     </Typography>
                   </Box>
 
                   {task.assignee && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <Person sx={{ fontSize: 16, color: 'text.secondary' }} />
-                      <Avatar sx={{ width: 24, height: 24 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                      <Person sx={{ fontSize: 14, color: 'text.secondary' }} />
+                      <Avatar sx={{ width: 20, height: 20, fontSize: '0.7rem' }}>
                         {task.assignee.name.charAt(0)}
                       </Avatar>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                         {task.assignee.name}
                       </Typography>
                     </Box>
                   )}
 
                   {task.dueDate && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <CalendarToday sx={{ fontSize: 16, color: isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary' }} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                      <CalendarToday sx={{ fontSize: 14, color: isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary' }} />
                       <Typography 
                         variant="body2" 
                         color={isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary'}
+                        sx={{ fontSize: '0.8rem' }}
                       >
                         Due: {formatDate(task.dueDate)}
                         {isOverdue(task.dueDate, task.status) && ' (Overdue)'}
@@ -687,24 +736,30 @@ const Tasks = () => {
                   )}
 
                   {task.estimatedHours > 0 && (
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem', mb: 1 }}>
                       Estimated: {task.estimatedHours}h
                     </Typography>
                   )}
 
                   {/* Time tracker on card */}
-                  <Box sx={{ mt: 1 }}>
-                    <Typography variant="caption" color="text.secondary">
+                  <Box sx={{ mb: 1 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
                       Logged: {task.actualHours ? task.actualHours.toFixed(2) : 0}h
                     </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }} onClick={(e) => e.stopPropagation()}>
+                    <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5 }} onClick={(e) => e.stopPropagation()}>
                       <TextField
                         size="small"
                         type="number"
                         placeholder="H"
                         value={(timeInputs[task._id]?.hours) ?? ''}
                         onChange={(e) => updateTimeInput(task._id, 'hours', e.target.value)}
-                        sx={{ width: 56 }}
+                        sx={{ 
+                          width: 44,
+                          '& .MuiInputBase-input': { 
+                            fontSize: '0.8rem',
+                            p: '4px 6px'
+                          }
+                        }}
                         inputProps={{ min: 0 }}
                       />
                       <TextField
@@ -713,22 +768,38 @@ const Tasks = () => {
                         placeholder="M"
                         value={(timeInputs[task._id]?.minutes) ?? ''}
                         onChange={(e) => updateTimeInput(task._id, 'minutes', e.target.value)}
-                        sx={{ width: 56 }}
+                        sx={{ 
+                          width: 44,
+                          '& .MuiInputBase-input': { 
+                            fontSize: '0.8rem',
+                            p: '4px 6px'
+                          }
+                        }}
                         inputProps={{ min: 0, max: 59 }}
                       />
-                      <Button variant="outlined" size="small" onClick={(e) => { e.stopPropagation(); handleLogTime(task._id); }}>
+                      <Button 
+                        variant="outlined" 
+                        size="small" 
+                        onClick={(e) => { e.stopPropagation(); handleLogTime(task._id); }}
+                        sx={{ 
+                          fontSize: '0.7rem',
+                          px: 1,
+                          py: 0.25,
+                          minWidth: 'auto'
+                        }}
+                      >
                         Log
                       </Button>
                     </Box>
                   </Box>
 
                   {/* Progress Bar */}
-                  <Box sx={{ width: '100%', mb: 2, mt: 2 }}>
+                  <Box sx={{ width: '100%', mb: 1 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
                         Progress
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" fontWeight="medium">
+                      <Typography variant="caption" color="text.secondary" fontWeight="medium" sx={{ fontSize: '0.7rem' }}>
                         {getTaskProgress(task.status)}%
                       </Typography>
                     </Box>
@@ -736,20 +807,25 @@ const Tasks = () => {
                       variant="determinate" 
                       value={getTaskProgress(task.status)} 
                       sx={{ 
-                        height: 6, 
-                        borderRadius: 3,
+                        height: 4, 
+                        borderRadius: 2,
                         bgcolor: 'rgba(0, 0, 0, 0.05)',
                         '& .MuiLinearProgress-bar': {
                           backgroundColor: getProgressColor(task.status),
-                          borderRadius: 3
+                          borderRadius: 2
                         }
                       }}
                     />
                   </Box>
                 </CardContent>
 
-                <CardActions>
-                  <Button size="small" startIcon={<Edit />} onClick={(e) => { e.stopPropagation(); openEditTask(task); }}>
+                <CardActions sx={{ p: 1, pt: 0 }}>
+                  <Button 
+                    size="small" 
+                    startIcon={<Edit />} 
+                    onClick={(e) => { e.stopPropagation(); openEditTask(task); }}
+                    sx={{ fontSize: '0.75rem' }}
+                  >
                     Edit
                   </Button>
                 </CardActions>

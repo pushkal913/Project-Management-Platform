@@ -11,7 +11,7 @@ const router = express.Router();
 // Get all tasks
 router.get('/', authenticate, async (req, res) => {
   try {
-    const { status, priority, assignee, project, search, dueDate } = req.query;
+    const { status, priority, assignee, project, search, dueDate, timeFilter } = req.query;
     let query = { isArchived: false };
 
     // Filter by user role - non-admin users see tasks assigned to them or in their projects
@@ -53,11 +53,47 @@ router.get('/', authenticate, async (req, res) => {
       query.dueDate = { $gte: date, $lt: nextDay };
     }
 
+    // Time filter based on creation date
+    if (timeFilter) {
+      const now = new Date();
+      let startDate, endDate;
+
+      switch (timeFilter) {
+        case 'this-month':
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+          break;
+        case 'last-month':
+          startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          endDate = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+          break;
+        case 'last-3-months':
+          startDate = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+          endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+          break;
+        case 'this-year':
+          startDate = new Date(now.getFullYear(), 0, 1);
+          endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+          break;
+      }
+
+      if (startDate && endDate) {
+        query.createdAt = { $gte: startDate, $lte: endDate };
+      }
+    }
+
     const tasks = await Task.find(query)
       .populate('project', 'name status')
       .populate('assignee', 'name email avatar')
       .populate('reporter', 'name email avatar')
       .sort({ createdAt: -1 });
+
+    res.json({ tasks });
+  } catch (error) {
+    console.error('Get tasks error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 // Log time to task
 router.post('/:id/time', authenticate, [
