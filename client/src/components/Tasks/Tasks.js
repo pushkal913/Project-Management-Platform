@@ -91,19 +91,26 @@ const Tasks = () => {
       return colors[0];
     }
     
-    // Use the last few characters of the userId for better distribution
-    // since MongoDB ObjectIds often have similar prefixes
-    const lastChars = userId.slice(-6); // Take last 6 characters
+    // Create a more unique hash by using multiple techniques
     let hash = 0;
     
-    for (let i = 0; i < lastChars.length; i++) {
-      const char = lastChars.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
+    // Method 1: Sum all character codes with position weight
+    for (let i = 0; i < userId.length; i++) {
+      hash += userId.charCodeAt(i) * (i + 1);
     }
     
-    const colorIndex = Math.abs(hash) % colors.length;
-    return colors[colorIndex];
+    // Method 2: Add the length of the string
+    hash += userId.length * 17;
+    
+    // Method 3: Use the last character's code
+    hash += userId.charCodeAt(userId.length - 1) * 23;
+    
+    // Method 4: Use middle character if exists
+    if (userId.length > 5) {
+      hash += userId.charCodeAt(Math.floor(userId.length / 2)) * 41;
+    }
+    
+    return colors[Math.abs(hash) % colors.length];
   };
 
   const [newTask, setNewTask] = useState({
