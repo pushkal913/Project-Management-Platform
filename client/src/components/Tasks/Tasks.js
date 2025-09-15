@@ -81,13 +81,18 @@ const Tasks = () => {
   // Function to generate consistent colors for users
   const getUserColor = (userId) => {
     const colors = [
-      '#2563eb', // Vibrant Blue
+      '#dc2626', // Vibrant Red
       '#ea580c', // Vibrant Orange  
       '#16a34a', // Vibrant Green
-      '#9333ea'  // Vibrant Purple
+      '#2563eb'  // Vibrant Blue
     ];
     
-    if (!userId) return colors[0];
+    console.log('getUserColor called with userId:', userId); // Debug log
+    
+    if (!userId) {
+      console.log('No userId provided, returning default color'); // Debug log
+      return colors[0];
+    }
     
     // Create a simple hash from userId
     let hash = 0;
@@ -95,7 +100,10 @@ const Tasks = () => {
       hash = userId.charCodeAt(i) + ((hash << 5) - hash);
     }
     
-    return colors[Math.abs(hash) % colors.length];
+    const selectedColor = colors[Math.abs(hash) % colors.length];
+    console.log('Selected color for user', userId, ':', selectedColor); // Debug log
+    
+    return selectedColor;
   };
 
   const [newTask, setNewTask] = useState({
