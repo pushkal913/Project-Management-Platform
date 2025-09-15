@@ -19,6 +19,11 @@ router.get('/time-report', authenticate, async (req, res) => {
     if (start && end) {
       startDate = new Date(start);
       endDate = new Date(end);
+    } else if (period === 'this-month') {
+      // Get current month's start and end dates
+      const now = new Date();
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
     } else {
       const days = parseInt(period, 10) || 7;
       endDate = new Date();
@@ -256,13 +261,22 @@ router.get('/overview', authenticate, async (req, res) => {
       // First get all active users
       const allUsers = await User.find({ isActive: true }).select('_id name email avatar');
       
-      // Then get task counts for each user
+      // Get current month's start and end dates for task filtering
+      const now = new Date();
+      const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+      
+      // Then get task counts for each user for current month only
       const taskCounts = await Task.aggregate([
         {
           $match: {
             assignee: { $exists: true, $ne: null },
-            status: { $nin: ['done'] },
-            isArchived: false
+            isArchived: false,
+            // Filter tasks created or due in current month
+            $or: [
+              { createdAt: { $gte: currentMonthStart, $lte: currentMonthEnd } },
+              { dueDate: { $gte: currentMonthStart, $lte: currentMonthEnd } }
+            ]
           }
         },
         {

@@ -881,6 +881,7 @@ const Dashboard = () => {
                       >
                         <MenuItem value={'7'}>Last 7 days</MenuItem>
                         <MenuItem value={'30'}>Last 30 days</MenuItem>
+                        <MenuItem value={'this-month'}>This Month</MenuItem>
                       </Select>
                     </FormControl>
                     <Tooltip title="Refresh">
