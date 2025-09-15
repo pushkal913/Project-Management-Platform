@@ -48,20 +48,13 @@ const AppLayout = ({ children }) => {
           },
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           minHeight: 'calc(100vh - 64px)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          maxWidth: { xs: '100%', lg: '1400px' },
-          mx: 'auto',
           width: '100%',
         }}
       >
         <Box
           sx={{
             width: '100%',
-            maxWidth: { xs: '100%', sm: '600px', md: '900px', lg: '1200px' },
             animation: 'fadeInUp 0.6s ease-out',
-            px: { xs: 0, sm: 1 }, // Remove horizontal padding on mobile
             '@keyframes fadeInUp': {
               '0%': {
                 opacity: 0,
