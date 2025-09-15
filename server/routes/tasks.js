@@ -11,7 +11,7 @@ const router = express.Router();
 // Get all tasks
 router.get('/', authenticate, async (req, res) => {
   try {
-    const { status, priority, assignee, project, search, dueDate, timeFilter } = req.query;
+    const { status, priority, assignee, project, search, dueDate, timeFilter, myTasks } = req.query;
     let query = { isArchived: false };
 
     // Filter by user role - non-admin users see tasks assigned to them or in their projects
@@ -30,6 +30,13 @@ router.get('/', authenticate, async (req, res) => {
         { reporter: req.user._id },
         { project: { $in: projectIds } }
       ];
+    }
+
+    // My Tasks filter - only show tasks assigned to the current user
+    if (myTasks === 'true') {
+      query.assignee = req.user._id;
+      // Remove the existing $or query if present, as myTasks is more specific
+      delete query.$or;
     }
 
     // Apply filters

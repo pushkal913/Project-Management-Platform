@@ -29,7 +29,9 @@ import {
   TableCell,
   TableBody,
   ToggleButton,
-  ToggleButtonGroup
+  ToggleButtonGroup,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
 import {
   Add,
@@ -72,7 +74,8 @@ const Tasks = () => {
     priority: '',
     assignee: '',
     project: '',
-    timeFilter: ''
+    timeFilter: '',
+    myTasks: false
   });
 
   // Function to generate consistent colors for users
@@ -139,7 +142,14 @@ const Tasks = () => {
       setLoading(true);
       const params = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) params.append(key, value);
+        if (value) {
+          // Handle boolean values for myTasks
+          if (typeof value === 'boolean') {
+            params.append(key, value.toString());
+          } else {
+            params.append(key, value);
+          }
+        }
       });
       
       const response = await axios.get(`/tasks?${params.toString()}`);
@@ -643,6 +653,50 @@ const Tasks = () => {
               </Select>
             </FormControl>
           </Grid>
+          {/* My Tasks checkbox - only for standard users */}
+          {user?.role !== 'admin' && (
+            <Grid item xs={12} sm={6} md={2.4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={filters.myTasks}
+                    onChange={(e) => setFilters({ ...filters, myTasks: e.target.checked })}
+                    sx={{
+                      color: '#6b7280',
+                      '&.Mui-checked': {
+                        color: '#3b82f6'
+                      }
+                    }}
+                  />
+                }
+                label={
+                  <Typography sx={{ 
+                    fontSize: '14px', 
+                    fontWeight: 500, 
+                    color: '#111827' 
+                  }}>
+                    My Tasks
+                  </Typography>
+                }
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.98)',
+                  borderRadius: 2,
+                  px: 1.5,
+                  py: 0.5,
+                  border: 'none',
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                  height: '40px',
+                  margin: 0,
+                  width: '100%',
+                  justifyContent: 'flex-start',
+                  '& .MuiFormControlLabel-label': {
+                    fontSize: '14px',
+                    fontWeight: 500
+                  }
+                }}
+              />
+            </Grid>
+          )}
           </Grid>
         </Paper>
 
