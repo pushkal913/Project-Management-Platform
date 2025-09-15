@@ -81,10 +81,10 @@ const Tasks = () => {
   // Function to generate consistent colors for users
   const getUserColor = (userId) => {
     const colors = [
-      '#dc2626', // Vibrant Red
+      '#2563eb', // Vibrant Blue (changed from red)
       '#ea580c', // Vibrant Orange  
       '#16a34a', // Vibrant Green
-      '#2563eb'  // Vibrant Blue
+      '#9333ea'  // Vibrant Purple
     ];
     
     if (!userId) {
