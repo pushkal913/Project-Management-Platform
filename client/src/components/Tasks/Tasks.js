@@ -87,23 +87,23 @@ const Tasks = () => {
       '#2563eb'  // Vibrant Blue
     ];
     
-    console.log('getUserColor called with userId:', userId); // Debug log
-    
     if (!userId) {
-      console.log('No userId provided, returning default color'); // Debug log
       return colors[0];
     }
     
-    // Create a simple hash from userId
+    // Use the last few characters of the userId for better distribution
+    // since MongoDB ObjectIds often have similar prefixes
+    const lastChars = userId.slice(-6); // Take last 6 characters
     let hash = 0;
-    for (let i = 0; i < userId.length; i++) {
-      hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+    
+    for (let i = 0; i < lastChars.length; i++) {
+      const char = lastChars.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
     }
     
-    const selectedColor = colors[Math.abs(hash) % colors.length];
-    console.log('Selected color for user', userId, ':', selectedColor); // Debug log
-    
-    return selectedColor;
+    const colorIndex = Math.abs(hash) % colors.length;
+    return colors[colorIndex];
   };
 
   const [newTask, setNewTask] = useState({
