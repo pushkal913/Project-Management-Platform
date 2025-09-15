@@ -25,7 +25,9 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  Button
+  Button,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import {
   Assignment,
@@ -57,6 +59,9 @@ import { useAuth } from '../../contexts/AuthContext';
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [timeReport, setTimeReport] = useState(null);
@@ -162,13 +167,20 @@ const Dashboard = () => {
   ] : [];
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+    <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        mb: { xs: 2, sm: 3, md: 4 },
+        flexWrap: 'wrap',
+        gap: 2
+      }}>
         <Box>
-          <Typography variant="h4" sx={{ color: 'white', fontWeight: 700, mb: 0.5 }}>
+          <Typography variant={isSmallScreen ? "h5" : "h4"} sx={{ color: 'white', fontWeight: 700, mb: 0.5 }}>
             Dashboard
           </Typography>
-          <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+          <Typography variant={isSmallScreen ? "body2" : "body1"} sx={{ color: 'rgba(255,255,255,0.8)' }}>
             Welcome back! Here's what's happening with your projects
           </Typography>
         </Box>
@@ -191,7 +203,7 @@ const Dashboard = () => {
         </Tooltip>
       </Box>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Modern Statistics Cards */}
         <Grid item xs={12} sm={6} md={3}>
           <Card 
@@ -457,7 +469,7 @@ const Dashboard = () => {
                   </Typography>
                 </Box>
               </Box>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
                 <PieChart>
                   <Pie
                     data={nonZeroTaskData}
@@ -524,7 +536,7 @@ const Dashboard = () => {
                   </Typography>
                 </Box>
               </Box>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
                 <BarChart data={projectChartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
                   <XAxis dataKey="name" tick={{ fontSize: 12 }} />
@@ -847,8 +859,15 @@ const Dashboard = () => {
                 }
               }}
             >
-              <CardContent sx={{ p: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+              <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between', 
+                  mb: 3,
+                  flexWrap: 'wrap',
+                  gap: 1
+                }}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Box
                       sx={{
@@ -861,7 +880,7 @@ const Dashboard = () => {
                       <TrendingUp sx={{ fontSize: 24, color: 'white' }} />
                     </Box>
                     <Box>
-                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+                      <Typography variant={isSmallScreen ? "subtitle1" : "h6"} sx={{ fontWeight: 700, mb: 0.5 }}>
                         Time Report (Per User)
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
@@ -869,7 +888,7 @@ const Dashboard = () => {
                       </Typography>
                     </Box>
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
                     <FormControl size="small">
                       <InputLabel id="report-period-label">Period</InputLabel>
                       <Select
@@ -906,12 +925,17 @@ const Dashboard = () => {
                       {timeReport?.period?.start ? new Date(timeReport.period.start).toLocaleDateString() : ''}
                       {timeReport?.period?.end ? ` - ${new Date(timeReport.period.end).toLocaleDateString()}` : ''}
                     </Typography>
-                    <Box sx={{ borderRadius: 2, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)' }}>
-                      <Table size="small">
+                    <Box sx={{ 
+                      borderRadius: 2, 
+                      overflow: 'hidden', 
+                      border: '1px solid rgba(0,0,0,0.05)',
+                      overflowX: 'auto' // Add horizontal scroll for mobile
+                    }}>
+                      <Table size={isSmallScreen ? "small" : "medium"}>
                         <TableHead>
                           <TableRow sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
-                            <TableCell sx={{ fontWeight: 700 }}>User</TableCell>
-                            <TableCell align="right" sx={{ fontWeight: 700 }}>Total Hours</TableCell>
+                            <TableCell sx={{ fontWeight: 700, fontSize: isSmallScreen ? '0.75rem' : 'inherit' }}>User</TableCell>
+                            <TableCell align="right" sx={{ fontWeight: 700, fontSize: isSmallScreen ? '0.75rem' : 'inherit' }}>Total Hours</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>

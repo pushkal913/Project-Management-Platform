@@ -11,7 +11,9 @@ import {
   Badge,
   Box,
   Tooltip,
-  Divider
+  Divider,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -26,11 +28,13 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useSocket } from '../../contexts/SocketContext';
 
-const Navbar = ({ onSidebarToggle }) => {
+const Navbar = ({ onSidebarToggle, isMobile }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { settings } = useSettings();
   const { connected } = useSocket();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
 
@@ -85,48 +89,61 @@ const Navbar = ({ onSidebarToggle }) => {
 
   return (
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-      <Toolbar>
+      <Toolbar sx={{ minHeight: { xs: 56, sm: 64 } }}>
         <IconButton
           color="inherit"
           aria-label="toggle sidebar"
           onClick={onSidebarToggle}
           edge="start"
-          sx={{ mr: 2 }}
+          sx={{ mr: { xs: 1, sm: 2 } }}
         >
           <MenuIcon />
         </IconButton>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-          <Business sx={{ mr: 1, color: 'inherit' }} />
-          <Typography variant="h6" noWrap component="div" color="inherit">
-            {`${settings?.brandingPrefix || 'ProjectHub'} • ${settings?.orgName || 'TechKnoGeeks'}`}
+        <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, sm: 2 }, flexGrow: 1, minWidth: 0 }}>
+          <Business sx={{ mr: 1, color: 'inherit', fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
+          <Typography 
+            variant={isSmallScreen ? "subtitle1" : "h6"} 
+            noWrap 
+            component="div" 
+            color="inherit"
+            sx={{ 
+              fontSize: { xs: '0.875rem', sm: '1.25rem' },
+              fontWeight: { xs: 500, sm: 400 }
+            }}
+          >
+            {isSmallScreen 
+              ? (settings?.brandingPrefix || 'ProjectHub')
+              : `${settings?.brandingPrefix || 'ProjectHub'} • ${settings?.orgName || 'TechKnoGeeks'}`
+            }
           </Typography>
         </Box>
 
-        <Box sx={{ flexGrow: 1 }} />
-
-        {/* Connection Status */}
-        <Tooltip title={connected ? 'Connected' : 'Disconnected'}>
-          <Box
-            sx={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              backgroundColor: connected ? '#4caf50' : '#f44336',
-              mr: 2
-            }}
-          />
-        </Tooltip>
+        {/* Connection Status - Hide on very small screens */}
+        {!isSmallScreen && (
+          <Tooltip title={connected ? 'Connected' : 'Disconnected'}>
+            <Box
+              sx={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                backgroundColor: connected ? '#4caf50' : '#f44336',
+                mr: 2
+              }}
+            />
+          </Tooltip>
+        )}
 
         {/* Notifications */}
         <Tooltip title="Notifications">
           <IconButton
             color="inherit"
             onClick={handleNotificationMenuOpen}
-            sx={{ mr: 1 }}
+            sx={{ mr: { xs: 0.5, sm: 1 } }}
+            size={isSmallScreen ? "small" : "medium"}
           >
             <Badge badgeContent={0} color="error">
-              <Notifications />
+              <Notifications fontSize={isSmallScreen ? "small" : "medium"} />
             </Badge>
           </IconButton>
         </Tooltip>
@@ -140,8 +157,9 @@ const Navbar = ({ onSidebarToggle }) => {
             <Avatar
               sx={{
                 bgcolor: getRoleColor(user?.role),
-                width: 40,
-                height: 40
+                width: isSmallScreen ? 32 : 40,
+                height: isSmallScreen ? 32 : 40,
+                fontSize: isSmallScreen ? '0.875rem' : '1rem'
               }}
               src={user?.avatar}
             >
@@ -226,7 +244,8 @@ const Navbar = ({ onSidebarToggle }) => {
           onClose={handleNotificationMenuClose}
           PaperProps={{
             sx: {
-              width: 320,
+              width: { xs: '90vw', sm: 320 },
+              maxWidth: 320,
               maxHeight: 400,
             },
           }}

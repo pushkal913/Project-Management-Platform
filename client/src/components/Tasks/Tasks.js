@@ -31,7 +31,9 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import {
   Add,
@@ -59,6 +61,9 @@ import { getTaskProgress, getProgressColor } from '../../utils/taskProgress';
 const Tasks = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
@@ -434,9 +439,9 @@ const Tasks = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
+      <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+          <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom sx={{ color: 'white', mb: 0 }}>
             Tasks
           </Typography>
           <Button
@@ -446,9 +451,9 @@ const Tasks = () => {
             sx={{
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               borderRadius: 2,
-              px: 3,
-              py: 1.5,
-              fontSize: '1rem',
+              px: { xs: 2, sm: 3 },
+              py: { xs: 1, sm: 1.5 },
+              fontSize: { xs: '0.875rem', sm: '1rem' },
               fontWeight: 600,
               textTransform: 'none',
               boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
@@ -460,7 +465,7 @@ const Tasks = () => {
               transition: 'all 0.3s ease'
             }}
           >
-            New Task
+            {isSmallScreen ? "New" : "New Task"}
           </Button>
         </Box>
 
@@ -527,9 +532,9 @@ const Tasks = () => {
         </Paper>
 
         {/* Filters */}
-        <Paper sx={{ p: 1.5, mb: 3, borderRadius: 3, backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)' }}>
-          <Grid container spacing={1.5}>
-          <Grid item xs={12} sm={6} md={2.4}>
+        <Paper sx={{ p: { xs: 1, sm: 1.5 }, mb: 3, borderRadius: 3, backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)' }}>
+          <Grid container spacing={{ xs: 1, sm: 1.5 }}>
+          <Grid item xs={6} sm={6} md={2.4}>
             <FormControl fullWidth size="small">
               <Select
                 value={filters.priority}
@@ -538,17 +543,17 @@ const Tasks = () => {
                 inputProps={{ 'aria-label': 'Priority filter' }}
                 renderValue={(selected) => {
                   if (!selected) {
-                    return <span style={{ color: '#9ca3af', fontSize: '14px', fontWeight: 500 }}>Priority</span>;
+                    return <span style={{ color: '#9ca3af', fontSize: isSmallScreen ? '12px' : '14px', fontWeight: 500 }}>Priority</span>;
                   }
                   const map = { low: 'Low', medium: 'Medium', high: 'High', critical: 'Critical' };
-                  return <span style={{ fontSize: '14px', fontWeight: 500 }}>{map[selected] || 'Priority'}</span>;
+                  return <span style={{ fontSize: isSmallScreen ? '12px' : '14px', fontWeight: 500 }}>{map[selected] || 'Priority'}</span>;
                 }}
                 sx={{
                   bgcolor: 'rgba(255,255,255,0.98)',
                   borderRadius: 2,
                   '& fieldset': { border: 'none' },
                   color: '#111827',
-                  fontSize: '14px',
+                  fontSize: isSmallScreen ? '12px' : '14px',
                   fontWeight: 500,
                   boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
                   '& .MuiSelect-icon': { color: '#6b7280' }
@@ -562,7 +567,7 @@ const Tasks = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6} md={2.4}>
+          <Grid item xs={6} sm={6} md={2.4}>
             <FormControl fullWidth size="small">
               <Select
                 value={filters.project}
@@ -571,17 +576,17 @@ const Tasks = () => {
                 inputProps={{ 'aria-label': 'Project filter' }}
                 renderValue={(selected) => {
                   if (!selected) {
-                    return <span style={{ color: '#9ca3af', fontSize: '14px', fontWeight: 500 }}>Project</span>;
+                    return <span style={{ color: '#9ca3af', fontSize: isSmallScreen ? '12px' : '14px', fontWeight: 500 }}>Project</span>;
                   }
                   const p = projects.find(pr => pr._id === selected);
-                  return <span style={{ fontSize: '14px', fontWeight: 500 }}>{p?.name || 'Project'}</span>;
+                  return <span style={{ fontSize: isSmallScreen ? '12px' : '14px', fontWeight: 500 }}>{p?.name || 'Project'}</span>;
                 }}
                 sx={{
                   bgcolor: 'rgba(255,255,255,0.98)',
                   borderRadius: 2,
                   '& fieldset': { border: 'none' },
                   color: '#111827',
-                  fontSize: '14px',
+                  fontSize: isSmallScreen ? '12px' : '14px',
                   fontWeight: 500,
                   boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
                   '& .MuiSelect-icon': { color: '#6b7280' }
@@ -597,7 +602,7 @@ const Tasks = () => {
             </FormControl>
           </Grid>
           {users.length > 0 && (
-            <Grid item xs={12} sm={6} md={2.4}>
+            <Grid item xs={6} sm={6} md={2.4}>
               <FormControl fullWidth size="small">
                 <Select
                   value={filters.assignee}
@@ -606,17 +611,17 @@ const Tasks = () => {
                   inputProps={{ 'aria-label': 'Assignee filter' }}
                   renderValue={(selected) => {
                     if (!selected) {
-                      return <span style={{ color: '#9ca3af', fontSize: '14px', fontWeight: 500 }}>Assignee</span>;
+                      return <span style={{ color: '#9ca3af', fontSize: isSmallScreen ? '12px' : '14px', fontWeight: 500 }}>Assignee</span>;
                     }
                     const u = users.find(us => us._id === selected);
-                    return <span style={{ fontSize: '14px', fontWeight: 500 }}>{u?.name || 'Assignee'}</span>;
+                    return <span style={{ fontSize: isSmallScreen ? '12px' : '14px', fontWeight: 500 }}>{u?.name || 'Assignee'}</span>;
                   }}
                   sx={{
                     bgcolor: 'rgba(255,255,255,0.98)',
                     borderRadius: 2,
                     '& fieldset': { border: 'none' },
                     color: '#111827',
-                    fontSize: '14px',
+                    fontSize: isSmallScreen ? '12px' : '14px',
                     fontWeight: 500,
                     boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
                     '& .MuiSelect-icon': { color: '#6b7280' }
@@ -632,7 +637,7 @@ const Tasks = () => {
               </FormControl>
             </Grid>
           )}
-          <Grid item xs={12} sm={6} md={2.4}>
+          <Grid item xs={6} sm={6} md={2.4}>
             <FormControl fullWidth size="small">
               <Select
                 value={filters.timeFilter}
@@ -641,7 +646,7 @@ const Tasks = () => {
                 inputProps={{ 'aria-label': 'Time filter' }}
                 renderValue={(selected) => {
                   if (!selected) {
-                    return <span style={{ color: '#9ca3af', fontSize: '14px', fontWeight: 500 }}>Time Filter</span>;
+                    return <span style={{ color: '#9ca3af', fontSize: isSmallScreen ? '12px' : '14px', fontWeight: 500 }}>Time Filter</span>;
                   }
                   const map = { 
                     'this-month': 'This Month', 
@@ -649,14 +654,14 @@ const Tasks = () => {
                     'last-3-months': 'Last 3 Months',
                     'this-year': 'This Year'
                   };
-                  return <span style={{ fontSize: '14px', fontWeight: 500 }}>{map[selected] || 'Time Filter'}</span>;
+                  return <span style={{ fontSize: isSmallScreen ? '12px' : '14px', fontWeight: 500 }}>{map[selected] || 'Time Filter'}</span>;
                 }}
                 sx={{
                   bgcolor: 'rgba(255,255,255,0.98)',
                   borderRadius: 2,
                   '& fieldset': { border: 'none' },
                   color: '#111827',
-                  fontSize: '14px',
+                  fontSize: isSmallScreen ? '12px' : '14px',
                   fontWeight: 500,
                   boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
                   '& .MuiSelect-icon': { color: '#6b7280' }
@@ -688,7 +693,7 @@ const Tasks = () => {
                 }
                 label={
                   <Typography sx={{ 
-                    fontSize: '14px', 
+                    fontSize: isSmallScreen ? '12px' : '14px', 
                     fontWeight: 500, 
                     color: '#111827' 
                   }}>
@@ -698,7 +703,7 @@ const Tasks = () => {
                 sx={{
                   bgcolor: 'rgba(255,255,255,0.98)',
                   borderRadius: 2,
-                  px: 1.5,
+                  px: isSmallScreen ? 1 : 1.5,
                   py: 0.5,
                   border: 'none',
                   boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
@@ -718,13 +723,18 @@ const Tasks = () => {
         </Paper>
 
         {/* View Mode Toggle */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>Tasks</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+          <Typography variant={isSmallScreen ? "subtitle1" : "h6"} sx={{ fontWeight: 600 }}>Tasks</Typography>
           <ToggleButtonGroup
-            size="small"
+            size={isSmallScreen ? "small" : "medium"}
             value={viewMode}
             exclusive
             onChange={(e, val) => { if (val) setViewMode(val); }}
+            sx={{
+              '& .MuiToggleButton-root': {
+                px: isSmallScreen ? 1 : 1.5
+              }
+            }}
           >
             <ToggleButton value="cards" aria-label="card view">
               <ViewModule fontSize="small" />
@@ -736,7 +746,7 @@ const Tasks = () => {
         </Box>
 
         {viewMode === 'cards' ? (
-          <Grid container spacing={2}>
+          <Grid container spacing={{ xs: 1.5, sm: 2 }}>
             {tasks.map((task) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={task._id}>
               <Card 
@@ -752,20 +762,25 @@ const Tasks = () => {
                 }}
                 onClick={() => navigate(`/tasks/${task._id}`)}
               >
-                <CardContent sx={{ flexGrow: 1, position: 'relative', p: 2, pb: 1 }}>
+                <CardContent sx={{ flexGrow: 1, position: 'relative', p: { xs: 1.5, sm: 2 }, pb: 1 }}>
                   <IconButton
                     size="small"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleMenuOpen(e, task);
                     }}
-                    sx={{ position: 'absolute', top: 4, right: 4 }}
+                    sx={{ 
+                      position: 'absolute', 
+                      top: { xs: 2, sm: 4 }, 
+                      right: { xs: 2, sm: 4 },
+                      padding: { xs: 0.5, sm: 1 }
+                    }}
                   >
-                    <MoreVert />
+                    <MoreVert fontSize={isSmallScreen ? "small" : "medium"} />
                   </IconButton>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, pr: 4 }}>
-                    <Typography variant="body2" component="span" sx={{ mr: 1, fontSize: '16px' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, pr: { xs: 3, sm: 4 } }}>
+                    <Typography variant="body2" component="span" sx={{ mr: 1, fontSize: { xs: '14px', sm: '16px' } }}>
                       {getTypeIcon(task.type)}
                     </Typography>
                     <Typography
@@ -773,7 +788,7 @@ const Tasks = () => {
                       component="div"
                       sx={{
                         fontWeight: 600,
-                        fontSize: '1.15rem',
+                        fontSize: { xs: '1rem', sm: '1.15rem' },
                         lineHeight: 1.3,
                         overflowWrap: 'anywhere',
                         wordBreak: 'break-word'
@@ -790,8 +805,8 @@ const Tasks = () => {
                       sx={{
                         bgcolor: getStatusColor(task.status),
                         color: 'white',
-                        fontSize: '0.7rem',
-                        height: 20
+                        fontSize: { xs: '0.6rem', sm: '0.7rem' },
+                        height: { xs: 18, sm: 20 }
                       }}
                     />
                     <Chip
@@ -1095,8 +1110,9 @@ const Tasks = () => {
           onClose={() => setCreateDialogOpen(false)}
           maxWidth="md"
           fullWidth
+          fullScreen={isSmallScreen}
         >
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" gutterBottom>
               Create New Task
             </Typography>
@@ -1116,13 +1132,13 @@ const Tasks = () => {
                   fullWidth
                   label="Description"
                   multiline
-                  rows={9}
+                  rows={isSmallScreen ? 4 : 9}
                   value={newTask.description}
                   onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
                   required
                   sx={{
                     '& .MuiInputBase-root': {
-                      maxHeight: '240px',
+                      maxHeight: isSmallScreen ? '120px' : '240px',
                       overflow: 'auto'
                     }
                   }}
@@ -1241,8 +1257,9 @@ const Tasks = () => {
           onClose={() => setEditDialogOpen(false)}
           maxWidth="md"
           fullWidth
+          fullScreen={isSmallScreen}
         >
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" gutterBottom>
               Edit Task
             </Typography>

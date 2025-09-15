@@ -10,7 +10,9 @@ import {
   Divider,
   Box,
   Tooltip,
-  Typography
+  Typography,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import {
   Dashboard,
@@ -22,9 +24,11 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
 
-const Sidebar = ({ open, onToggle }) => {
+const Sidebar = ({ open, onToggle, isMobile }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const theme = useTheme();
+  const isExtraSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
   const menuItems = [
     {
@@ -71,6 +75,10 @@ const Sidebar = ({ open, onToggle }) => {
 
   const handleNavigation = (path) => {
     navigate(path);
+    // Close mobile drawer after navigation
+    if (isMobile && onToggle) {
+      onToggle();
+    }
   };
 
   // Remove location-based active detection - causes redirect blocker issues
@@ -82,7 +90,7 @@ const Sidebar = ({ open, onToggle }) => {
     return roles.includes(user?.role);
   };
 
-  const drawerWidth = open ? 240 : 60;
+  const drawerWidth = isMobile ? 280 : (open ? 240 : 60);
 
   const renderMenuItem = (item, index) => {
     if (!hasAccess(item.roles)) return null;
@@ -91,12 +99,12 @@ const Sidebar = ({ open, onToggle }) => {
 
     return (
       <ListItem key={item.text} disablePadding>
-        <Tooltip title={!open ? item.text : ''} placement="right">
+        <Tooltip title={(!open && !isMobile) ? item.text : ''} placement="right">
           <ListItemButton
             onClick={() => handleNavigation(item.path)}
             sx={{
               minHeight: 48,
-              justifyContent: open ? 'initial' : 'center',
+              justifyContent: (open || isMobile) ? 'initial' : 'center',
               px: 2.5,
               backgroundColor: active ? 'rgba(255, 255, 255, 0.18)' : 'transparent',
               borderLeft: active ? '3px solid #ffffff' : '3px solid transparent',
@@ -109,7 +117,7 @@ const Sidebar = ({ open, onToggle }) => {
             <ListItemIcon
               sx={{
                 minWidth: 0,
-                mr: open ? 3 : 'auto',
+                mr: (open || isMobile) ? 3 : 'auto',
                 justifyContent: 'center',
                 color: active ? '#ffffff' : 'rgba(255,255,255,0.9)',
               }}
@@ -119,7 +127,7 @@ const Sidebar = ({ open, onToggle }) => {
             <ListItemText
               primary={item.text}
               sx={{
-                opacity: open ? 1 : 0,
+                opacity: (open || isMobile) ? 1 : 0,
                 color: '#ffffff',
                 '& .MuiListItemText-primary': {
                   fontWeight: active ? 800 : 700,
@@ -134,8 +142,12 @@ const Sidebar = ({ open, onToggle }) => {
 
   return (
     <Drawer
-      variant="permanent"
+      variant={isMobile ? "temporary" : "permanent"}
       open={open}
+      onClose={isMobile ? onToggle : undefined}
+      ModalProps={{
+        keepMounted: true, // Better open performance on mobile
+      }}
       sx={{
         width: drawerWidth,
         flexShrink: 0,
@@ -144,27 +156,32 @@ const Sidebar = ({ open, onToggle }) => {
           boxSizing: 'border-box',
           transition: 'width 0.3s',
           overflowX: 'hidden',
+          backgroundColor: '#1976d2',
+          color: '#ffffff',
         },
       }}
     >
-      <Box sx={{ mt: 8 }}>
+      <Box sx={{ mt: isMobile ? 1 : 8 }}>
         {/* User Info Section */}
-        {open && (
+        {(open || isMobile) && (
           <Box sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="h6" noWrap>
+            <Typography variant="h6" noWrap sx={{ color: '#ffffff' }}>
               {user?.name?.split(' ')[0]}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', textTransform: 'capitalize' }}>
+              {user?.role}
             </Typography>
           </Box>
         )}
         
-        <Divider />
+        <Divider sx={{ borderColor: 'rgba(255,255,255,0.12)' }} />
 
         {/* Main Navigation */}
         <List>
           {menuItems.map((item, index) => renderMenuItem(item, index))}
         </List>
 
-        <Divider />
+        <Divider sx={{ borderColor: 'rgba(255,255,255,0.12)' }} />
 
         {/* Bottom Navigation */}
         <Box sx={{ position: 'absolute', bottom: 0, width: '100%' }}>
