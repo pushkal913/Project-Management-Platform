@@ -16,6 +16,9 @@ import {
   MenuItem,
   Button,
   Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   TextField,
   FormControl,
   InputLabel,
@@ -28,7 +31,9 @@ import {
   Block,
   Add,
   Email,
-  Phone
+  Phone,
+  PersonRemove,
+  Warning
 } from '@mui/icons-material';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
@@ -41,6 +46,9 @@ const Users = () => {
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+  const [userToRemove, setUserToRemove] = useState(null);
+  const [selectionMode, setSelectionMode] = useState(false);
   const [editFormData, setEditFormData] = useState({
     name: '',
     email: '',
@@ -114,6 +122,29 @@ const Users = () => {
     handleMenuClose();
   };
 
+  const handleRemoveUserClick = (userData) => {
+    setUserToRemove(userData);
+    setRemoveDialogOpen(true);
+  };
+
+  const handleConfirmRemoveUser = async () => {
+    try {
+      await axios.delete(`/users/${userToRemove._id}`);
+      toast.success('User removed successfully');
+      setRemoveDialogOpen(false);
+      setUserToRemove(null);
+      fetchUsers();
+    } catch (error) {
+      console.error('Error removing user:', error);
+      toast.error('Failed to remove user');
+    }
+  };
+
+  const handleCancelRemoveUser = () => {
+    setRemoveDialogOpen(false);
+    setUserToRemove(null);
+  };
+
   const getRoleColor = (role) => {
     const colors = {
       admin: '#f44336',
@@ -149,13 +180,30 @@ const Users = () => {
           Team Members
         </Typography>
         {user?.role === 'admin' && (
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => window.open('/register', '_blank')}
-          >
-            Add Member
-          </Button>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              onClick={() => window.open('/register', '_blank')}
+            >
+              Add Member
+            </Button>
+            <Button
+              variant="outlined"
+              color={selectionMode ? "secondary" : "error"}
+              startIcon={<PersonRemove />}
+              onClick={() => {
+                setSelectionMode(!selectionMode);
+                if (!selectionMode) {
+                  toast.info('Selection mode enabled. Click on a user to remove them.');
+                } else {
+                  toast.info('Selection mode disabled.');
+                }
+              }}
+            >
+              {selectionMode ? 'Cancel Remove' : 'Remove User'}
+            </Button>
+          </Box>
         )}
       </Box>
 
@@ -175,7 +223,21 @@ const Users = () => {
           </TableHead>
           <TableBody>
             {users.map((userData) => (
-              <TableRow key={userData._id}>
+              <TableRow 
+                key={userData._id}
+                onClick={() => {
+                  if (selectionMode && userData._id !== user._id) {
+                    handleRemoveUserClick(userData);
+                  }
+                }}
+                sx={{
+                  cursor: selectionMode && userData._id !== user._id ? 'pointer' : 'default',
+                  backgroundColor: selectionMode && userData._id !== user._id ? 'rgba(244, 67, 54, 0.1)' : 'transparent',
+                  '&:hover': {
+                    backgroundColor: selectionMode && userData._id !== user._id ? 'rgba(244, 67, 54, 0.2)' : 'rgba(0, 0, 0, 0.04)'
+                  }
+                }}
+              >
                 <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Avatar sx={{ bgcolor: getRoleColor(userData.role) }}>
@@ -346,6 +408,40 @@ const Users = () => {
             </Button>
           </Box>
         </Box>
+      </Dialog>
+
+      {/* Remove User Confirmation Dialog */}
+      <Dialog
+        open={removeDialogOpen}
+        onClose={handleCancelRemoveUser}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Warning color="error" />
+          Confirm User Removal
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" gutterBottom>
+            Are you sure you want to remove <strong>{userToRemove?.name}</strong> from the platform?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone. The user will lose access to all projects and data.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelRemoveUser}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleConfirmRemoveUser}
+            startIcon={<PersonRemove />}
+          >
+            Remove User
+          </Button>
+        </DialogActions>
       </Dialog>
     </Box>
   );
