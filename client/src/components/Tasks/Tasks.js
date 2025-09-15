@@ -81,10 +81,26 @@ const Tasks = () => {
   // Function to generate consistent colors for users
   const getUserColor = (userId) => {
     const colors = [
-      '#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5',
-      '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50',
-      '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800',
-      '#ff5722', '#795548', '#9e9e9e', '#607d8b', '#6366f1'
+      '#1e40af', // blue-800
+      '#dc2626', // red-600  
+      '#059669', // emerald-600
+      '#7c3aed', // violet-600
+      '#ea580c', // orange-600
+      '#0891b2', // cyan-600
+      '#65a30d', // lime-600
+      '#c2410c', // orange-700
+      '#9333ea', // purple-600
+      '#0369a1', // sky-700
+      '#166534', // green-800
+      '#991b1b', // red-800
+      '#581c87', // purple-800
+      '#92400e', // amber-700
+      '#134e4a', // teal-800
+      '#7c2d12', // orange-800
+      '#312e81', // indigo-800
+      '#1f2937', // gray-800
+      '#78350f', // amber-800
+      '#831843'  // pink-800
     ];
     
     if (!userId) return colors[0];
@@ -814,7 +830,7 @@ const Tasks = () => {
                           height: 24, 
                           fontSize: '0.75rem',
                           fontWeight: 600,
-                          bgcolor: '#3b82f6',
+                          bgcolor: getUserColor(task.assignee._id),
                           color: 'white',
                           border: '2px solid rgba(255,255,255,0.2)'
                         }}
@@ -825,7 +841,7 @@ const Tasks = () => {
                         label={task.assignee.name}
                         size="small"
                         sx={{
-                          bgcolor: '#3b82f6',
+                          bgcolor: getUserColor(task.assignee._id),
                           color: 'white',
                           fontSize: '0.75rem',
                           fontWeight: 600,
@@ -997,7 +1013,7 @@ const Tasks = () => {
                             height: 28,
                             fontSize: '0.8rem',
                             fontWeight: 600,
-                            bgcolor: task.assignee ? '#3b82f6' : '#9e9e9e',
+                            bgcolor: task.assignee ? getUserColor(task.assignee._id) : '#9e9e9e',
                             color: 'white',
                             border: '2px solid rgba(255,255,255,0.2)'
                           }}
@@ -1009,7 +1025,7 @@ const Tasks = () => {
                             label={task.assignee.name}
                             size="small"
                             sx={{
-                              bgcolor: '#3b82f6',
+                              bgcolor: getUserColor(task.assignee._id),
                               color: 'white',
                               fontSize: '0.8rem',
                               fontWeight: 600,
