@@ -47,7 +47,8 @@ import {
   FilterList,
   ViewModule,
   ViewList,
-  FolderOpen
+  FolderOpen,
+  Close
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -762,7 +763,7 @@ const Tasks = () => {
                 }}
                 onClick={() => navigate(`/tasks/${task._id}`)}
               >
-                <CardContent sx={{ flexGrow: 1, position: 'relative', p: { xs: 1.5, sm: 2 }, pb: 1 }}>
+                <CardContent sx={{ flexGrow: 1, position: 'relative', p: { xs: 1.25, sm: 2 } }}>
                   <IconButton
                     size="small"
                     onClick={(e) => {
@@ -771,200 +772,201 @@ const Tasks = () => {
                     }}
                     sx={{ 
                       position: 'absolute', 
-                      top: { xs: 2, sm: 4 }, 
-                      right: { xs: 2, sm: 4 },
+                      top: { xs: 4, sm: 8 }, 
+                      right: { xs: 4, sm: 8 },
                       padding: { xs: 0.5, sm: 1 }
                     }}
                   >
                     <MoreVert fontSize={isSmallScreen ? "small" : "medium"} />
                   </IconButton>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, pr: { xs: 3, sm: 4 } }}>
-                    <Typography variant="body2" component="span" sx={{ mr: 1, fontSize: { xs: '14px', sm: '16px' } }}>
-                      {getTypeIcon(task.type)}
-                    </Typography>
-                    <Typography
-                      variant="subtitle1"
-                      component="div"
-                      sx={{
-                        fontWeight: 600,
-                        fontSize: { xs: '1rem', sm: '1.15rem' },
-                        lineHeight: 1.3,
-                        overflowWrap: 'anywhere',
-                        wordBreak: 'break-word'
-                      }}
-                    >
-                      {task.title}
-                    </Typography>
-                  </Box>
+                  {/* Main Content Layout - Two Column on Mobile */}
+                  <Box sx={{ display: 'flex', gap: 1, pr: { xs: 3, sm: 4 } }}>
+                    {/* Left Column - Main Info */}
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      {/* Title with Icon */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="body2" component="span" sx={{ mr: 0.5, fontSize: { xs: '12px', sm: '14px' } }}>
+                          {getTypeIcon(task.type)}
+                        </Typography>
+                        <Typography
+                          variant="subtitle1"
+                          component="div"
+                          sx={{
+                            fontWeight: 600,
+                            fontSize: { xs: '0.9rem', sm: '1.1rem' },
+                            lineHeight: 1.2,
+                            overflowWrap: 'anywhere',
+                            wordBreak: 'break-word'
+                          }}
+                        >
+                          {task.title}
+                        </Typography>
+                      </Box>
 
-                  <Box sx={{ display: 'flex', gap: { xs: 0.3, sm: 0.5 }, mb: { xs: 1, sm: 1.5 }, flexWrap: 'wrap' }}>
-                    <Chip
-                      label={task.status.replace('-', ' ')}
-                      size="small"
-                      sx={{
-                        bgcolor: getStatusColor(task.status),
-                        color: 'white',
-                        fontSize: { xs: '0.55rem', sm: '0.7rem' },
-                        height: { xs: 16, sm: 20 }
-                      }}
-                    />
-                    <Chip
-                      label={task.priority}
-                      size="small"
-                      sx={{
-                        bgcolor: getPriorityColor(task.priority),
-                        color: 'white',
-                        fontSize: { xs: '0.55rem', sm: '0.7rem' },
-                        height: { xs: 16, sm: 20 }
-                      }}
-                    />
-                    <Chip
-                      label={task.type}
-                      size="small"
-                      variant="outlined"
-                      sx={{
-                        fontSize: { xs: '0.55rem', sm: '0.7rem' },
-                        height: { xs: 16, sm: 20 }
-                      }}
-                    />
-                  </Box>
+                      {/* Status and Priority Chips */}
+                      <Box sx={{ display: 'flex', gap: 0.4, mb: 1, flexWrap: 'wrap' }}>
+                        <Chip
+                          label={task.status.replace('-', ' ')}
+                          size="small"
+                          sx={{
+                            bgcolor: getStatusColor(task.status),
+                            color: 'white',
+                            fontSize: { xs: '0.55rem', sm: '0.65rem' },
+                            height: { xs: 16, sm: 18 }
+                          }}
+                        />
+                        <Chip
+                          label={task.priority}
+                          size="small"
+                          sx={{
+                            bgcolor: getPriorityColor(task.priority),
+                            color: 'white',
+                            fontSize: { xs: '0.55rem', sm: '0.65rem' },
+                            height: { xs: 16, sm: 18 }
+                          }}
+                        />
+                      </Box>
 
-                  <Box sx={{ mb: { xs: 0.5, sm: 1 } }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-                      <FolderOpen sx={{ fontSize: { xs: 12, sm: 14 }, mr: 0.5, color: '#3b82f6' }} />
-                      {task.project?.name}
-                    </Typography>
-                  </Box>
+                      {/* Project Info */}
+                      <Box sx={{ mb: 0.5 }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, fontWeight: 600, display: 'flex', alignItems: 'center' }}>
+                          <FolderOpen sx={{ fontSize: { xs: 10, sm: 12 }, mr: 0.3, color: '#3b82f6' }} />
+                          {task.project?.name}
+                        </Typography>
+                      </Box>
 
-                  {task.assignee && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: { xs: 0.5, sm: 1 } }}>
-                      <Person sx={{ fontSize: { xs: 12, sm: 14 }, color: 'text.secondary' }} />
-                      <Avatar 
-                        sx={{ 
-                          width: { xs: 20, sm: 24 }, 
-                          height: { xs: 20, sm: 24 }, 
-                          fontSize: { xs: '0.6rem', sm: '0.75rem' },
-                          fontWeight: 600,
-                          bgcolor: getUserColor(task.assignee._id),
-                          color: 'white',
-                          border: '2px solid rgba(255,255,255,0.2)'
-                        }}
-                      >
-                        {task.assignee.name.charAt(0).toUpperCase()}
-                      </Avatar>
-                      <Chip
-                        label={task.assignee.name}
-                        size="small"
-                        sx={{
-                          bgcolor: getUserColor(task.assignee._id),
-                          color: 'white',
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          height: 24,
-                          '& .MuiChip-label': {
-                            px: 1.5
-                          }
-                        }}
-                      />
+                      {/* Assignee */}
+                      {task.assignee && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3, mb: 0.5 }}>
+                          <Avatar 
+                            sx={{ 
+                              width: { xs: 16, sm: 20 }, 
+                              height: { xs: 16, sm: 20 }, 
+                              fontSize: { xs: '0.5rem', sm: '0.6rem' },
+                              fontWeight: 600,
+                              bgcolor: getUserColor(task.assignee._id),
+                              color: 'white'
+                            }}
+                          >
+                            {task.assignee.name.charAt(0).toUpperCase()}
+                          </Avatar>
+                          <Typography variant="caption" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, fontWeight: 500 }}>
+                            {task.assignee.name}
+                          </Typography>
+                        </Box>
+                      )}
+
+                      {/* Progress Bar */}
+                      <Box sx={{ width: '100%', mt: 1 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.3 }}>
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
+                            Progress
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" fontWeight="medium" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
+                            {getTaskProgress(task.status)}%
+                          </Typography>
+                        </Box>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={getTaskProgress(task.status)} 
+                          sx={{ 
+                            height: 3, 
+                            borderRadius: 2,
+                            bgcolor: 'rgba(0, 0, 0, 0.05)',
+                            '& .MuiLinearProgress-bar': {
+                              backgroundColor: getProgressColor(task.status),
+                              borderRadius: 2
+                            }
+                          }}
+                        />
+                      </Box>
                     </Box>
-                  )}
 
-                  {task.dueDate && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-                      <CalendarToday sx={{ fontSize: 14, color: isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary' }} />
-                      <Typography 
-                        variant="body2" 
-                        color={isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary'}
-                        sx={{ fontSize: '0.8rem' }}
-                      >
-                        Due: {formatDate(task.dueDate)}
-                        {isOverdue(task.dueDate, task.status) && ' (Overdue)'}
-                      </Typography>
+                    {/* Right Column - Time & Due Date Info */}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', minWidth: 'fit-content', gap: 0.5 }}>
+                      {/* Due Date */}
+                      {task.dueDate && (
+                        <Box sx={{ textAlign: 'right' }}>
+                          <Typography 
+                            variant="caption" 
+                            color={isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary'}
+                            sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' }, fontWeight: 600, display: 'block' }}
+                          >
+                            Due: {formatDate(task.dueDate).split('/').slice(0,2).join('/')}
+                          </Typography>
+                          {isOverdue(task.dueDate, task.status) && (
+                            <Typography variant="caption" color="error.main" sx={{ fontSize: { xs: '0.55rem', sm: '0.6rem' } }}>
+                              Overdue
+                            </Typography>
+                          )}
+                        </Box>
+                      )}
+
+                      {/* Time Info */}
+                      <Box sx={{ textAlign: 'right' }}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' }, display: 'block' }}>
+                          Logged: {task.actualHours ? task.actualHours.toFixed(1) : 0}h
+                        </Typography>
+                        {task.estimatedHours > 0 && (
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' }, display: 'block' }}>
+                            Est: {task.estimatedHours}h
+                          </Typography>
+                        )}
+                      </Box>
+
+                      {/* Time Tracker - Compact */}
+                      <Box sx={{ textAlign: 'right' }} onClick={(e) => e.stopPropagation()}>
+                        <Box sx={{ display: 'flex', gap: 0.3, alignItems: 'center' }}>
+                          <TextField
+                            size="small"
+                            type="number"
+                            placeholder="H"
+                            value={(timeInputs[task._id]?.hours) ?? ''}
+                            onChange={(e) => updateTimeInput(task._id, 'hours', e.target.value)}
+                            sx={{ 
+                              width: 32,
+                              '& .MuiInputBase-input': { 
+                                fontSize: '0.7rem',
+                                p: '2px 4px',
+                                textAlign: 'center'
+                              }
+                            }}
+                            inputProps={{ min: 0 }}
+                          />
+                          <TextField
+                            size="small"
+                            type="number"
+                            placeholder="M"
+                            value={(timeInputs[task._id]?.minutes) ?? ''}
+                            onChange={(e) => updateTimeInput(task._id, 'minutes', e.target.value)}
+                            sx={{ 
+                              width: 32,
+                              '& .MuiInputBase-input': { 
+                                fontSize: '0.7rem',
+                                p: '2px 4px',
+                                textAlign: 'center'
+                              }
+                            }}
+                            inputProps={{ min: 0, max: 59 }}
+                          />
+                          <Button 
+                            variant="outlined" 
+                            size="small" 
+                            onClick={(e) => { e.stopPropagation(); handleLogTime(task._id); }}
+                            sx={{ 
+                              fontSize: '0.6rem',
+                              px: 0.5,
+                              py: 0.2,
+                              minWidth: 'auto',
+                              height: 24
+                            }}
+                          >
+                            Log
+                          </Button>
+                        </Box>
+                      </Box>
                     </Box>
-                  )}
-
-                  {task.estimatedHours > 0 && (
-                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem', fontWeight: 700, mb: 1 }}>
-                      Estimated: {task.estimatedHours}h
-                    </Typography>
-                  )}
-
-                  {/* Time tracker on card */}
-                  <Box sx={{ mb: 1 }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                      Logged: {task.actualHours ? task.actualHours.toFixed(2) : 0}h
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5 }} onClick={(e) => e.stopPropagation()}>
-                      <TextField
-                        size="small"
-                        type="number"
-                        placeholder="H"
-                        value={(timeInputs[task._id]?.hours) ?? ''}
-                        onChange={(e) => updateTimeInput(task._id, 'hours', e.target.value)}
-                        sx={{ 
-                          width: 44,
-                          '& .MuiInputBase-input': { 
-                            fontSize: '0.8rem',
-                            p: '4px 6px'
-                          }
-                        }}
-                        inputProps={{ min: 0 }}
-                      />
-                      <TextField
-                        size="small"
-                        type="number"
-                        placeholder="M"
-                        value={(timeInputs[task._id]?.minutes) ?? ''}
-                        onChange={(e) => updateTimeInput(task._id, 'minutes', e.target.value)}
-                        sx={{ 
-                          width: 44,
-                          '& .MuiInputBase-input': { 
-                            fontSize: '0.8rem',
-                            p: '4px 6px'
-                          }
-                        }}
-                        inputProps={{ min: 0, max: 59 }}
-                      />
-                      <Button 
-                        variant="outlined" 
-                        size="small" 
-                        onClick={(e) => { e.stopPropagation(); handleLogTime(task._id); }}
-                        sx={{ 
-                          fontSize: '0.7rem',
-                          px: 1,
-                          py: 0.25,
-                          minWidth: 'auto'
-                        }}
-                      >
-                        Log
-                      </Button>
-                    </Box>
-                  </Box>
-
-                  {/* Progress Bar */}
-                  <Box sx={{ width: '100%', mb: 1 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                        Progress
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" fontWeight="medium" sx={{ fontSize: '0.7rem' }}>
-                        {getTaskProgress(task.status)}%
-                      </Typography>
-                    </Box>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={getTaskProgress(task.status)} 
-                      sx={{ 
-                        height: 4, 
-                        borderRadius: 2,
-                        bgcolor: 'rgba(0, 0, 0, 0.05)',
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: getProgressColor(task.status),
-                          borderRadius: 2
-                        }
-                      }}
-                    />
                   </Box>
                 </CardContent>
 
@@ -991,7 +993,7 @@ const Tasks = () => {
                   <TableCell sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit', minWidth: isSmallScreen ? 80 : 'auto' }}>Status</TableCell>
                   {!isSmallScreen && <TableCell sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit' }}>Due Date</TableCell>}
                   <TableCell sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit', minWidth: isSmallScreen ? 100 : 'auto' }}>Assigned To</TableCell>
-                  {!isSmallScreen && <TableCell align="right" sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit' }}>Logged (h)</TableCell>}
+                  <TableCell align="right" sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit', minWidth: isSmallScreen ? 60 : 'auto' }}>Logged (h)</TableCell>
                   {!isSmallScreen && <TableCell align="right" sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit' }}>Estimated (h)</TableCell>}
                 </TableRow>
               </TableHead>
@@ -1080,13 +1082,15 @@ const Tasks = () => {
                         )}
                       </Box>
                     </TableCell>
-                    {!isSmallScreen && <TableCell align="right">{task.actualHours ? task.actualHours.toFixed(2) : '0.00'}</TableCell>}
+                    <TableCell align="right" sx={{ fontSize: isSmallScreen ? '0.7rem' : 'inherit' }}>
+                      {task.actualHours ? task.actualHours.toFixed(2) : '0.00'}
+                    </TableCell>
                     {!isSmallScreen && <TableCell align="right">{task.estimatedHours ? Number(task.estimatedHours).toFixed(2) : '0.00'}</TableCell>}
                   </TableRow>
                 ))}
                 {tasks.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={isSmallScreen ? 3 : 6} align="center">No tasks found</TableCell>
+                    <TableCell colSpan={isSmallScreen ? 4 : 6} align="center">No tasks found</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -1133,13 +1137,52 @@ const Tasks = () => {
           maxWidth="md"
           fullWidth
           fullScreen={isSmallScreen}
+          sx={{
+            '& .MuiDialog-paper': {
+              ...(isSmallScreen && {
+                m: 0,
+                maxHeight: '100vh',
+                borderRadius: 0
+              })
+            }
+          }}
         >
-          <Box sx={{ p: { xs: 2, sm: 3 } }}>
-            <Typography variant="h6" gutterBottom>
-              Create New Task
-            </Typography>
+          <Box sx={{ 
+            p: { xs: 1.5, sm: 3 },
+            maxHeight: isSmallScreen ? '100vh' : 'auto',
+            overflow: 'auto'
+          }}>
+            {/* Header */}
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              mb: { xs: 2, sm: 3 },
+              ...(isSmallScreen && {
+                position: 'sticky',
+                top: 0,
+                bgcolor: 'background.paper',
+                zIndex: 1,
+                pb: 1,
+                borderBottom: '1px solid',
+                borderColor: 'divider'
+              })
+            }}>
+              <Typography variant={isSmallScreen ? "h6" : "h5"} sx={{ fontWeight: 600 }}>
+                Create New Task
+              </Typography>
+              {isSmallScreen && (
+                <IconButton 
+                  onClick={() => setCreateDialogOpen(false)}
+                  size="small"
+                  sx={{ p: 1 }}
+                >
+                  <Close />
+                </IconButton>
+              )}
+            </Box>
 
-            <Grid container spacing={2}>
+            <Grid container spacing={{ xs: 1.5, sm: 2 }}>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -1147,6 +1190,12 @@ const Tasks = () => {
                   value={newTask.title}
                   onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
                   required
+                  size={isSmallScreen ? "small" : "medium"}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontSize: isSmallScreen ? '0.875rem' : 'inherit'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -1154,21 +1203,25 @@ const Tasks = () => {
                   fullWidth
                   label="Description"
                   multiline
-                  rows={isSmallScreen ? 4 : 9}
+                  rows={isSmallScreen ? 3 : 4}
                   value={newTask.description}
                   onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
                   required
+                  size={isSmallScreen ? "small" : "medium"}
                   sx={{
                     '& .MuiInputBase-root': {
-                      maxHeight: isSmallScreen ? '120px' : '240px',
+                      maxHeight: isSmallScreen ? '80px' : '120px',
                       overflow: 'auto'
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: isSmallScreen ? '0.875rem' : 'inherit'
                     }
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth required>
-                  <InputLabel>Project</InputLabel>
+              <Grid item xs={12}>
+                <FormControl fullWidth required size={isSmallScreen ? "small" : "medium"}>
+                  <InputLabel sx={{ fontSize: isSmallScreen ? '0.875rem' : 'inherit' }}>Project</InputLabel>
                   <Select
                     value={newTask.project}
                     label="Project"
@@ -1182,9 +1235,9 @@ const Tasks = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel>Type</InputLabel>
+              <Grid item xs={6}>
+                <FormControl fullWidth size={isSmallScreen ? "small" : "medium"}>
+                  <InputLabel sx={{ fontSize: isSmallScreen ? '0.875rem' : 'inherit' }}>Type</InputLabel>
                   <Select
                     value={newTask.type}
                     label="Type"
@@ -1198,9 +1251,9 @@ const Tasks = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel>Priority</InputLabel>
+              <Grid item xs={6}>
+                <FormControl fullWidth size={isSmallScreen ? "small" : "medium"}>
+                  <InputLabel sx={{ fontSize: isSmallScreen ? '0.875rem' : 'inherit' }}>Priority</InputLabel>
                   <Select
                     value={newTask.priority}
                     label="Priority"
@@ -1213,9 +1266,9 @@ const Tasks = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel>Assignee</InputLabel>
+              <Grid item xs={12}>
+                <FormControl fullWidth size={isSmallScreen ? "small" : "medium"}>
+                  <InputLabel sx={{ fontSize: isSmallScreen ? '0.875rem' : 'inherit' }}>Assignee</InputLabel>
                   <Select
                     value={newTask.assignee}
                     label="Assignee"
@@ -1230,42 +1283,88 @@ const Tasks = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={6}>
                 <DatePicker
                   label="Due Date"
                   value={newTask.dueDate}
                   onChange={(date) => setNewTask({ ...newTask, dueDate: date })}
-                  renderInput={(params) => <TextField {...params} fullWidth />}
+                  renderInput={(params) => 
+                    <TextField 
+                      {...params} 
+                      fullWidth 
+                      size={isSmallScreen ? "small" : "medium"}
+                      sx={{
+                        '& .MuiInputLabel-root': {
+                          fontSize: isSmallScreen ? '0.875rem' : 'inherit'
+                        }
+                      }}
+                    />
+                  }
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={6}>
                 <TextField
                   fullWidth
                   label="Estimated Hours"
                   type="number"
                   value={newTask.estimatedHours}
                   onChange={(e) => setNewTask({ ...newTask, estimatedHours: e.target.value })}
+                  size={isSmallScreen ? "small" : "medium"}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontSize: isSmallScreen ? '0.875rem' : 'inherit'
+                    }
+                  }}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Tags (comma separated)"
-                  value={newTask.tags}
-                  onChange={(e) => setNewTask({ ...newTask, tags: e.target.value })}
-                  placeholder="frontend, urgent, feature"
-                />
-              </Grid>
+              {!isSmallScreen && (
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Tags (comma separated)"
+                    value={newTask.tags}
+                    onChange={(e) => setNewTask({ ...newTask, tags: e.target.value })}
+                    placeholder="frontend, urgent, feature"
+                    size="medium"
+                  />
+                </Grid>
+              )}
             </Grid>
 
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
-              <Button onClick={() => setCreateDialogOpen(false)}>
+            {/* Action Buttons */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'flex-end', 
+              gap: { xs: 1, sm: 2 }, 
+              mt: { xs: 2, sm: 3 },
+              ...(isSmallScreen && {
+                position: 'sticky',
+                bottom: 0,
+                bgcolor: 'background.paper',
+                pt: 2,
+                borderTop: '1px solid',
+                borderColor: 'divider'
+              })
+            }}>
+              <Button 
+                onClick={() => setCreateDialogOpen(false)}
+                size={isSmallScreen ? "medium" : "large"}
+                sx={{ 
+                  px: { xs: 2, sm: 3 },
+                  fontSize: isSmallScreen ? '0.875rem' : 'inherit'
+                }}
+              >
                 Cancel
               </Button>
               <Button
                 variant="contained"
                 onClick={handleCreateTask}
                 disabled={!newTask.title || !newTask.description || !newTask.project}
+                size={isSmallScreen ? "medium" : "large"}
+                sx={{ 
+                  px: { xs: 2, sm: 3 },
+                  fontSize: isSmallScreen ? '0.875rem' : 'inherit'
+                }}
               >
                 Create Task
               </Button>
