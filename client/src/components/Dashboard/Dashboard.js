@@ -205,12 +205,12 @@ const Dashboard = () => {
 
       <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Modern Statistics Cards */}
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={6} md={3}>
           <Card 
             sx={{
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: 'white',
-              borderRadius: 4,
+              borderRadius: { xs: 2, sm: 4 },
               border: 'none',
               boxShadow: '0 20px 40px rgba(102, 126, 234, 0.3)',
               transform: 'translateY(0)',
@@ -218,6 +218,7 @@ const Dashboard = () => {
               cursor: 'pointer',
               position: 'relative',
               overflow: 'hidden',
+              height: { xs: 120, sm: 140, md: 160 }, // Responsive height
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -230,20 +231,33 @@ const Dashboard = () => {
                 transition: 'opacity 0.3s ease'
               },
               '&:hover': {
-                transform: 'translateY(-12px) scale(1.02)',
+                transform: { xs: 'translateY(-4px)', sm: 'translateY(-8px)', md: 'translateY(-12px) scale(1.02)' },
                 boxShadow: '0 25px 50px rgba(102, 126, 234, 0.4)',
                 '&::before': { opacity: 1 }
               },
             }}
             onClick={() => navigate('/tasks')}
           >
-            <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography variant="h3" component="div" sx={{ fontWeight: 800, mb: 0.5 }}>
+            <CardContent sx={{ p: { xs: 1.5, sm: 2, md: 3 }, height: '100%', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography 
+                    variant={isMobile ? "h5" : "h3"} 
+                    component="div" 
+                    sx={{ 
+                      fontWeight: 800, 
+                      mb: 0.5,
+                      fontSize: { xs: '1.5rem', sm: '2rem', md: '3rem' }
+                    }}
+                  >
                     {dashboardData?.totalTasks || 0}
                   </Typography>
-                  <Typography sx={{ opacity: 0.9, fontWeight: 600, fontSize: '1.1rem' }}>
+                  <Typography sx={{ 
+                    opacity: 0.9, 
+                    fontWeight: 600, 
+                    fontSize: { xs: '0.75rem', sm: '0.9rem', md: '1.1rem' },
+                    lineHeight: 1.2
+                  }}>
                     Total Tasks
                   </Typography>
                 </Box>
@@ -251,23 +265,24 @@ const Dashboard = () => {
                   sx={{
                     background: 'rgba(255, 255, 255, 0.2)',
                     borderRadius: '50%',
-                    p: 2,
-                    backdropFilter: 'blur(10px)'
+                    p: { xs: 1, sm: 1.5, md: 2 },
+                    backdropFilter: 'blur(10px)',
+                    ml: 1
                   }}
                 >
-                  <Assignment sx={{ fontSize: 32, color: 'white' }} />
+                  <Assignment sx={{ fontSize: { xs: 20, sm: 24, md: 32 }, color: 'white' }} />
                 </Box>
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={6} md={3}>
           <Card
             sx={{
               background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
               color: 'white',
-              borderRadius: 4,
+              borderRadius: { xs: 2, sm: 4 },
               border: 'none',
               boxShadow: '0 20px 40px rgba(17, 153, 142, 0.3)',
               transform: 'translateY(0)',
@@ -275,6 +290,7 @@ const Dashboard = () => {
               cursor: 'pointer',
               position: 'relative',
               overflow: 'hidden',
+              height: { xs: 120, sm: 140, md: 160 },
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -287,20 +303,33 @@ const Dashboard = () => {
                 transition: 'opacity 0.3s ease'
               },
               '&:hover': {
-                transform: 'translateY(-12px) scale(1.02)',
+                transform: { xs: 'translateY(-4px)', sm: 'translateY(-8px)', md: 'translateY(-12px) scale(1.02)' },
                 boxShadow: '0 25px 50px rgba(17, 153, 142, 0.4)',
                 '&::before': { opacity: 1 }
               },
             }}
             onClick={() => navigate('/projects')}
           >
-            <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography variant="h3" component="div" sx={{ fontWeight: 800, mb: 0.5 }}>
+            <CardContent sx={{ p: { xs: 1.5, sm: 2, md: 3 }, height: '100%', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography 
+                    variant={isMobile ? "h5" : "h3"} 
+                    component="div" 
+                    sx={{ 
+                      fontWeight: 800, 
+                      mb: 0.5,
+                      fontSize: { xs: '1.5rem', sm: '2rem', md: '3rem' }
+                    }}
+                  >
                     {dashboardData?.totalProjects || 0}
                   </Typography>
-                  <Typography sx={{ opacity: 0.9, fontWeight: 600, fontSize: '1.1rem' }}>
+                  <Typography sx={{ 
+                    opacity: 0.9, 
+                    fontWeight: 600, 
+                    fontSize: { xs: '0.75rem', sm: '0.9rem', md: '1.1rem' },
+                    lineHeight: 1.2
+                  }}>
                     Total Projects
                   </Typography>
                 </Box>
@@ -308,23 +337,24 @@ const Dashboard = () => {
                   sx={{
                     background: 'rgba(255, 255, 255, 0.2)',
                     borderRadius: '50%',
-                    p: 2,
-                    backdropFilter: 'blur(10px)'
+                    p: { xs: 1, sm: 1.5, md: 2 },
+                    backdropFilter: 'blur(10px)',
+                    ml: 1
                   }}
                 >
-                  <FolderOpen sx={{ fontSize: 32, color: 'white' }} />
+                  <FolderOpen sx={{ fontSize: { xs: 20, sm: 24, md: 32 }, color: 'white' }} />
                 </Box>
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={6} md={3}>
           <Card
             sx={{
               background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
               color: 'white',
-              borderRadius: 4,
+              borderRadius: { xs: 2, sm: 4 },
               border: 'none',
               boxShadow: '0 20px 40px rgba(59, 130, 246, 0.3)',
               transform: 'translateY(0)',
@@ -332,6 +362,7 @@ const Dashboard = () => {
               cursor: 'pointer',
               position: 'relative',
               overflow: 'hidden',
+              height: { xs: 120, sm: 140, md: 160 },
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -344,20 +375,33 @@ const Dashboard = () => {
                 transition: 'opacity 0.3s ease'
               },
               '&:hover': {
-                transform: 'translateY(-12px) scale(1.02)',
+                transform: { xs: 'translateY(-4px)', sm: 'translateY(-8px)', md: 'translateY(-12px) scale(1.02)' },
                 boxShadow: '0 25px 50px rgba(59, 130, 246, 0.4)',
                 '&::before': { opacity: 1 }
               },
             }}
             onClick={() => navigate('/tasks')}
           >
-            <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography variant="h3" component="div" sx={{ fontWeight: 800, mb: 0.5 }}>
+            <CardContent sx={{ p: { xs: 1.5, sm: 2, md: 3 }, height: '100%', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography 
+                    variant={isMobile ? "h5" : "h3"} 
+                    component="div" 
+                    sx={{ 
+                      fontWeight: 800, 
+                      mb: 0.5,
+                      fontSize: { xs: '1.5rem', sm: '2rem', md: '3rem' }
+                    }}
+                  >
                     {dashboardData?.myTasks || 0}
                   </Typography>
-                  <Typography sx={{ opacity: 0.9, fontWeight: 600, fontSize: '1.1rem' }}>
+                  <Typography sx={{ 
+                    opacity: 0.9, 
+                    fontWeight: 600, 
+                    fontSize: { xs: '0.75rem', sm: '0.9rem', md: '1.1rem' },
+                    lineHeight: 1.2
+                  }}>
                     My Tasks
                   </Typography>
                 </Box>
@@ -365,23 +409,24 @@ const Dashboard = () => {
                   sx={{
                     background: 'rgba(255, 255, 255, 0.2)',
                     borderRadius: '50%',
-                    p: 2,
-                    backdropFilter: 'blur(10px)'
+                    p: { xs: 1, sm: 1.5, md: 2 },
+                    backdropFilter: 'blur(10px)',
+                    ml: 1
                   }}
                 >
-                  <Person sx={{ fontSize: 32, color: 'white' }} />
+                  <Person sx={{ fontSize: { xs: 20, sm: 24, md: 32 }, color: 'white' }} />
                 </Box>
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={6} md={3}>
           <Card
             sx={{
               background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
               color: 'white',
-              borderRadius: 4,
+              borderRadius: { xs: 2, sm: 4 },
               border: 'none',
               boxShadow: '0 20px 40px rgba(245, 158, 11, 0.3)',
               transform: 'translateY(0)',
@@ -389,6 +434,7 @@ const Dashboard = () => {
               cursor: 'pointer',
               position: 'relative',
               overflow: 'hidden',
+              height: { xs: 120, sm: 140, md: 160 },
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -401,20 +447,33 @@ const Dashboard = () => {
                 transition: 'opacity 0.3s ease'
               },
               '&:hover': {
-                transform: 'translateY(-12px) scale(1.02)',
+                transform: { xs: 'translateY(-4px)', sm: 'translateY(-8px)', md: 'translateY(-12px) scale(1.02)' },
                 boxShadow: '0 25px 50px rgba(245, 158, 11, 0.4)',
                 '&::before': { opacity: 1 }
               },
             }}
             onClick={() => navigate('/tasks')}
           >
-            <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography variant="h3" component="div" sx={{ fontWeight: 800, mb: 0.5 }}>
+            <CardContent sx={{ p: { xs: 1.5, sm: 2, md: 3 }, height: '100%', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography 
+                    variant={isMobile ? "h5" : "h3"} 
+                    component="div" 
+                    sx={{ 
+                      fontWeight: 800, 
+                      mb: 0.5,
+                      fontSize: { xs: '1.5rem', sm: '2rem', md: '3rem' }
+                    }}
+                  >
                     {dashboardData?.overdueTasks || 0}
                   </Typography>
-                  <Typography sx={{ opacity: 0.9, fontWeight: 600, fontSize: '1.1rem' }}>
+                  <Typography sx={{ 
+                    opacity: 0.9, 
+                    fontWeight: 600, 
+                    fontSize: { xs: '0.75rem', sm: '0.9rem', md: '1.1rem' },
+                    lineHeight: 1.2
+                  }}>
                     Overdue Tasks
                   </Typography>
                 </Box>
@@ -422,11 +481,12 @@ const Dashboard = () => {
                   sx={{
                     background: 'rgba(255, 255, 255, 0.2)',
                     borderRadius: '50%',
-                    p: 2,
-                    backdropFilter: 'blur(10px)'
+                    p: { xs: 1, sm: 1.5, md: 2 },
+                    backdropFilter: 'blur(10px)',
+                    ml: 1
                   }}
                 >
-                  <Warning sx={{ fontSize: 32, color: 'white' }} />
+                  <Warning sx={{ fontSize: { xs: 20, sm: 24, md: 32 }, color: 'white' }} />
                 </Box>
               </Box>
             </CardContent>

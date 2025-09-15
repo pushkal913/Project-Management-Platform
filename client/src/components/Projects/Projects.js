@@ -21,7 +21,9 @@ import {
   Alert,
   Avatar,
   AvatarGroup,
-  Tooltip
+  Tooltip,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import {
   Add,
@@ -43,6 +45,9 @@ import { toast } from 'react-toastify';
 const Projects = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -308,33 +313,44 @@ const Projects = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
+      <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+                <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom sx={{ color: 'white', mb: 0 }}>
             Projects
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, flexWrap: 'wrap' }}>
             <Button
               variant="outlined"
               startIcon={<Add />}
               onClick={() => setCreateTaskDialogOpen(true)}
-              sx={{ color: 'white', borderColor: 'white' }}
+              sx={{ 
+                color: 'white', 
+                borderColor: 'white',
+                px: { xs: 2, sm: 3 },
+                py: { xs: 0.5, sm: 1 },
+                fontSize: { xs: '0.75rem', sm: '0.875rem' }
+              }}
             >
-              New Task
+              {isSmallScreen ? "Task" : "New Task"}
             </Button>
             {canCreateProject && (
               <Button
                 variant="contained"
                 startIcon={<Add />}
                 onClick={() => setCreateDialogOpen(true)}
+                sx={{
+                  px: { xs: 2, sm: 3 },
+                  py: { xs: 0.5, sm: 1 },
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                }}
               >
-                New Project
+                {isSmallScreen ? "Project" : "New Project"}
               </Button>
             )}
           </Box>
         </Box>
 
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 2, sm: 3 }}>
           {projects.map((project) => (
             <Grid item xs={12} sm={6} md={4} key={project._id}>
               <Card 

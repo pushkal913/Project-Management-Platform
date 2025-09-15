@@ -798,15 +798,15 @@ const Tasks = () => {
                     </Typography>
                   </Box>
 
-                  <Box sx={{ display: 'flex', gap: 0.5, mb: 1.5, flexWrap: 'wrap' }}>
+                  <Box sx={{ display: 'flex', gap: { xs: 0.3, sm: 0.5 }, mb: { xs: 1, sm: 1.5 }, flexWrap: 'wrap' }}>
                     <Chip
                       label={task.status.replace('-', ' ')}
                       size="small"
                       sx={{
                         bgcolor: getStatusColor(task.status),
                         color: 'white',
-                        fontSize: { xs: '0.6rem', sm: '0.7rem' },
-                        height: { xs: 18, sm: 20 }
+                        fontSize: { xs: '0.55rem', sm: '0.7rem' },
+                        height: { xs: 16, sm: 20 }
                       }}
                     />
                     <Chip
@@ -815,8 +815,8 @@ const Tasks = () => {
                       sx={{
                         bgcolor: getPriorityColor(task.priority),
                         color: 'white',
-                        fontSize: '0.7rem',
-                        height: 20
+                        fontSize: { xs: '0.55rem', sm: '0.7rem' },
+                        height: { xs: 16, sm: 20 }
                       }}
                     />
                     <Chip
@@ -824,27 +824,27 @@ const Tasks = () => {
                       size="small"
                       variant="outlined"
                       sx={{
-                        fontSize: '0.7rem',
-                        height: 20
+                        fontSize: { xs: '0.55rem', sm: '0.7rem' },
+                        height: { xs: 16, sm: 20 }
                       }}
                     />
                   </Box>
 
-                  <Box sx={{ mb: 1 }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem', fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-                      <FolderOpen sx={{ fontSize: 14, mr: 0.5, color: '#3b82f6' }} />
+                  <Box sx={{ mb: { xs: 0.5, sm: 1 } }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, fontWeight: 700, display: 'flex', alignItems: 'center' }}>
+                      <FolderOpen sx={{ fontSize: { xs: 12, sm: 14 }, mr: 0.5, color: '#3b82f6' }} />
                       {task.project?.name}
                     </Typography>
                   </Box>
 
                   {task.assignee && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-                      <Person sx={{ fontSize: 14, color: 'text.secondary' }} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: { xs: 0.5, sm: 1 } }}>
+                      <Person sx={{ fontSize: { xs: 12, sm: 14 }, color: 'text.secondary' }} />
                       <Avatar 
                         sx={{ 
-                          width: 24, 
-                          height: 24, 
-                          fontSize: '0.75rem',
+                          width: { xs: 20, sm: 24 }, 
+                          height: { xs: 20, sm: 24 }, 
+                          fontSize: { xs: '0.6rem', sm: '0.75rem' },
                           fontWeight: 600,
                           bgcolor: getUserColor(task.assignee._id),
                           color: 'white',
@@ -983,16 +983,16 @@ const Tasks = () => {
             ))}
           </Grid>
         ) : (
-          <Paper sx={{ p: 0 }}>
-            <Table size="small">
+          <Paper sx={{ p: 0, overflowX: 'auto' }}>
+            <Table size={isSmallScreen ? "small" : "medium"}>
               <TableHead>
                 <TableRow>
-                  <TableCell>Task</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Due Date</TableCell>
-                  <TableCell>Assigned To</TableCell>
-                  <TableCell align="right">Logged (h)</TableCell>
-                  <TableCell align="right">Estimated (h)</TableCell>
+                  <TableCell sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit', minWidth: isSmallScreen ? 120 : 'auto' }}>Task</TableCell>
+                  <TableCell sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit', minWidth: isSmallScreen ? 80 : 'auto' }}>Status</TableCell>
+                  {!isSmallScreen && <TableCell sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit' }}>Due Date</TableCell>}
+                  <TableCell sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit', minWidth: isSmallScreen ? 100 : 'auto' }}>Assigned To</TableCell>
+                  {!isSmallScreen && <TableCell align="right" sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit' }}>Logged (h)</TableCell>}
+                  {!isSmallScreen && <TableCell align="right" sx={{ fontSize: isSmallScreen ? '0.75rem' : 'inherit' }}>Estimated (h)</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -1000,34 +1000,50 @@ const Tasks = () => {
                   <TableRow key={task._id} hover sx={{ cursor: 'pointer' }} onClick={() => navigate(`/tasks/${task._id}`)}>
                     <TableCell>
                       <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{task.title}</Typography>
-                        <Typography variant="caption" color="text.secondary">{task.project?.name || '—'}</Typography>
+                        <Typography variant={isSmallScreen ? "caption" : "body2"} sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+                          {isSmallScreen ? task.title.substring(0, 30) + (task.title.length > 30 ? '...' : '') : task.title}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: isSmallScreen ? '0.6rem' : 'inherit' }}>
+                          {isSmallScreen ? (task.project?.name || '—').substring(0, 15) + ((task.project?.name || '').length > 15 ? '...' : '') : (task.project?.name || '—')}
+                        </Typography>
+                        {isSmallScreen && task.dueDate && (
+                          <Typography variant="caption" color={isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary'} sx={{ display: 'block', fontSize: '0.6rem' }}>
+                            Due: {formatDate(task.dueDate)}
+                          </Typography>
+                        )}
                       </Box>
                     </TableCell>
                     <TableCell>
                       <Chip
                         label={task.status?.replace('-', ' ') || '—'}
                         size="small"
-                        sx={{ bgcolor: getStatusColor(task.status), color: 'white' }}
+                        sx={{ 
+                          bgcolor: getStatusColor(task.status), 
+                          color: 'white',
+                          fontSize: isSmallScreen ? '0.6rem' : 'inherit',
+                          height: isSmallScreen ? 18 : 'auto'
+                        }}
                       />
                     </TableCell>
+                    {!isSmallScreen && (
+                      <TableCell>
+                        {task.dueDate ? (
+                          <Typography variant="body2" color={isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary'}>
+                            {formatDate(task.dueDate)}
+                            {isOverdue(task.dueDate, task.status) && ' (Overdue)'}
+                          </Typography>
+                        ) : (
+                          <Typography variant="body2" color="text.secondary">—</Typography>
+                        )}
+                      </TableCell>
+                    )}
                     <TableCell>
-                      {task.dueDate ? (
-                        <Typography variant="body2" color={isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary'}>
-                          {formatDate(task.dueDate)}
-                          {isOverdue(task.dueDate, task.status) && ' (Overdue)'}
-                        </Typography>
-                      ) : (
-                        <Typography variant="body2" color="text.secondary">—</Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: isSmallScreen ? 0.5 : 1 }}>
                         <Avatar 
                           sx={{ 
-                            width: 28, 
-                            height: 28,
-                            fontSize: '0.8rem',
+                            width: isSmallScreen ? 24 : 28, 
+                            height: isSmallScreen ? 24 : 28,
+                            fontSize: isSmallScreen ? '0.6rem' : '0.8rem',
                             fontWeight: 600,
                             bgcolor: task.assignee ? getUserColor(task.assignee._id) : '#9e9e9e',
                             color: 'white',
@@ -1037,34 +1053,40 @@ const Tasks = () => {
                           {task.assignee?.name ? task.assignee.name[0].toUpperCase() : '?'}
                         </Avatar>
                         {task.assignee ? (
-                          <Chip
-                            label={task.assignee.name}
-                            size="small"
-                            sx={{
-                              bgcolor: getUserColor(task.assignee._id),
-                              color: 'white',
-                              fontSize: '0.8rem',
-                              fontWeight: 600,
-                              height: 28,
-                              '& .MuiChip-label': {
-                                px: 1.5
-                              }
-                            }}
-                          />
+                          isSmallScreen ? (
+                            <Typography variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 600 }}>
+                              {task.assignee.name.split(' ')[0]}
+                            </Typography>
+                          ) : (
+                            <Chip
+                              label={task.assignee.name}
+                              size="small"
+                              sx={{
+                                bgcolor: getUserColor(task.assignee._id),
+                                color: 'white',
+                                fontSize: '0.8rem',
+                                fontWeight: 600,
+                                height: 28,
+                                '& .MuiChip-label': {
+                                  px: 1.5
+                                }
+                              }}
+                            />
+                          )
                         ) : (
-                          <Typography variant="body2" color="text.secondary">
-                            Unassigned
+                          <Typography variant={isSmallScreen ? "caption" : "body2"} color="text.secondary" sx={{ fontSize: isSmallScreen ? '0.7rem' : 'inherit' }}>
+                            {isSmallScreen ? 'None' : 'Unassigned'}
                           </Typography>
                         )}
                       </Box>
                     </TableCell>
-                    <TableCell align="right">{task.actualHours ? task.actualHours.toFixed(2) : '0.00'}</TableCell>
-                    <TableCell align="right">{task.estimatedHours ? Number(task.estimatedHours).toFixed(2) : '0.00'}</TableCell>
+                    {!isSmallScreen && <TableCell align="right">{task.actualHours ? task.actualHours.toFixed(2) : '0.00'}</TableCell>}
+                    {!isSmallScreen && <TableCell align="right">{task.estimatedHours ? Number(task.estimatedHours).toFixed(2) : '0.00'}</TableCell>}
                   </TableRow>
                 ))}
                 {tasks.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">No tasks found</TableCell>
+                    <TableCell colSpan={isSmallScreen ? 3 : 6} align="center">No tasks found</TableCell>
                   </TableRow>
                 )}
               </TableBody>
