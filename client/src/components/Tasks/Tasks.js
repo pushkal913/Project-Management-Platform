@@ -91,18 +91,26 @@ const Tasks = () => {
       return colors[0];
     }
     
-    // Use a simple character-based approach that guarantees different results
-    // Take specific characters from different positions and combine them
-    const char1 = userId.charCodeAt(0) || 0;
-    const char2 = userId.charCodeAt(userId.length - 1) || 0;
-    const char3 = userId.charCodeAt(Math.floor(userId.length / 3)) || 0;
-    const char4 = userId.charCodeAt(Math.floor(userId.length * 2 / 3)) || 0;
+    // Use a more sophisticated approach that ensures better distribution
+    // Convert the userId string into a number in a way that creates more variation
+    let hash = 0;
     
-    // Create a unique sum for each user
-    const uniqueSum = char1 + char2 * 2 + char3 * 3 + char4 * 5;
+    // Use the entire string but with a better algorithm
+    for (let i = 0; i < userId.length; i++) {
+      const char = userId.charCodeAt(i);
+      // Use a combination of bit shifting and addition for better distribution
+      hash = ((hash << 5) - hash + char) & 0xffffffff; // Keep it 32-bit
+    }
     
-    // Use modulo to ensure we get 0, 1, 2, or 3
-    const colorIndex = uniqueSum % 4;
+    // Additional mixing to ensure better distribution
+    hash = hash ^ (hash >>> 16);
+    hash = hash * 0x85ebca6b;
+    hash = hash ^ (hash >>> 13);
+    hash = hash * 0xc2b2ae35;
+    hash = hash ^ (hash >>> 16);
+    
+    // Use absolute value and modulo to get index
+    const colorIndex = Math.abs(hash) % colors.length;
     
     return colors[colorIndex];
   };
