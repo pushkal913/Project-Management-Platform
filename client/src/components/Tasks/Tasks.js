@@ -91,26 +91,20 @@ const Tasks = () => {
       return colors[0];
     }
     
-    // Create a more unique hash by using multiple techniques
-    let hash = 0;
+    // Use a simple character-based approach that guarantees different results
+    // Take specific characters from different positions and combine them
+    const char1 = userId.charCodeAt(0) || 0;
+    const char2 = userId.charCodeAt(userId.length - 1) || 0;
+    const char3 = userId.charCodeAt(Math.floor(userId.length / 3)) || 0;
+    const char4 = userId.charCodeAt(Math.floor(userId.length * 2 / 3)) || 0;
     
-    // Method 1: Sum all character codes with position weight
-    for (let i = 0; i < userId.length; i++) {
-      hash += userId.charCodeAt(i) * (i + 1);
-    }
+    // Create a unique sum for each user
+    const uniqueSum = char1 + char2 * 2 + char3 * 3 + char4 * 5;
     
-    // Method 2: Add the length of the string
-    hash += userId.length * 17;
+    // Use modulo to ensure we get 0, 1, 2, or 3
+    const colorIndex = uniqueSum % 4;
     
-    // Method 3: Use the last character's code
-    hash += userId.charCodeAt(userId.length - 1) * 23;
-    
-    // Method 4: Use middle character if exists
-    if (userId.length > 5) {
-      hash += userId.charCodeAt(Math.floor(userId.length / 2)) * 41;
-    }
-    
-    return colors[Math.abs(hash) % colors.length];
+    return colors[colorIndex];
   };
 
   const [newTask, setNewTask] = useState({
