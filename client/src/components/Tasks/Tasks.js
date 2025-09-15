@@ -81,26 +81,10 @@ const Tasks = () => {
   // Function to generate consistent colors for users
   const getUserColor = (userId) => {
     const colors = [
-      '#1e40af', // blue-800
-      '#dc2626', // red-600  
-      '#059669', // emerald-600
-      '#7c3aed', // violet-600
-      '#ea580c', // orange-600
-      '#0891b2', // cyan-600
-      '#65a30d', // lime-600
-      '#c2410c', // orange-700
-      '#9333ea', // purple-600
-      '#0369a1', // sky-700
-      '#166534', // green-800
-      '#991b1b', // red-800
-      '#581c87', // purple-800
-      '#92400e', // amber-700
-      '#134e4a', // teal-800
-      '#7c2d12', // orange-800
-      '#312e81', // indigo-800
-      '#1f2937', // gray-800
-      '#78350f', // amber-800
-      '#831843'  // pink-800
+      '#2563eb', // Vibrant Blue
+      '#ea580c', // Vibrant Orange  
+      '#16a34a', // Vibrant Green
+      '#9333ea'  // Vibrant Purple
     ];
     
     if (!userId) return colors[0];
