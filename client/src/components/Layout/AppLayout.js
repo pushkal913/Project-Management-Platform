@@ -42,10 +42,6 @@ const AppLayout = ({ children }) => {
           flexGrow: 1,
           p: { xs: 1, sm: 2, md: 3, lg: 4 },
           mt: 8,
-          ml: {
-            xs: 0, // No margin on mobile
-            md: sidebarOpen ? '240px' : '60px' // Only apply margin on desktop
-          },
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           minHeight: 'calc(100vh - 64px)',
           width: '100%',
