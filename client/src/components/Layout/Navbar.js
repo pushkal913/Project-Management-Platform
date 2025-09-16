@@ -88,20 +88,79 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
   };
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-      <Toolbar sx={{ minHeight: { xs: 56, sm: 64 } }}>
+    <AppBar 
+      position="fixed" 
+      sx={{ 
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+        background: 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
+          borderRadius: 'inherit',
+          pointerEvents: 'none'
+        }
+      }}
+    >
+      <Toolbar sx={{ 
+        minHeight: { xs: 56, sm: 64 },
+        px: { xs: 2, sm: 3 },
+        position: 'relative',
+        zIndex: 1
+      }}>
         <IconButton
           color="inherit"
           aria-label="toggle sidebar"
           onClick={onSidebarToggle}
           edge="start"
-          sx={{ mr: { xs: 1, sm: 2 } }}
+          sx={{ 
+            mr: { xs: 1, sm: 2 },
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: '12px',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              background: 'rgba(255, 255, 255, 0.2)',
+              transform: 'translateY(-1px)',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
+            }
+          }}
         >
           <MenuIcon />
         </IconButton>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, sm: 2 }, flexGrow: 1, minWidth: 0 }}>
-          <Business sx={{ mr: 1, color: 'inherit', fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          mr: { xs: 1, sm: 2 }, 
+          flexGrow: 1, 
+          minWidth: 0,
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+          px: 2,
+          py: 0.5,
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            background: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
+          }
+        }}>
+          <Business sx={{ 
+            mr: 1, 
+            color: 'inherit', 
+            fontSize: { xs: '1.2rem', sm: '1.5rem' },
+            filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))'
+          }} />
           <Typography 
             variant={isSmallScreen ? "subtitle1" : "h6"} 
             noWrap 
@@ -109,7 +168,12 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
             color="inherit"
             sx={{ 
               fontSize: { xs: '0.875rem', sm: '1.25rem' },
-              fontWeight: 700
+              fontWeight: 700,
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+              background: 'linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
             }}
           >
             {isSmallScreen 
@@ -124,11 +188,23 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
           <Tooltip title={connected ? 'Connected' : 'Disconnected'}>
             <Box
               sx={{
-                width: 8,
-                height: 8,
+                width: 12,
+                height: 12,
                 borderRadius: '50%',
-                backgroundColor: connected ? '#4caf50' : '#f44336',
-                mr: 2
+                background: connected 
+                  ? 'linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)'
+                  : 'linear-gradient(135deg, #f44336 0%, #ef5350 100%)',
+                mr: 2,
+                boxShadow: connected 
+                  ? '0 0 12px rgba(76, 175, 80, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.3)'
+                  : '0 0 12px rgba(244, 67, 54, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                animation: connected ? 'pulse 2s infinite' : 'none',
+                '@keyframes pulse': {
+                  '0%': { boxShadow: `0 0 12px rgba(76, 175, 80, 0.6)` },
+                  '50%': { boxShadow: `0 0 20px rgba(76, 175, 80, 0.8)` },
+                  '100%': { boxShadow: `0 0 12px rgba(76, 175, 80, 0.6)` }
+                }
               }}
             />
           </Tooltip>
@@ -139,10 +215,32 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
           <IconButton
             color="inherit"
             onClick={handleNotificationMenuOpen}
-            sx={{ mr: { xs: 0.5, sm: 1 } }}
+            sx={{ 
+              mr: { xs: 0.5, sm: 1 },
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '12px',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.2)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
+              }
+            }}
             size={isSmallScreen ? "small" : "medium"}
           >
-            <Badge badgeContent={0} color="error">
+            <Badge 
+              badgeContent={0} 
+              color="error"
+              sx={{
+                '& .MuiBadge-badge': {
+                  background: 'linear-gradient(135deg, #f44336 0%, #ff5722 100%)',
+                  boxShadow: '0 2px 8px rgba(244, 67, 54, 0.4)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)'
+                }
+              }}
+            >
               <Notifications fontSize={isSmallScreen ? "small" : "medium"} />
             </Badge>
           </IconButton>
@@ -152,14 +250,29 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
         <Tooltip title="Account">
           <IconButton
             onClick={handleProfileMenuOpen}
-            sx={{ p: 0 }}
+            sx={{ 
+              p: 0,
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '50%',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.2)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
+              }
+            }}
           >
             <Avatar
               sx={{
                 bgcolor: getRoleColor(user?.role),
                 width: isSmallScreen ? 32 : 40,
                 height: isSmallScreen ? 32 : 40,
-                fontSize: isSmallScreen ? '0.875rem' : '1rem'
+                fontSize: isSmallScreen ? '0.875rem' : '1rem',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+                border: '2px solid rgba(255, 255, 255, 0.3)',
+                background: `linear-gradient(135deg, ${getRoleColor(user?.role)} 0%, ${getRoleColor(user?.role)}88 100%)`
               }}
               src={user?.avatar}
             >
@@ -177,9 +290,24 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
           PaperProps={{
             elevation: 0,
             sx: {
-              overflow: 'visible',
-              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '16px',
               mt: 1.5,
+              overflow: 'visible',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
+                borderRadius: 'inherit',
+                pointerEvents: 'none'
+              },
               '& .MuiAvatar-root': {
                 width: 32,
                 height: 32,
@@ -194,7 +322,8 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
                 right: 14,
                 width: 10,
                 height: 10,
-                bgcolor: 'background.paper',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
                 transform: 'translateY(-50%) rotate(45deg)',
                 zIndex: 0,
               },
@@ -203,11 +332,18 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
           transformOrigin={{ horizontal: 'right', vertical: 'top' }}
           anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
-          <Box sx={{ px: 2, py: 1 }}>
-            <Typography variant="subtitle1" fontWeight="bold">
+          <Box sx={{ 
+            px: 2, 
+            py: 1,
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(10px)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px 12px 0 0'
+          }}>
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ color: 'white' }}>
               {user?.name}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
               {user?.email}
             </Typography>
             <Typography 
@@ -221,18 +357,56 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
               {user?.role}
             </Typography>
           </Box>
-          <Divider />
-          <MenuItem onClick={handleProfileClick}>
-            <Person sx={{ mr: 1 }} />
+          <MenuItem 
+            onClick={handleProfileClick}
+            sx={{
+              color: 'white',
+              borderRadius: '8px',
+              margin: '4px 8px',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                transform: 'translateX(4px)'
+              }
+            }}
+          >
+            <Person sx={{ mr: 1, filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }} />
             Profile
           </MenuItem>
-          <MenuItem onClick={handleSettingsClick}>
-            <Settings sx={{ mr: 1 }} />
+          <MenuItem 
+            onClick={handleSettingsClick}
+            sx={{
+              color: 'white',
+              borderRadius: '8px',
+              margin: '4px 8px',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                transform: 'translateX(4px)'
+              }
+            }}
+          >
+            <Settings sx={{ mr: 1, filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }} />
             Settings
           </MenuItem>
-          <Divider />
-          <MenuItem onClick={handleLogout}>
-            <ExitToApp sx={{ mr: 1 }} />
+          <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)', margin: '8px' }} />
+          <MenuItem 
+            onClick={handleLogout}
+            sx={{
+              color: '#ff6b6b',
+              borderRadius: '8px',
+              margin: '4px 8px',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                background: 'rgba(255, 107, 107, 0.1)',
+                backdropFilter: 'blur(10px)',
+                transform: 'translateX(4px)'
+              }
+            }}
+          >
+            <ExitToApp sx={{ mr: 1, filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }} />
             Logout
           </MenuItem>
         </Menu>
@@ -247,17 +421,40 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
               width: { xs: '90vw', sm: 320 },
               maxWidth: 320,
               maxHeight: 400,
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '16px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
+                borderRadius: 'inherit',
+                pointerEvents: 'none'
+              }
             },
           }}
           transformOrigin={{ horizontal: 'right', vertical: 'top' }}
           anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
-          <Box sx={{ p: 2 }}>
-            <Typography variant="h6">Notifications</Typography>
+          <Box sx={{ 
+            p: 2,
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(10px)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px 12px 0 0'
+          }}>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 600 }}>
+              Notifications
+            </Typography>
           </Box>
-          <Divider />
           <Box sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
               No new notifications
             </Typography>
           </Box>
