@@ -290,7 +290,7 @@ const TaskDetails = () => {
                 Description
               </Typography>
               <Tooltip title="Edit task">
-                <IconButton size="small" onClick={() => navigate(`/tasks?edit=${id}`)}>
+                <IconButton size="small" onClick={() => navigate('/tasks')}>
                   <Edit fontSize="small" />
                 </IconButton>
               </Tooltip>
