@@ -24,7 +24,8 @@ import {
   Checkbox,
   FormControlLabel,
   LinearProgress,
-  Tooltip
+  Tooltip,
+  Dialog
 } from '@mui/material';
 import {
   ArrowBack,
@@ -38,6 +39,10 @@ import {
   Add,
   Check
 } from '@mui/icons-material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getTaskProgress, getProgressColor } from '../../utils/taskProgress';
@@ -52,9 +57,27 @@ const TaskDetails = () => {
   const [newSubtask, setNewSubtask] = useState('');
   const [timeHours, setTimeHours] = useState('');
   const [timeMinutes, setTimeMinutes] = useState('');
+  
+  // Edit dialog state
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [editTask, setEditTask] = useState({
+    title: '',
+    description: '',
+    project: '',
+    priority: 'medium',
+    type: 'task',
+    assignee: '',
+    dueDate: null,
+    estimatedHours: '',
+    tags: ''
+  });
 
   useEffect(() => {
     fetchTaskDetails();
+    fetchProjects();
+    fetchUsers();
   }, [id]);
 
   const fetchTaskDetails = async () => {
@@ -69,6 +92,58 @@ const TaskDetails = () => {
       // navigate('/tasks');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchProjects = async () => {
+    try {
+      const response = await axios.get('/projects');
+      setProjects(response.data.projects || []);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('/users');
+      setUsers(response.data.users || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const openEditTask = () => {
+    if (!task) return;
+    setEditTask({
+      title: task.title || '',
+      description: task.description || '',
+      project: task.project?._id || task.project || '',
+      priority: task.priority || 'medium',
+      type: task.type || 'task',
+      assignee: task.assignee?._id || task.assignee || '',
+      dueDate: task.dueDate ? dayjs(task.dueDate) : null,
+      estimatedHours: task.estimatedHours || '',
+      tags: (task.tags || []).join(', ')
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleUpdateTask = async () => {
+    try {
+      const payload = {
+        ...editTask,
+        dueDate: editTask.dueDate ? editTask.dueDate.toISOString() : null,
+        estimatedHours: parseFloat(editTask.estimatedHours) || 0,
+        tags: editTask.tags.split(',').map(t => t.trim()).filter(Boolean)
+      };
+      await axios.put(`/tasks/${id}`, payload);
+      toast.success('Task updated successfully');
+      setEditDialogOpen(false);
+      fetchTaskDetails(); // Refresh task data
+    } catch (error) {
+      console.error('Error updating task:', error);
+      toast.error('Failed to update task');
     }
   };
 
@@ -290,7 +365,7 @@ const TaskDetails = () => {
                 Description
               </Typography>
               <Tooltip title="Edit task">
-                <IconButton size="small" onClick={() => navigate('/tasks')}>
+                <IconButton size="small" onClick={openEditTask}>
                   <Edit fontSize="small" />
                 </IconButton>
               </Tooltip>
@@ -640,6 +715,146 @@ const TaskDetails = () => {
           )}
         </Grid>
       </Grid>
+
+      {/* Edit Task Dialog */}
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Dialog
+          open={editDialogOpen}
+          onClose={() => setEditDialogOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Edit Task
+            </Typography>
+
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Task Title"
+                  value={editTask.title}
+                  onChange={(e) => setEditTask({ ...editTask, title: e.target.value })}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Description"
+                  multiline
+                  rows={4}
+                  value={editTask.description}
+                  onChange={(e) => setEditTask({ ...editTask, description: e.target.value })}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth required>
+                  <InputLabel>Project</InputLabel>
+                  <Select
+                    value={editTask.project}
+                    label="Project"
+                    onChange={(e) => setEditTask({ ...editTask, project: e.target.value })}
+                  >
+                    {projects.map((project) => (
+                      <MenuItem key={project._id} value={project._id}>
+                        {project.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Type</InputLabel>
+                  <Select
+                    value={editTask.type}
+                    label="Type"
+                    onChange={(e) => setEditTask({ ...editTask, type: e.target.value })}
+                  >
+                    <MenuItem value="feature">Feature</MenuItem>
+                    <MenuItem value="bug">Bug</MenuItem>
+                    <MenuItem value="improvement">Improvement</MenuItem>
+                    <MenuItem value="task">Task</MenuItem>
+                    <MenuItem value="story">Story</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Priority</InputLabel>
+                  <Select
+                    value={editTask.priority}
+                    label="Priority"
+                    onChange={(e) => setEditTask({ ...editTask, priority: e.target.value })}
+                  >
+                    <MenuItem value="low">Low</MenuItem>
+                    <MenuItem value="medium">Medium</MenuItem>
+                    <MenuItem value="high">High</MenuItem>
+                    <MenuItem value="critical">Critical</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Assignee</InputLabel>
+                  <Select
+                    value={editTask.assignee}
+                    label="Assignee"
+                    onChange={(e) => setEditTask({ ...editTask, assignee: e.target.value })}
+                  >
+                    <MenuItem value="">Unassigned</MenuItem>
+                    {users.map((user) => (
+                      <MenuItem key={user._id} value={user._id}>
+                        {user.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <DatePicker
+                  label="Due Date"
+                  value={editTask.dueDate}
+                  onChange={(date) => setEditTask({ ...editTask, dueDate: date })}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Estimated Hours"
+                  type="number"
+                  value={editTask.estimatedHours}
+                  onChange={(e) => setEditTask({ ...editTask, estimatedHours: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Tags (comma separated)"
+                  value={editTask.tags}
+                  onChange={(e) => setEditTask({ ...editTask, tags: e.target.value })}
+                  placeholder="frontend, urgent, feature"
+                />
+              </Grid>
+            </Grid>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+              <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
+              <Button
+                variant="contained"
+                onClick={handleUpdateTask}
+                disabled={!editTask.title || !editTask.description || !editTask.project}
+              >
+                Save Changes
+              </Button>
+            </Box>
+          </Box>
+        </Dialog>
+      </LocalizationProvider>
     </Box>
   );
 };
