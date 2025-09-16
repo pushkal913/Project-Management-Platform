@@ -109,7 +109,7 @@ const Navbar = ({ onSidebarToggle, isMobile }) => {
             color="inherit"
             sx={{ 
               fontSize: { xs: '0.875rem', sm: '1.25rem' },
-              fontWeight: { xs: 500, sm: 400 }
+              fontWeight: 700
             }}
           >
             {isSmallScreen 

@@ -168,9 +168,6 @@ const Sidebar = ({ open, onToggle, isMobile }) => {
             <Typography variant="h6" noWrap sx={{ color: '#ffffff' }}>
               {user?.name?.split(' ')[0]}
             </Typography>
-            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', textTransform: 'capitalize' }}>
-              {user?.role}
-            </Typography>
           </Box>
         )}
         
