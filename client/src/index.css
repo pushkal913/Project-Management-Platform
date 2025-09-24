@@ -235,3 +235,136 @@ div[style*="#9c27b0"] {
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
+
+/* Task Status Specific Styling - Light Background with Colored Text */
+/* Override dark glassmorphism for task status dropdowns only */
+.MuiSelect-select[aria-expanded="false"]:not([aria-labelledby*="priority"]) {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 12px !important;
+  color: inherit !important;
+}
+
+/* Task Status Colors - Colored Text on Light Background */
+/* Todo Status - Red Text */
+div[style*="#f44336"] .MuiSelect-select,
+div[style*="#f44336"] .MuiTypography-root {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #f44336 !important;
+  font-weight: 700 !important;
+}
+
+/* In-Progress Status - Orange Text */
+div[style*="#ff9800"] .MuiSelect-select,
+div[style*="#ff9800"] .MuiTypography-root {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #ff9800 !important;
+  font-weight: 700 !important;
+}
+
+/* Review Status - Blue Text */
+div[style*="#2196f3"] .MuiSelect-select,
+div[style*="#2196f3"] .MuiTypography-root {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #2196f3 !important;
+  font-weight: 700 !important;
+}
+
+/* Testing Status - Purple Text */
+div[style*="#9c27b0"] .MuiSelect-select,
+div[style*="#9c27b0"] .MuiTypography-root {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #9c27b0 !important;
+  font-weight: 700 !important;
+}
+
+/* Done Status - Green Text */
+div[style*="#4caf50"] .MuiSelect-select,
+div[style*="#4caf50"] .MuiTypography-root {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #4caf50 !important;
+  font-weight: 700 !important;
+}
+
+/* Task Status Container Override */
+.MuiBox-root[style*="borderRadius: 16px"] .MuiSelect-select {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Task Status Dropdown - Light Background with Status-Specific Colored Text */
+/* Target the specific task status dropdown in TaskDetails page */
+.MuiPaper-root .MuiSelect-select {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  padding: 12px 14px !important;
+}
+
+/* Status-specific text colors for task status */
+.MuiSelect-select[value="todo"] {
+  color: #f44336 !important;
+  font-weight: 700 !important;
+}
+
+.MuiSelect-select[value="in-progress"] {
+  color: #ff9800 !important;
+  font-weight: 700 !important;
+}
+
+.MuiSelect-select[value="review"] {
+  color: #2196f3 !important;
+  font-weight: 700 !important;
+}
+
+.MuiSelect-select[value="testing"] {
+  color: #9c27b0 !important;
+  font-weight: 700 !important;
+}
+
+.MuiSelect-select[value="done"] {
+  color: #4caf50 !important;
+  font-weight: 700 !important;
+}
+
+/* Override any dark backgrounds for task status dropdowns */
+.MuiFormControl-root .MuiSelect-select {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: inherit !important;
+}
+
+/* Task Status Menu Items */
+.MuiMenuItem-root[value="todo"] {
+  color: #f44336 !important;
+  font-weight: 600 !important;
+}
+
+.MuiMenuItem-root[value="in-progress"] {
+  color: #ff9800 !important;
+  font-weight: 600 !important;
+}
+
+.MuiMenuItem-root[value="review"] {
+  color: #2196f3 !important;
+  font-weight: 600 !important;
+}
+
+.MuiMenuItem-root[value="testing"] {
+  color: #9c27b0 !important;
+  font-weight: 600 !important;
+}
+
+.MuiMenuItem-root[value="done"] {
+  color: #4caf50 !important;
+  font-weight: 600 !important;
+}
