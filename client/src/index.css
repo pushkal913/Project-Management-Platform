@@ -113,32 +113,32 @@ html, body, #root {
 }
 
 /* Glassmorphism Sidebar & Navbar */
-/* Sidebar Glassmorphism */
+/* Enhanced Sidebar Glassmorphism - More Morphed & Darker */
 .MuiDrawer-paper {
-  background: rgba(25, 118, 210, 0.15) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15) !important;
+  background: rgba(25, 118, 210, 0.25) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 4px 0 25px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* Navbar Glassmorphism */
+/* Enhanced Navbar Glassmorphism - More Morphed & Darker */
 .MuiAppBar-root {
-  background: rgba(25, 118, 210, 0.15) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  background: rgba(25, 118, 210, 0.25) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* Menu/Dropdown Glassmorphism */
+/* Enhanced Menu/Dropdown Glassmorphism */
 .MuiPaper-root.MuiMenu-paper,
 .MuiPaper-root.MuiPopover-paper {
-  background: rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.35) !important;
 }
 
 /* Menu Items Glassmorphism */
@@ -157,4 +157,81 @@ html, body, #root {
 
 .MuiMenu-paper .MuiDivider-root {
   border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Enhanced Dark Status Pills for Better Text Visibility */
+/* Status Chips/Pills with Dark Glassmorphism */
+.MuiChip-root[style*="background"] {
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+/* Status Pills in Cards - Dark Glassmorphism */
+.MuiBox-root[style*="borderRadius: 16px"] {
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+  color: white !important;
+}
+
+/* Status Pills with specific status colors - Enhanced Dark Versions */
+/* Planning Status */
+div[style*="#757575"] {
+  background: rgba(117, 117, 117, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Active/Completed Status (Green) */
+div[style*="#4caf50"] {
+  background: rgba(76, 175, 80, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* On-hold/In-progress Status (Orange) */
+div[style*="#ff9800"] {
+  background: rgba(255, 152, 0, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Error/Todo Status (Red) */
+div[style*="#f44336"] {
+  background: rgba(244, 67, 54, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Review Status (Blue) */
+div[style*="#2196f3"] {
+  background: rgba(33, 150, 243, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Testing Status (Purple) */
+div[style*="#9c27b0"] {
+  background: rgba(156, 39, 176, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
