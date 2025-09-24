@@ -12,12 +12,14 @@ import {
   CardContent,
   Chip
 } from '@mui/material';
-import { Edit, Save, Cancel } from '@mui/icons-material';
+import { Edit, Save, Cancel, Lock, Security } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
+import ChangePasswordModal from './ChangePasswordModal';
 
 const Profile = () => {
   const { user, updateProfile } = useAuth();
   const [editing, setEditing] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -257,7 +259,42 @@ const Profile = () => {
             </Grid>
           </Paper>
         </Grid>
+
+        {/* Security Settings Section */}
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Security sx={{ mr: 1, color: 'primary.main' }} />
+              <Typography variant="h6">
+                Security Settings
+              </Typography>
+            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              Manage your account security and password settings.
+            </Typography>
+            <Button
+              variant="outlined"
+              startIcon={<Lock />}
+              onClick={() => setChangePasswordOpen(true)}
+              sx={{ 
+                borderColor: 'primary.main',
+                '&:hover': {
+                  borderColor: 'primary.dark',
+                  bgcolor: 'primary.light',
+                }
+              }}
+            >
+              Change Password
+            </Button>
+          </Paper>
+        </Grid>
       </Grid>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal 
+        open={changePasswordOpen}
+        onClose={() => setChangePasswordOpen(false)}
+      />
     </Box>
   );
 };
