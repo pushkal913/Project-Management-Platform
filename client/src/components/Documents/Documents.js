@@ -36,10 +36,23 @@ const Documents = () => {
   const fetchDocuments = async () => {
     try {
       setLoading(true);
+      console.log('=== FETCHING DOCUMENTS DEBUG ===');
+      console.log('User:', user);
+      console.log('Axios base URL:', axios.defaults.baseURL);
+      console.log('Auth token exists:', !!localStorage.getItem('token'));
+      console.log('Making request to: /api/documents');
+      
       const response = await axios.get('/api/documents');
+      console.log('Documents response status:', response.status);
+      console.log('Documents response data:', response.data);
       setDocuments(response.data.documents || []);
+      console.log('Documents set in state:', response.data.documents?.length || 0);
     } catch (error) {
-      console.error('Error fetching documents:', error);
+      console.error('=== DOCUMENTS FETCH ERROR ===');
+      console.error('Error status:', error.response?.status);
+      console.error('Error message:', error.response?.data?.message);
+      console.error('Error config:', error.config);
+      console.error('Full error:', error);
       toast.error('Failed to load documents');
     } finally {
       setLoading(false);

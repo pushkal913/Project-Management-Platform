@@ -26,8 +26,10 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useAuth } from '../../contexts/AuthContext';
 
 const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -58,6 +60,9 @@ const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
   // Fetch projects on mount
   useEffect(() => {
     if (open) {
+      console.log('Modal opened, checking auth status...');
+      console.log('User from AuthContext:', user);
+      console.log('Token from localStorage:', localStorage.getItem('token'));
       fetchProjects();
     }
   }, [open]);
@@ -65,6 +70,7 @@ const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
   // Fetch tasks when project changes
   useEffect(() => {
     if (formData.project) {
+      console.log('Project changed, fetching tasks for project:', formData.project);
       fetchProjectTasks(formData.project);
     } else {
       setTasks([]);
@@ -74,10 +80,22 @@ const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
 
   const fetchProjects = async () => {
     try {
+      console.log('=== FETCHING PROJECTS DEBUG ===');
+      console.log('Axios base URL:', axios.defaults.baseURL);
+      console.log('Auth token exists:', !!localStorage.getItem('token'));
+      console.log('Making request to: /api/projects');
+      
       const response = await axios.get('/api/projects');
+      console.log('Projects response status:', response.status);
+      console.log('Projects response data:', response.data);
       setProjects(response.data.projects || []);
+      console.log('Projects set in state:', response.data.projects?.length || 0);
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      console.error('=== PROJECTS FETCH ERROR ===');
+      console.error('Error status:', error.response?.status);
+      console.error('Error message:', error.response?.data?.message);
+      console.error('Error config:', error.config);
+      console.error('Full error:', error);
       toast.error('Failed to load projects');
     }
   };
@@ -85,11 +103,24 @@ const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
   const fetchProjectTasks = async (projectId) => {
     try {
       setLoadingTasks(true);
+      console.log('=== FETCHING TASKS DEBUG ===');
+      console.log('Project ID:', projectId);
+      console.log('Request URL:', `/api/tasks?project=${projectId}`);
+      console.log('Full request URL with base:', axios.defaults.baseURL + `/api/tasks?project=${projectId}`);
+      
       const response = await axios.get(`/api/tasks?project=${projectId}`);
+      console.log('Tasks response status:', response.status);
+      console.log('Tasks response data:', response.data);
       const projectTasks = response.data.tasks || response.data || [];
+      console.log('Setting tasks:', projectTasks);
       setTasks(projectTasks);
     } catch (error) {
-      console.error('Error fetching tasks:', error);
+      console.error('=== TASKS FETCH ERROR ===');
+      console.error('Error status:', error.response?.status);
+      console.error('Error message:', error.response?.data?.message);
+      console.error('Error config:', error.config);
+      console.error('Full error:', error);
+      toast.error('Failed to load tasks for selected project');
       setTasks([]);
     } finally {
       setLoadingTasks(false);
@@ -221,11 +252,16 @@ const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
               <InputLabel>Project *</InputLabel>
               <Select
                 value={formData.project}
-                onChange={(e) => handleInputChange('project', e.target.value)}
+                onChange={(e) => {
+                  console.log('Project selected:', e.target.value);
+                  handleInputChange('project', e.target.value);
+                }}
                 label="Project *"
               >
                 {projects.length === 0 ? (
-                  <MenuItem disabled>No projects available</MenuItem>
+                  <MenuItem disabled>
+                    {loading ? 'Loading projects...' : 'No projects available'}
+                  </MenuItem>
                 ) : (
                   projects.map(project => (
                     <MenuItem key={project._id} value={project._id}>
