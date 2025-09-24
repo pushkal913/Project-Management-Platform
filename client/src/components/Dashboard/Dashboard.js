@@ -208,11 +208,11 @@ const Dashboard = () => {
         <Grid item xs={6} sm={6} md={3}>
           <Card 
             sx={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #8d6e63 0%, #3e2723 100%)',
               color: 'white',
               borderRadius: { xs: 2, sm: 4 },
               border: 'none',
-              boxShadow: '0 20px 40px rgba(102, 126, 234, 0.3)',
+              boxShadow: '0 20px 40px rgba(141, 110, 99, 0.3)',
               transform: 'translateY(0)',
               transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
               cursor: 'pointer',
@@ -232,7 +232,7 @@ const Dashboard = () => {
               },
               '&:hover': {
                 transform: { xs: 'translateY(-4px)', sm: 'translateY(-8px)', md: 'translateY(-12px) scale(1.02)' },
-                boxShadow: '0 25px 50px rgba(102, 126, 234, 0.4)',
+                boxShadow: '0 25px 50px rgba(141, 110, 99, 0.4)',
                 '&::before': { opacity: 1 }
               },
             }}
@@ -540,7 +540,7 @@ const Dashboard = () => {
                     labelLine={false}
                     paddingAngle={nonZeroTaskData.length > 1 ? 2 : 0}
                     label={nonZeroTaskData.length > 1 ? (({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`) : false}
-                    innerRadius={60}
+                    innerRadius={0}
                     outerRadius={90}
                     fill="#8884d8"
                     dataKey="value"
