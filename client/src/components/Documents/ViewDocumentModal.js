@@ -21,7 +21,8 @@ import {
   Close,
   Edit,
   Save,
-  Cancel
+  Cancel,
+  AttachFile
 } from '@mui/icons-material';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -131,14 +132,15 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="lg"
       fullWidth
       PaperProps={{
         sx: {
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(255, 255, 255, 0.2)',
-          color: 'white'
+          color: 'white',
+          maxHeight: '90vh'
         }
       }}
     >
@@ -309,7 +311,7 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
               <TextField
                 fullWidth
                 multiline
-                rows={8}
+                rows={12}
                 value={formData.content}
                 onChange={(e) => handleInputChange('content', e.target.value)}
                 placeholder="Enter document content..."
@@ -340,6 +342,85 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
               </Typography>
             )}
           </Grid>
+
+          {/* File Attachments */}
+          {!editMode && (
+            <Grid item xs={12}>
+              <Typography variant="subtitle2" sx={{ color: 'rgba(255, 255, 255, 0.6)', mb: 2 }}>
+                File Attachments
+              </Typography>
+              {document.attachments && document.attachments.length > 0 ? (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  {document.attachments.map((attachment, index) => (
+                    <Box 
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 2,
+                        p: 2,
+                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: 1,
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.08)'
+                        }
+                      }}
+                    >
+                      <AttachFile sx={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: 20 }} />
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography variant="body2" sx={{ color: 'white', fontWeight: 'medium' }}>
+                          {attachment.originalName || attachment.filename || 'Untitled File'}
+                        </Typography>
+                        {attachment.size && (
+                          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                            {(attachment.size / 1024 / 1024).toFixed(2)} MB • {attachment.mimetype || 'Unknown type'}
+                          </Typography>
+                        )}
+                        {attachment.uploadedAt && (
+                          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)', ml: 1 }}>
+                            • Uploaded {new Date(attachment.uploadedAt).toLocaleDateString()}
+                          </Typography>
+                        )}
+                      </Box>
+                      {attachment.url && (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => window.open(attachment.url, '_blank')}
+                          sx={{
+                            borderColor: 'rgba(255, 255, 255, 0.3)',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            '&:hover': {
+                              borderColor: 'rgba(255, 255, 255, 0.5)',
+                              backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                            }
+                          }}
+                        >
+                          Download
+                        </Button>
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              ) : (
+                <Box 
+                  sx={{
+                    p: 3,
+                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                    borderRadius: 1,
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    textAlign: 'center'
+                  }}
+                >
+                  <AttachFile sx={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: 32, mb: 1 }} />
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                    No file attachments
+                  </Typography>
+                </Box>
+              )}
+            </Grid>
+          )}
 
           {/* Meta Info */}
           {!editMode && (

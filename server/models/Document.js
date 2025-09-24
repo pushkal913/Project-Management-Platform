@@ -34,7 +34,18 @@ const documentSchema = new mongoose.Schema({
     type: String,
     enum: ['draft', 'review', 'approved'],
     default: 'draft'
-  }
+  },
+  attachments: [{
+    filename: String,
+    originalName: String,
+    size: Number,
+    mimetype: String,
+    url: String,
+    uploadedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 }, {
   timestamps: true
 });
