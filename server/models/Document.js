@@ -27,13 +27,17 @@ const documentSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['requirement', 'specification', 'meeting-notes', 'design', 'documentation', 'other'],
+    enum: ['requirement', 'specification', 'meeting-notes', 'design', 'documentation', 'credentials', 'other'],
     default: 'other'
   },
   status: {
     type: String,
     enum: ['draft', 'review', 'approved'],
     default: 'draft'
+  },
+  isPublic: {
+    type: Boolean,
+    default: false
   },
   attachments: [{
     filename: String,

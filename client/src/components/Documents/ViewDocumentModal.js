@@ -15,7 +15,9 @@ import {
   Grid,
   Chip,
   IconButton,
-  Divider
+  Divider,
+  FormControlLabel,
+  Switch
 } from '@mui/material';
 import {
   Close,
@@ -26,15 +28,18 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useAuth } from '../../contexts/AuthContext';
 
 const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdated }) => {
+  const { user } = useAuth();
   const [editMode, setEditMode] = useState(isEditing);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
     category: '',
-    status: ''
+    status: '',
+    isPublic: false
   });
 
   // Update form data when document changes
@@ -44,7 +49,8 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
         title: document.title || '',
         content: document.content || '',
         category: document.category || '',
-        status: document.status || ''
+        status: document.status || '',
+        isPublic: document.isPublic || false
       });
     }
     setEditMode(isEditing);
@@ -56,6 +62,7 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
     { value: 'meeting-notes', label: 'Meeting Notes' },
     { value: 'design', label: 'Design' },
     { value: 'documentation', label: 'Documentation' },
+    { value: 'credentials', label: 'Credentials' },
     { value: 'other', label: 'Other' }
   ];
 
@@ -84,7 +91,8 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
         title: formData.title.trim(),
         content: formData.content.trim(),
         category: formData.category,
-        status: formData.status
+        status: formData.status,
+        isPublic: formData.isPublic
       };
 
       await axios.put(`/documents/${document._id}`, updateData);
@@ -106,7 +114,8 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
         title: document.title || '',
         content: document.content || '',
         category: document.category || '',
-        status: document.status || ''
+        status: document.status || '',
+        isPublic: document.isPublic || false
       });
     }
     setEditMode(false);
@@ -190,7 +199,16 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
                 }}
               />
             ) : (
-              <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  color: 'white', 
+                  fontWeight: 'bold',
+                  wordBreak: 'break-word',
+                  whiteSpace: 'normal',
+                  lineHeight: 1.3
+                }}
+              >
                 {document.title}
               </Typography>
             )}
@@ -296,6 +314,51 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
               </Box>
             )}
           </Grid>
+
+          {/* Admin: Make Public Toggle */}
+          {user?.role === 'admin' && (
+            <Grid item xs={12}>
+              {editMode ? (
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={formData.isPublic}
+                      onChange={(e) => handleInputChange('isPublic', e.target.checked)}
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': {
+                          color: '#2196F3',
+                          '&:hover': {
+                            backgroundColor: 'rgba(33, 150, 243, 0.08)',
+                          },
+                        },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                          backgroundColor: '#2196F3',
+                        },
+                      }}
+                    />
+                  }
+                  label="Make Public (visible to all users)"
+                  sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
+                />
+              ) : (
+                <Box>
+                  <Typography variant="subtitle2" sx={{ color: 'rgba(255, 255, 255, 0.6)', mb: 1 }}>
+                    Visibility
+                  </Typography>
+                  <Chip 
+                    label={document.isPublic ? 'Public' : 'Private'} 
+                    color={document.isPublic ? 'success' : 'default'}
+                    size="small"
+                    sx={{
+                      backgroundColor: document.isPublic ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 255, 255, 0.2)',
+                      color: 'white',
+                      fontWeight: 'bold'
+                    }}
+                  />
+                </Box>
+              )}
+            </Grid>
+          )}
 
           {/* Document Content */}
           <Grid item xs={12}>

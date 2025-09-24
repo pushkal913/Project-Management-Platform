@@ -32,7 +32,8 @@ import {
   Archive,
   People,
   CalendarToday,
-  TrendingUp
+  TrendingUp,
+  Description
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -319,6 +320,20 @@ const Projects = () => {
             Projects
           </Typography>
           <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, flexWrap: 'wrap' }}>
+            <Button
+              variant="outlined"
+              startIcon={<Description />}
+              onClick={() => navigate('/documents')}
+              sx={{ 
+                color: 'white', 
+                borderColor: 'white',
+                px: { xs: 2, sm: 3 },
+                py: { xs: 0.5, sm: 1 },
+                fontSize: { xs: '0.75rem', sm: '0.875rem' }
+              }}
+            >
+              {isSmallScreen ? "Docs" : "View Documents"}
+            </Button>
             <Button
               variant="outlined"
               startIcon={<Add />}

@@ -54,6 +54,7 @@ const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
     { value: 'meeting-notes', label: 'Meeting Notes' },
     { value: 'design', label: 'Design' },
     { value: 'documentation', label: 'Documentation' },
+    { value: 'credentials', label: 'Credentials' },
     { value: 'other', label: 'Other' }
   ];
 

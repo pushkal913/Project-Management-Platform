@@ -47,7 +47,8 @@ import {
   FilterList,
   ViewModule,
   ViewList,
-  FolderOpen
+  FolderOpen,
+  Description
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -444,29 +445,52 @@ const Tasks = () => {
           <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom sx={{ color: 'white', mb: 0 }}>
             Tasks
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => setCreateDialogOpen(true)}
-            sx={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: 2,
-              px: { xs: 2, sm: 3 },
-              py: { xs: 1, sm: 1.5 },
-              fontSize: { xs: '0.875rem', sm: '1rem' },
-              fontWeight: 600,
-              textTransform: 'none',
-              boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 12px 35px rgba(0,0,0,0.2)'
-              },
-              transition: 'all 0.3s ease'
-            }}
-          >
-            {isSmallScreen ? "New" : "New Task"}
-          </Button>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            <Button
+              variant="outlined"
+              startIcon={<Description />}
+              onClick={() => navigate('/documents')}
+              sx={{ 
+                color: 'white', 
+                borderColor: 'white',
+                px: { xs: 2, sm: 3 },
+                py: { xs: 1, sm: 1.5 },
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+                fontWeight: 600,
+                textTransform: 'none',
+                borderRadius: 2,
+                '&:hover': {
+                  borderColor: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+            >
+              {isSmallScreen ? "Docs" : "View Documents"}
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              onClick={() => setCreateDialogOpen(true)}
+              sx={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: 2,
+                px: { xs: 2, sm: 3 },
+                py: { xs: 1, sm: 1.5 },
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+                fontWeight: 600,
+                textTransform: 'none',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 12px 35px rgba(0,0,0,0.2)'
+                },
+                transition: 'all 0.3s ease'
+              }}
+            >
+              {isSmallScreen ? "New" : "New Task"}
+            </Button>
+          </Box>
         </Box>
 
         {/* Status Tabs */}

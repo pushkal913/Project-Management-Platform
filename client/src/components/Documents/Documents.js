@@ -121,6 +121,7 @@ const Documents = () => {
       'meeting-notes': 'Meeting Notes',
       design: 'Design',
       documentation: 'Documentation',
+      credentials: 'Credentials',
       other: 'Other'
     };
     return labels[category] || category;
@@ -193,7 +194,7 @@ const Documents = () => {
       ) : (
         <Grid container spacing={3}>
           {documents.map((doc) => (
-            <Grid item xs={12} md={6} lg={4} key={doc._id}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={doc._id}>
               <Card 
                 onClick={() => handleViewDocument(doc)}
                 sx={{ 
@@ -212,19 +213,30 @@ const Documents = () => {
                   }
                 }}
               >
-                <CardContent sx={{ flexGrow: 1 }}>
+                <CardContent sx={{ flexGrow: 1, p: 2, pb: 1 }}>
                   {/* Document Title */}
-                  <Typography variant="h6" component="h2" gutterBottom noWrap sx={{ color: 'white' }}>
+                  <Typography 
+                    variant="h6" 
+                    component="h2" 
+                    gutterBottom 
+                    noWrap 
+                    sx={{ 
+                      color: 'white', 
+                      fontSize: '1.1rem',
+                      lineHeight: 1.3,
+                      mb: 1
+                    }}
+                  >
                     {doc.title}
                   </Typography>
 
                   {/* Project & Task Info */}
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                      Project: <strong>{doc.project?.name}</strong>
+                  <Box sx={{ mb: 1.5 }}>
+                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.875rem' }}>
+                      <strong>{doc.project?.name}</strong>
                     </Typography>
                     {doc.task && (
-                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                      <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.75rem' }}>
                         Task: {doc.task.title}
                       </Typography>
                     )}
@@ -234,21 +246,23 @@ const Documents = () => {
                   <Typography 
                     variant="body2" 
                     sx={{ 
-                      mb: 2,
+                      mb: 1.5,
                       color: 'rgba(255, 255, 255, 0.7)',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       display: '-webkit-box',
-                      WebkitLineClamp: 3,
+                      WebkitLineClamp: 2,
                       WebkitBoxOrient: 'vertical',
-                      minHeight: '60px'
+                      minHeight: '35px',
+                      fontSize: '0.8rem',
+                      lineHeight: 1.3
                     }}
                   >
                     {doc.content || 'No content yet...'}
                   </Typography>
 
                   {/* Status & Category */}
-                  <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                  <Box sx={{ display: 'flex', gap: 0.5, mb: 1.5, flexWrap: 'wrap' }}>
                     <Chip 
                       label={doc.status} 
                       color={getStatusColor(doc.status)} 
@@ -256,7 +270,9 @@ const Documents = () => {
                       sx={{
                         backgroundColor: 'rgba(255, 255, 255, 0.2)',
                         color: 'white',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        fontSize: '0.7rem',
+                        height: '20px'
                       }}
                     />
                     <Chip 
@@ -265,14 +281,16 @@ const Documents = () => {
                       size="small" 
                       sx={{
                         borderColor: 'rgba(255, 255, 255, 0.4)',
-                        color: 'rgba(255, 255, 255, 0.8)'
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '0.7rem',
+                        height: '20px'
                       }}
                     />
                   </Box>
 
                   {/* Meta Info */}
-                  <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                    Created by {doc.createdBy?.name} • {new Date(doc.createdAt).toLocaleDateString()}
+                  <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.7rem' }}>
+                    {doc.createdBy?.name} • {new Date(doc.createdAt).toLocaleDateString()}
                   </Typography>
                 </CardContent>
 
