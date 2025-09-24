@@ -8,11 +8,7 @@ import {
   Grid,
   Chip,
   IconButton,
-  Tooltip,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem
+  Tooltip
 } from '@mui/material';
 import {
   Add,
@@ -29,8 +25,6 @@ import ViewDocumentModal from './ViewDocumentModal';
 
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState('');
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -38,20 +32,10 @@ const Documents = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { user } = useAuth();
 
-  // Fetch documents and projects
+  // Fetch documents
   useEffect(() => {
     fetchDocuments();
-    fetchProjects();
   }, []);
-
-  const fetchProjects = async () => {
-    try {
-      const response = await axios.get('/projects');
-      setProjects(response.data);
-    } catch (error) {
-      console.error('Error fetching projects:', error);
-    }
-  };
 
   const fetchDocuments = async () => {
     try {
@@ -143,15 +127,6 @@ const Documents = () => {
     return labels[category] || category;
   };
 
-  // Filter documents by selected project
-  const filteredDocuments = selectedProject 
-    ? documents.filter(doc => doc.project?._id === selectedProject)
-    : documents;
-
-  const handleProjectFilterChange = (event) => {
-    setSelectedProject(event.target.value);
-  };
-
   if (loading) {
     return (
       <Box sx={{ p: 3 }}>
@@ -186,48 +161,8 @@ const Documents = () => {
         </Button>
       </Box>
 
-      {/* Project Filter */}
-      <Box sx={{ mb: 3 }}>
-        <FormControl 
-          sx={{ 
-            minWidth: 200,
-            '& .MuiOutlinedInput-root': {
-              background: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              '&:hover': {
-                background: 'rgba(255, 255, 255, 0.15)',
-              }
-            },
-            '& .MuiInputLabel-root': {
-              color: 'white',
-            },
-            '& .MuiSelect-select': {
-              color: 'white',
-            },
-            '& .MuiOutlinedInput-notchedOutline': {
-              border: 'none',
-            }
-          }}
-        >
-          <InputLabel>Filter by Project</InputLabel>
-          <Select
-            value={selectedProject}
-            onChange={handleProjectFilterChange}
-            label="Filter by Project"
-          >
-            <MenuItem value="">All Projects</MenuItem>
-            {projects.map((project) => (
-              <MenuItem key={project._id} value={project._id}>
-                {project.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-
       {/* Documents List */}
-      {filteredDocuments.length === 0 ? (
+      {documents.length === 0 ? (
         <Card sx={{ 
           p: 4, 
           textAlign: 'center', 
@@ -237,10 +172,10 @@ const Documents = () => {
         }}>
           <Description sx={{ fontSize: 64, color: 'rgba(255, 255, 255, 0.7)', mb: 2 }} />
           <Typography variant="h6" sx={{ color: 'white', mb: 1 }}>
-            {selectedProject ? 'No documents for selected project' : 'No documents yet'}
+            No documents yet
           </Typography>
           <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 3 }}>
-            {selectedProject ? 'Try selecting a different project or create a new document.' : 'Create your first document to get started'}
+            Create your first document to get started
           </Typography>
           <Button
             variant="contained"
@@ -258,7 +193,7 @@ const Documents = () => {
         </Card>
       ) : (
         <Grid container spacing={3}>
-          {filteredDocuments.map((doc) => (
+          {documents.map((doc) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={doc._id}>
               <Card 
                 onClick={() => handleViewDocument(doc)}
