@@ -24,6 +24,7 @@ import TaskDetailsPage from './components/Tasks/TaskDetailsPage';
 import UsersPage from './components/Users/UsersPage';
 import ProfilePage from './components/Profile/ProfilePage';
 import SettingsPage from './components/Settings/SettingsPage';
+import DocumentsPage from './components/Documents/DocumentsPage';
 
 // Modern Theme with Vibrant Colors
 const theme = createTheme({
@@ -190,6 +191,7 @@ function App() {
                 <Route path="/projects/:id" element={<ProjectDetailsPage />} />
                 <Route path="/tasks" element={<TasksPage />} />
                 <Route path="/tasks/:id" element={<TaskDetailsPage />} />
+                <Route path="/documents" element={<DocumentsPage />} />
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/settings" element={<SettingsPage />} />

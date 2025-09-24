@@ -20,7 +20,8 @@ import {
   Assignment,
   People,
   Settings,
-  Help
+  Help,
+  Description
 } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -47,6 +48,12 @@ const Sidebar = ({ open, onToggle, isMobile }) => {
       text: 'Tasks',
       icon: <Assignment />,
       path: '/tasks',
+      roles: ['admin', 'standard']
+    },
+    {
+      text: 'Documents',
+      icon: <Description />,
+      path: '/documents',
       roles: ['admin', 'standard']
     },
     {
