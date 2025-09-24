@@ -20,10 +20,12 @@ import {
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
+import CreateDocumentModal from './CreateDocumentModal';
 
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
   const { user } = useAuth();
 
   // Fetch documents
@@ -42,6 +44,10 @@ const Documents = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDocumentCreated = () => {
+    fetchDocuments(); // Refresh the list
   };
 
   const getStatusColor = (status) => {
@@ -86,7 +92,7 @@ const Documents = () => {
         <Button
           variant="contained"
           startIcon={<Add />}
-          onClick={() => {/* TODO: Open create modal */}}
+          onClick={() => setCreateModalOpen(true)}
           sx={{ 
             borderRadius: 2,
             background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
@@ -118,7 +124,7 @@ const Documents = () => {
           <Button
             variant="contained"
             startIcon={<Add />}
-            onClick={() => {/* TODO: Open create modal */}}
+            onClick={() => setCreateModalOpen(true)}
             sx={{
               background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
               '&:hover': {
@@ -236,6 +242,13 @@ const Documents = () => {
           ))}
         </Grid>
       )}
+
+      {/* Create Document Modal */}
+      <CreateDocumentModal
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onDocumentCreated={handleDocumentCreated}
+      />
     </Box>
   );
 };
