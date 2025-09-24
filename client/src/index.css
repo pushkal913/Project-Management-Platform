@@ -131,10 +131,10 @@ html, body, #root {
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* Enhanced Menu/Dropdown Glassmorphism - 30% Darker Background */
+/* Enhanced Menu/Dropdown Glassmorphism */
 .MuiPaper-root.MuiMenu-paper,
 .MuiPaper-root.MuiPopover-paper {
-  background: rgba(0, 0, 0, 0.45) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
   backdrop-filter: blur(25px) !important;
   -webkit-backdrop-filter: blur(25px) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -157,71 +157,6 @@ html, body, #root {
 
 .MuiMenu-paper .MuiDivider-root {
   border-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* All Dropdown/Select/Picker Elements - 30% Darker Background for White Text Visibility */
-/* Select Dropdowns */
-.MuiSelect-select {
-  background: rgba(0, 0, 0, 0.3) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-}
-
-/* FormControl components */
-.MuiFormControl-root .MuiOutlinedInput-root {
-  background: rgba(0, 0, 0, 0.3) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-}
-
-.MuiFormControl-root .MuiOutlinedInput-root input {
-  color: white !important;
-}
-
-/* Autocomplete/Picker dropdowns */
-.MuiAutocomplete-paper {
-  background: rgba(0, 0, 0, 0.45) !important;
-  backdrop-filter: blur(25px) !important;
-  -webkit-backdrop-filter: blur(25px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.35) !important;
-}
-
-.MuiAutocomplete-option {
-  color: white !important;
-}
-
-/* Filter dropdowns and chips */
-.MuiChip-root {
-  background: rgba(0, 0, 0, 0.3) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-}
-
-/* Input fields in dropdowns */
-.MuiInputBase-root {
-  background: rgba(0, 0, 0, 0.3) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  color: white !important;
-}
-
-.MuiInputBase-input {
-  color: white !important;
-}
-
-/* Ensure all dropdown text is white and visible */
-.MuiPaper-root * {
-  color: white !important;
-}
-
-.MuiSelect-root * {
-  color: white !important;
 }
 
 /* Enhanced Dark Status Pills for Better Text Visibility */
