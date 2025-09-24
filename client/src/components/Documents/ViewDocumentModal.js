@@ -197,28 +197,24 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
           </Grid>
 
           {/* Project and Task Info */}
-          {!editMode && (
-            <>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="subtitle2" sx={{ color: 'rgba(255, 255, 255, 0.6)', mb: 1 }}>
-                  Project
-                </Typography>
-                <Typography variant="body1" sx={{ color: 'white' }}>
-                  {document.project?.name}
-                </Typography>
-              </Grid>
-              
-              {document.task && (
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" sx={{ color: 'rgba(255, 255, 255, 0.6)', mb: 1 }}>
-                    Task
-                  </Typography>
-                  <Typography variant="body1" sx={{ color: 'white' }}>
-                    {document.task.title}
-                  </Typography>
-                </Grid>
-              )}
-            </>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="subtitle2" sx={{ color: 'rgba(255, 255, 255, 0.6)', mb: 1 }}>
+              Project
+            </Typography>
+            <Typography variant="body1" sx={{ color: 'white' }}>
+              {document.project?.name}
+            </Typography>
+          </Grid>
+          
+          {document.task && (
+            <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle2" sx={{ color: 'rgba(255, 255, 255, 0.6)', mb: 1 }}>
+                Task
+              </Typography>
+              <Typography variant="body1" sx={{ color: 'white' }}>
+                {document.task.title}
+              </Typography>
+            </Grid>
           )}
 
           {/* Category and Status */}
@@ -400,15 +396,24 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
                           Download
                         </Button>
                       ) : (
-                        <Chip
-                          label="File Attached"
+                        <Button
                           size="small"
-                          sx={{
-                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                            color: 'rgba(76, 175, 80, 1)',
-                            border: '1px solid rgba(76, 175, 80, 0.5)'
+                          variant="outlined"
+                          onClick={() => {
+                            // Simple approach: show info that file cannot be downloaded yet
+                            toast.info(`File "${attachment.originalName || attachment.filename}" was attached but download functionality requires cloud storage setup.`);
                           }}
-                        />
+                          sx={{
+                            borderColor: 'rgba(255, 193, 7, 0.5)',
+                            color: 'rgba(255, 193, 7, 0.8)',
+                            '&:hover': {
+                              borderColor: 'rgba(255, 193, 7, 0.7)',
+                              backgroundColor: 'rgba(255, 193, 7, 0.1)'
+                            }
+                          }}
+                        >
+                          View Info
+                        </Button>
                       )}
                     </Box>
                   ))}
