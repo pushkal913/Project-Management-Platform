@@ -40,9 +40,9 @@ const Documents = () => {
       console.log('User:', user);
       console.log('Axios base URL:', axios.defaults.baseURL);
       console.log('Auth token exists:', !!localStorage.getItem('token'));
-      console.log('Making request to: /api/documents');
+      console.log('Making request to: /documents');
       
-      const response = await axios.get('/api/documents');
+      const response = await axios.get('/documents');
       console.log('Documents response status:', response.status);
       console.log('Documents response data:', response.data);
       setDocuments(response.data.documents || []);

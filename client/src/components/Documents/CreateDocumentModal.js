@@ -83,9 +83,9 @@ const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
       console.log('=== FETCHING PROJECTS DEBUG ===');
       console.log('Axios base URL:', axios.defaults.baseURL);
       console.log('Auth token exists:', !!localStorage.getItem('token'));
-      console.log('Making request to: /api/projects');
+      console.log('Making request to: /projects');
       
-      const response = await axios.get('/api/projects');
+      const response = await axios.get('/projects');
       console.log('Projects response status:', response.status);
       console.log('Projects response data:', response.data);
       setProjects(response.data.projects || []);
@@ -105,10 +105,10 @@ const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
       setLoadingTasks(true);
       console.log('=== FETCHING TASKS DEBUG ===');
       console.log('Project ID:', projectId);
-      console.log('Request URL:', `/api/tasks?project=${projectId}`);
-      console.log('Full request URL with base:', axios.defaults.baseURL + `/api/tasks?project=${projectId}`);
+      console.log('Request URL:', `/tasks?project=${projectId}`);
+      console.log('Full request URL with base:', axios.defaults.baseURL + `/tasks?project=${projectId}`);
       
-      const response = await axios.get(`/api/tasks?project=${projectId}`);
+      const response = await axios.get(`/tasks?project=${projectId}`);
       console.log('Tasks response status:', response.status);
       console.log('Tasks response data:', response.data);
       const projectTasks = response.data.tasks || response.data || [];
@@ -181,7 +181,7 @@ const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
         task: formData.task || null
       };
 
-      const response = await axios.post('/api/documents', documentData);
+      const response = await axios.post('/documents', documentData);
       
       toast.success('Document created successfully!');
       onDocumentCreated();
