@@ -748,7 +748,12 @@ const Tasks = () => {
 
         {/* View Mode Toggle */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
-          <Typography variant={isSmallScreen ? "subtitle1" : "h6"} sx={{ fontWeight: 600 }}>Tasks</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Assignment sx={{ color: 'white', fontSize: isSmallScreen ? '1.2rem' : '1.5rem' }} />
+            <Typography variant={isSmallScreen ? "subtitle1" : "h6"} sx={{ fontWeight: 600, color: 'white' }}>
+              {tasks.length}
+            </Typography>
+          </Box>
           <ToggleButtonGroup
             size={isSmallScreen ? "small" : "medium"}
             value={viewMode}
