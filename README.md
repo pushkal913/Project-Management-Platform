@@ -2,6 +2,10 @@
 
 A comprehensive project management platform built for teams up to 10 employees, similar to Zoho Projects and Jira.
 
+## Recent Updates - Force Deployment v2
+- ✅ Password change functionality for admin users  
+- 🧹 Documents system removed and will be rebuilt from scratch
+
 ## Features
 
 ### 🎯 Core Functionality
