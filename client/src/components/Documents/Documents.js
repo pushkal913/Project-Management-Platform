@@ -21,11 +21,15 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
 import CreateDocumentModal from './CreateDocumentModal';
+import ViewDocumentModal from './ViewDocumentModal';
 
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const { user } = useAuth();
 
   // Fetch documents
@@ -61,6 +65,44 @@ const Documents = () => {
 
   const handleDocumentCreated = () => {
     fetchDocuments(); // Refresh the list
+  };
+
+  const handleViewDocument = (document) => {
+    setSelectedDocument(document);
+    setIsEditing(false);
+    setViewModalOpen(true);
+  };
+
+  const handleEditDocument = (document) => {
+    setSelectedDocument(document);
+    setIsEditing(true);
+    setViewModalOpen(true);
+  };
+
+  const handleDeleteDocument = async (documentId) => {
+    if (!window.confirm('Are you sure you want to delete this document?')) {
+      return;
+    }
+
+    try {
+      await axios.delete(`/documents/${documentId}`);
+      toast.success('Document deleted successfully');
+      fetchDocuments(); // Refresh the list
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      toast.error('Failed to delete document');
+    }
+  };
+
+  const handleCloseViewModal = () => {
+    setViewModalOpen(false);
+    setSelectedDocument(null);
+    setIsEditing(false);
+  };
+
+  const handleDocumentUpdated = () => {
+    fetchDocuments(); // Refresh the list
+    handleCloseViewModal();
   };
 
   const getStatusColor = (status) => {
@@ -153,6 +195,7 @@ const Documents = () => {
           {documents.map((doc) => (
             <Grid item xs={12} md={6} lg={4} key={doc._id}>
               <Card 
+                onClick={() => handleViewDocument(doc)}
                 sx={{ 
                   height: '100%',
                   display: 'flex',
@@ -161,6 +204,7 @@ const Documents = () => {
                   backdropFilter: 'blur(10px)',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  cursor: 'pointer',
                   '&:hover': {
                     transform: 'translateY(-4px)',
                     boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
@@ -235,17 +279,38 @@ const Documents = () => {
                 {/* Actions */}
                 <Box sx={{ p: 2, pt: 0, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
                   <Tooltip title="View Document">
-                    <IconButton size="small" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <IconButton 
+                      size="small" 
+                      sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewDocument(doc);
+                      }}
+                    >
                       <Visibility />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Edit Document">
-                    <IconButton size="small" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <IconButton 
+                      size="small" 
+                      sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditDocument(doc);
+                      }}
+                    >
                       <Edit />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Delete Document">
-                    <IconButton size="small" sx={{ color: '#ff6b6b' }}>
+                    <IconButton 
+                      size="small" 
+                      sx={{ color: '#ff6b6b' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteDocument(doc._id);
+                      }}
+                    >
                       <Delete />
                     </IconButton>
                   </Tooltip>
@@ -261,6 +326,15 @@ const Documents = () => {
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onDocumentCreated={handleDocumentCreated}
+      />
+
+      {/* View/Edit Document Modal */}
+      <ViewDocumentModal
+        open={viewModalOpen}
+        onClose={handleCloseViewModal}
+        document={selectedDocument}
+        isEditing={isEditing}
+        onDocumentUpdated={handleDocumentUpdated}
       />
     </Box>
   );
