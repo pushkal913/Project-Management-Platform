@@ -383,7 +383,7 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
                           </Typography>
                         )}
                       </Box>
-                      {attachment.url && (
+                      {attachment.url ? (
                         <Button
                           size="small"
                           variant="outlined"
@@ -399,6 +399,16 @@ const ViewDocumentModal = ({ open, onClose, document, isEditing, onDocumentUpdat
                         >
                           Download
                         </Button>
+                      ) : (
+                        <Chip
+                          label="File Attached"
+                          size="small"
+                          sx={{
+                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                            color: 'rgba(76, 175, 80, 1)',
+                            border: '1px solid rgba(76, 175, 80, 0.5)'
+                          }}
+                        />
                       )}
                     </Box>
                   ))}

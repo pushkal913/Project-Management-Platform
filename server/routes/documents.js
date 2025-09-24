@@ -44,7 +44,7 @@ router.get('/:id', authenticate, async (req, res) => {
 // Create document
 router.post('/', authenticate, async (req, res) => {
   try {
-    const { title, content, project, task, category, status } = req.body;
+    const { title, content, project, task, category, status, attachments } = req.body;
 
     // Basic validation
     if (!title || !project) {
@@ -72,6 +72,7 @@ router.post('/', authenticate, async (req, res) => {
       task: task || null,
       category: category || 'other',
       status: status || 'draft',
+      attachments: attachments || [],
       createdBy: req.user._id
     });
 

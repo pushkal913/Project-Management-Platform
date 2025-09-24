@@ -174,11 +174,18 @@ const CreateDocumentModal = ({ open, onClose, onDocumentCreated }) => {
 
     setLoading(true);
     try {
-      // For now, we'll create the document without file uploads
-      // File upload functionality can be added later with cloud storage
+      // Prepare document data with attachments
       const documentData = {
         ...formData,
-        task: formData.task || null
+        task: formData.task || null,
+        attachments: attachments.map(att => ({
+          filename: att.file.name,
+          originalName: att.file.name,
+          size: att.file.size,
+          mimetype: att.file.type,
+          url: null, // Will be set when actual file upload is implemented
+          uploadedAt: new Date()
+        }))
       };
 
       const response = await axios.post('/documents', documentData);
