@@ -111,3 +111,50 @@ html, body, #root {
   color: white !important;
   opacity: 1 !important;
 }
+
+/* Glassmorphism Sidebar & Navbar */
+/* Sidebar Glassmorphism */
+.MuiDrawer-paper {
+  background: rgba(25, 118, 210, 0.15) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Navbar Glassmorphism */
+.MuiAppBar-root {
+  background: rgba(25, 118, 210, 0.15) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Menu/Dropdown Glassmorphism */
+.MuiPaper-root.MuiMenu-paper,
+.MuiPaper-root.MuiPopover-paper {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Menu Items Glassmorphism */
+.MuiMenu-paper .MuiMenuItem-root {
+  color: white !important;
+}
+
+.MuiMenu-paper .MuiMenuItem-root:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Menu Typography */
+.MuiMenu-paper .MuiTypography-root {
+  color: white !important;
+}
+
+.MuiMenu-paper .MuiDivider-root {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
