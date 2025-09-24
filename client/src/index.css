@@ -160,101 +160,78 @@ html, body, #root {
 }
 
 /* Enhanced Dark Status Pills for Better Text Visibility */
-/* Status Chips/Pills with Dark Glassmorphism - Extra Dark for White Text */
+/* Status Chips/Pills with Dark Glassmorphism */
 .MuiChip-root[style*="background"] {
-  background: rgba(0, 0, 0, 0.7) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
   color: white !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
 }
 
-/* Status Pills in Cards - Extra Dark Glassmorphism */
+/* Status Pills in Cards - Dark Glassmorphism */
 .MuiBox-root[style*="borderRadius: 16px"] {
-  background: rgba(0, 0, 0, 0.7) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
-  color: white !important;
-}
-
-/* Task Status Dropdown - Extra Dark Background */
-.MuiSelect-select {
-  background: rgba(0, 0, 0, 0.8) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
-  color: white !important;
-  font-weight: 700 !important;
-  border-radius: 8px !important;
-}
-
-/* Ensure all text in status areas is white */
-.MuiSelect-select * {
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
   color: white !important;
 }
 
 /* Status Pills with specific status colors - Enhanced Dark Versions */
-/* Planning Status - Extra Dark */
+/* Planning Status */
 div[style*="#757575"] {
-  background: rgba(117, 117, 117, 0.9) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5) !important;
-  color: white !important;
+  background: rgba(117, 117, 117, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Active/Completed Status (Green) - Extra Dark */
+/* Active/Completed Status (Green) */
 div[style*="#4caf50"] {
-  background: rgba(76, 175, 80, 0.9) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5) !important;
-  color: white !important;
+  background: rgba(76, 175, 80, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* On-hold/In-progress Status (Orange) - Extra Dark */
+/* On-hold/In-progress Status (Orange) */
 div[style*="#ff9800"] {
-  background: rgba(255, 152, 0, 0.9) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5) !important;
-  color: white !important;
+  background: rgba(255, 152, 0, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Error/Todo Status (Red) - Extra Dark */
+/* Error/Todo Status (Red) */
 div[style*="#f44336"] {
-  background: rgba(244, 67, 54, 0.9) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5) !important;
-  color: white !important;
+  background: rgba(244, 67, 54, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Review Status (Blue) - Extra Dark */
+/* Review Status (Blue) */
 div[style*="#2196f3"] {
-  background: rgba(33, 150, 243, 0.9) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5) !important;
-  color: white !important;
+  background: rgba(33, 150, 243, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Testing Status (Purple) - Extra Dark */
+/* Testing Status (Purple) */
 div[style*="#9c27b0"] {
-  background: rgba(156, 39, 176, 0.9) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5) !important;
-  color: white !important;
+  background: rgba(156, 39, 176, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
