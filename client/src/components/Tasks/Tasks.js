@@ -957,6 +957,19 @@ const Tasks = () => {
                     </Box>
                   )}
 
+                  {task.createdAt && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: { xs: 0.5, sm: 1 } }}>
+                      <CalendarToday sx={{ fontSize: { xs: 12, sm: 14 }, color: 'text.secondary' }} />
+                      <Typography 
+                        variant="body2" 
+                        color="text.secondary"
+                        sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
+                      >
+                        Added: {formatDate(task.createdAt)}
+                      </Typography>
+                    </Box>
+                  )}
+
                   {task.dueDate && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
                       <CalendarToday sx={{ fontSize: 14, color: isOverdue(task.dueDate, task.status) ? 'error.main' : 'text.secondary' }} />
