@@ -3,12 +3,12 @@ const router = express.Router();
 const Task = require('../models/Task');
 const User = require('../models/User');
 const Project = require('../models/Project');
-const auth = require('../middleware/auth');
+const { authenticate } = require('../middleware/auth');
 
 // @route   GET /timesheet
 // @desc    Get detailed timesheet data with user and task breakdown
 // @access  Private (Admin only)
-router.get('/', auth, async (req, res) => {
+router.get('/', authenticate, async (req, res) => {
   try {
     // Check if user is admin
     if (req.user.role !== 'admin') {
