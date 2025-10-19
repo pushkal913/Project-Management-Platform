@@ -609,41 +609,53 @@ const TaskDetails = () => {
 
         {/* Sidebar */}
         <Grid item xs={12} md={4}>
-          {/* Task Navigation */}
+          {/* Task Navigation - Compact */}
           {taskList.length > 0 && (
-            <Paper sx={{ p: 2, mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Paper sx={{ 
+              p: 1, 
+              mb: 2, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              borderRadius: 2,
+              boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
+            }}>
               <Tooltip title="Previous Task">
                 <span>
                   <IconButton 
+                    size="small"
                     onClick={goToPreviousTask}
                     disabled={currentTaskIndex <= 0}
                     sx={{ 
                       color: currentTaskIndex <= 0 ? 'rgba(0,0,0,0.26)' : 'primary.main',
+                      padding: '6px',
                       '&:hover': {
                         bgcolor: 'rgba(103, 58, 183, 0.08)'
                       }
                     }}
                   >
-                    <NavigateBefore />
+                    <NavigateBefore fontSize="small" />
                   </IconButton>
                 </span>
               </Tooltip>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
-                {currentTaskIndex + 1} of {taskList.length}
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, fontSize: '0.75rem' }}>
+                {currentTaskIndex + 1} / {taskList.length}
               </Typography>
               <Tooltip title="Next Task">
                 <span>
                   <IconButton 
+                    size="small"
                     onClick={goToNextTask}
                     disabled={currentTaskIndex >= taskList.length - 1}
                     sx={{ 
                       color: currentTaskIndex >= taskList.length - 1 ? 'rgba(0,0,0,0.26)' : 'primary.main',
+                      padding: '6px',
                       '&:hover': {
                         bgcolor: 'rgba(103, 58, 183, 0.08)'
                       }
                     }}
                   >
-                    <NavigateNext />
+                    <NavigateNext fontSize="small" />
                   </IconButton>
                 </span>
               </Tooltip>
