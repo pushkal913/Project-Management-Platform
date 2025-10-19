@@ -73,16 +73,47 @@ const Tasks = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [activeTab, setActiveTab] = useState(0);
-  const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'list'
-  const [filters, setFilters] = useState({
-    status: '',
-    priority: '',
-    assignee: '',
-    project: '',
-    timeFilter: '',
-    myTasks: false
-  });
+  
+  // Load saved filters and view settings from localStorage
+  const loadSavedFilters = () => {
+    try {
+      const savedFilters = localStorage.getItem('taskFilters');
+      const savedTab = localStorage.getItem('taskActiveTab');
+      const savedViewMode = localStorage.getItem('taskViewMode');
+      
+      return {
+        filters: savedFilters ? JSON.parse(savedFilters) : {
+          status: '',
+          priority: '',
+          assignee: '',
+          project: '',
+          timeFilter: '',
+          myTasks: false
+        },
+        activeTab: savedTab ? parseInt(savedTab, 10) : 0,
+        viewMode: savedViewMode || 'cards'
+      };
+    } catch (error) {
+      console.error('Error loading saved filters:', error);
+      return {
+        filters: {
+          status: '',
+          priority: '',
+          assignee: '',
+          project: '',
+          timeFilter: '',
+          myTasks: false
+        },
+        activeTab: 0,
+        viewMode: 'cards'
+      };
+    }
+  };
+
+  const savedSettings = loadSavedFilters();
+  const [activeTab, setActiveTab] = useState(savedSettings.activeTab);
+  const [viewMode, setViewMode] = useState(savedSettings.viewMode);
+  const [filters, setFilters] = useState(savedSettings.filters);
 
   // Function to generate consistent colors for users
   const getUserColor = (userId) => {
@@ -159,6 +190,33 @@ const Tasks = () => {
       fetchUsers();
     }
   }, [user, filters]);
+
+  // Save filters to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('taskFilters', JSON.stringify(filters));
+    } catch (error) {
+      console.error('Error saving filters:', error);
+    }
+  }, [filters]);
+
+  // Save activeTab to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('taskActiveTab', activeTab.toString());
+    } catch (error) {
+      console.error('Error saving activeTab:', error);
+    }
+  }, [activeTab]);
+
+  // Save viewMode to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('taskViewMode', viewMode);
+    } catch (error) {
+      console.error('Error saving viewMode:', error);
+    }
+  }, [viewMode]);
 
   const fetchTasks = async () => {
     try {
