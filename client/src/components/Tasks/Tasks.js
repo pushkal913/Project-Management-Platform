@@ -235,6 +235,15 @@ const Tasks = () => {
       
       const response = await axios.get(`/tasks?${params.toString()}`);
       setTasks(response.data.tasks);
+      
+      // Save task list to localStorage for task navigation
+      if (response.data.tasks && response.data.tasks.length > 0) {
+        try {
+          localStorage.setItem('currentTaskList', JSON.stringify(response.data.tasks));
+        } catch (error) {
+          console.error('Error saving task list:', error);
+        }
+      }
     } catch (error) {
       console.error('Error fetching tasks:', error);
       toast.error('Failed to fetch tasks');

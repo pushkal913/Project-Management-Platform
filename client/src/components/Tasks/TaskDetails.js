@@ -37,7 +37,9 @@ import {
   Schedule,
   Comment,
   Add,
-  Check
+  Check,
+  NavigateBefore,
+  NavigateNext
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -57,6 +59,10 @@ const TaskDetails = () => {
   const [newSubtask, setNewSubtask] = useState('');
   const [timeHours, setTimeHours] = useState('');
   const [timeMinutes, setTimeMinutes] = useState('');
+  
+  // Task navigation state
+  const [taskList, setTaskList] = useState([]);
+  const [currentTaskIndex, setCurrentTaskIndex] = useState(-1);
   
   // Edit dialog state
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -78,6 +84,7 @@ const TaskDetails = () => {
     fetchTaskDetails();
     fetchProjects();
     fetchUsers();
+    loadTaskList();
   }, [id]);
 
   const fetchTaskDetails = async () => {
@@ -110,6 +117,37 @@ const TaskDetails = () => {
       setUsers(response.data.users || []);
     } catch (error) {
       console.error('Error fetching users:', error);
+    }
+  };
+
+  // Load task list from localStorage (saved from Tasks page)
+  const loadTaskList = () => {
+    try {
+      const savedTaskList = localStorage.getItem('currentTaskList');
+      if (savedTaskList) {
+        const tasks = JSON.parse(savedTaskList);
+        setTaskList(tasks);
+        const index = tasks.findIndex(t => t._id === id);
+        setCurrentTaskIndex(index);
+      }
+    } catch (error) {
+      console.error('Error loading task list:', error);
+    }
+  };
+
+  // Navigate to previous task
+  const goToPreviousTask = () => {
+    if (currentTaskIndex > 0 && taskList.length > 0) {
+      const previousTask = taskList[currentTaskIndex - 1];
+      navigate(`/tasks/${previousTask._id}`);
+    }
+  };
+
+  // Navigate to next task
+  const goToNextTask = () => {
+    if (currentTaskIndex < taskList.length - 1 && taskList.length > 0) {
+      const nextTask = taskList[currentTaskIndex + 1];
+      navigate(`/tasks/${nextTask._id}`);
     }
   };
 
@@ -571,6 +609,47 @@ const TaskDetails = () => {
 
         {/* Sidebar */}
         <Grid item xs={12} md={4}>
+          {/* Task Navigation */}
+          {taskList.length > 0 && (
+            <Paper sx={{ p: 2, mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Tooltip title="Previous Task">
+                <span>
+                  <IconButton 
+                    onClick={goToPreviousTask}
+                    disabled={currentTaskIndex <= 0}
+                    sx={{ 
+                      color: currentTaskIndex <= 0 ? 'rgba(0,0,0,0.26)' : 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'rgba(103, 58, 183, 0.08)'
+                      }
+                    }}
+                  >
+                    <NavigateBefore />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+                {currentTaskIndex + 1} of {taskList.length}
+              </Typography>
+              <Tooltip title="Next Task">
+                <span>
+                  <IconButton 
+                    onClick={goToNextTask}
+                    disabled={currentTaskIndex >= taskList.length - 1}
+                    sx={{ 
+                      color: currentTaskIndex >= taskList.length - 1 ? 'rgba(0,0,0,0.26)' : 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'rgba(103, 58, 183, 0.08)'
+                      }
+                    }}
+                  >
+                    <NavigateNext />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </Paper>
+          )}
+          
           {/* Status */}
           <Paper sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
