@@ -109,12 +109,21 @@ router.get('/', authenticate, async (req, res) => {
         }
 
         if (userId) {
-          filteredTimeLogs = filteredTimeLogs.filter(log => log.loggedBy.toString() === userId);
+          filteredTimeLogs = filteredTimeLogs.filter(log => {
+            if (!log.loggedBy) return false;
+            const loggedById = typeof log.loggedBy === 'object' ? log.loggedBy._id : log.loggedBy;
+            return loggedById && loggedById.toString() === userId;
+          });
         }
 
         // Process each time log
         for (const log of filteredTimeLogs) {
-          const userIdStr = log.loggedBy.toString();
+          if (!log.loggedBy) continue; // Skip logs without user
+          
+          const loggedById = typeof log.loggedBy === 'object' ? log.loggedBy._id : log.loggedBy;
+          if (!loggedById) continue;
+          
+          const userIdStr = loggedById.toString();
           
           if (!userMap.has(userIdStr)) {
             // Fetch user details
@@ -182,7 +191,11 @@ router.get('/', authenticate, async (req, res) => {
         }
 
         if (userId) {
-          filteredTimeLogs = filteredTimeLogs.filter(log => log.loggedBy.toString() === userId);
+          filteredTimeLogs = filteredTimeLogs.filter(log => {
+            if (!log.loggedBy) return false;
+            const loggedById = typeof log.loggedBy === 'object' ? log.loggedBy._id : log.loggedBy;
+            return loggedById && loggedById.toString() === userId;
+          });
         }
 
         if (filteredTimeLogs.length === 0) continue;
@@ -207,7 +220,12 @@ router.get('/', authenticate, async (req, res) => {
         const userLogsMap = new Map();
         
         for (const log of filteredTimeLogs) {
-          const userIdStr = log.loggedBy.toString();
+          if (!log.loggedBy) continue; // Skip logs without user
+          
+          const loggedById = typeof log.loggedBy === 'object' ? log.loggedBy._id : log.loggedBy;
+          if (!loggedById) continue;
+          
+          const userIdStr = loggedById.toString();
           
           if (!userLogsMap.has(userIdStr)) {
             userLogsMap.set(userIdStr, {
@@ -263,15 +281,24 @@ router.get('/', authenticate, async (req, res) => {
         }
 
         if (userId) {
-          filteredTimeLogs = filteredTimeLogs.filter(log => log.loggedBy.toString() === userId);
+          filteredTimeLogs = filteredTimeLogs.filter(log => {
+            if (!log.loggedBy) return false;
+            const loggedById = typeof log.loggedBy === 'object' ? log.loggedBy._id : log.loggedBy;
+            return loggedById && loggedById.toString() === userId;
+          });
         }
 
         for (const log of filteredTimeLogs) {
-          const user = await User.findById(log.loggedBy).select('name email').lean();
+          if (!log.loggedBy) continue; // Skip logs without user
+          
+          const loggedById = typeof log.loggedBy === 'object' ? log.loggedBy._id : log.loggedBy;
+          if (!loggedById) continue;
+          
+          const user = await User.findById(loggedById).select('name email').lean();
           if (!user) continue;
 
           timesheetData.push({
-            userId: log.loggedBy.toString(),
+            userId: loggedById.toString(),
             userName: user.name,
             userEmail: user.email,
             taskId: task._id.toString(),
@@ -283,7 +310,7 @@ router.get('/', authenticate, async (req, res) => {
           });
 
           summary.totalHours += log.hours;
-          summary.activeUsers.add(log.loggedBy.toString());
+          summary.activeUsers.add(loggedById.toString());
         }
       }
     }
