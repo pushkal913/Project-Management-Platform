@@ -21,7 +21,8 @@ import {
   People,
   Settings,
   Help,
-  Description
+  Description,
+  AccessTime
 } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -55,6 +56,12 @@ const Sidebar = ({ open, onToggle, isMobile }) => {
       icon: <Description />,
       path: '/documents',
       roles: ['admin', 'standard']
+    },
+    {
+      text: 'Timesheet',
+      icon: <AccessTime />,
+      path: '/timesheet',
+      roles: ['admin']
     },
     {
       text: 'Team',

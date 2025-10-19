@@ -12,6 +12,7 @@ const projectRoutes = require('./routes/projects');
 const taskRoutes = require('./routes/tasks');
 const dashboardRoutes = require('./routes/dashboard');
 const documentRoutes = require('./routes/documents');
+const timesheetRoutes = require('./routes/timesheet');
 
 dotenv.config();
 
@@ -127,6 +128,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/timesheet', timesheetRoutes);
 
 // API health check
 app.get('/api', (req, res) => {
@@ -134,7 +136,7 @@ app.get('/api', (req, res) => {
     status: 'ProjectHub API is running', 
     version: '1.0.0',
     timestamp: new Date().toISOString(),
-    endpoints: ['/api/auth', '/api/users', '/api/projects', '/api/tasks', '/api/dashboard', '/api/documents']
+    endpoints: ['/api/auth', '/api/users', '/api/projects', '/api/tasks', '/api/dashboard', '/api/documents', '/api/timesheet']
   });
 });
 
@@ -143,7 +145,7 @@ app.get('/', (req, res) => {
   res.json({ 
     status: 'ProjectHub API is running', 
     timestamp: new Date().toISOString(),
-    endpoints: ['/api/auth', '/api/users', '/api/projects', '/api/tasks', '/api/dashboard', '/api/documents']
+    endpoints: ['/api/auth', '/api/users', '/api/projects', '/api/tasks', '/api/dashboard', '/api/documents', '/api/timesheet']
   });
 });
 
