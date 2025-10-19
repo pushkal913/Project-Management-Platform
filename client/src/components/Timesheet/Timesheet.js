@@ -506,17 +506,17 @@ const Timesheet = () => {
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       {task.contributors?.slice(0, 3).map((contributor, idx) => (
-                        <Tooltip key={idx} title={contributor} arrow>
+                        <Tooltip key={idx} title={contributor.userName} arrow>
                           <Avatar
                             sx={{
                               width: 28,
                               height: 28,
-                              bgcolor: getUserColor(contributor),
+                              bgcolor: getUserColor(contributor.userId),
                               fontSize: '0.75rem',
                               fontWeight: 700
                             }}
                           >
-                            {contributor.charAt(0).toUpperCase()}
+                            {contributor.userName.charAt(0).toUpperCase()}
                           </Avatar>
                         </Tooltip>
                       ))}

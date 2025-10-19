@@ -211,7 +211,7 @@ router.get('/', authenticate, async (req, res) => {
             projectName: task.project?.name || 'Unknown',
             totalHours: 0,
             status: task.status,
-            contributors: new Set(),
+            contributors: [], // Change to array to store objects
             userBreakdown: []
           });
         }
@@ -253,7 +253,11 @@ router.get('/', authenticate, async (req, res) => {
         for (const [userIdStr, logData] of userLogsMap) {
           const user = await User.findById(userIdStr).select('name email').lean();
           if (user) {
-            taskData.contributors.add(user.name);
+            // Add contributor with userId and userName for consistent coloring
+            taskData.contributors.push({
+              userId: userIdStr,
+              userName: user.name
+            });
             taskData.userBreakdown.push({
               userId: userIdStr,
               userName: user.name,
@@ -264,10 +268,7 @@ router.get('/', authenticate, async (req, res) => {
         }
       }
 
-      timesheetData = Array.from(taskMap.values()).map(task => ({
-        ...task,
-        contributors: Array.from(task.contributors)
-      }));
+      timesheetData = Array.from(taskMap.values());
 
     } else {
       // Detailed view - individual time log entries
